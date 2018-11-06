@@ -642,9 +642,10 @@ export default {
       // this.queryData()
     },
     filtersContentType(value,row,column){
-      console.log(value)
-      console.log(row)
-      console.log(column)
+      debugger;
+      this.filterDataF[column.columnKey]=column.filteredValue;
+      
+      return true;
       
 
     },
