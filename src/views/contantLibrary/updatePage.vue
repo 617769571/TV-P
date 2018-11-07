@@ -204,18 +204,7 @@ export default {
         contentName: '',
         contentType: 0,
         showMode: '',
-        imgs:[{
-          // id:integer($int64),
-          imgUrl:'',
-          description:'',
-          // goodsSource:integer($int32),//来源
-          //商品来源，0-如家；1-其它
-          size:'',
-          imgType:0,
-          //影像类型:1-图片,2-视频
-          // mediaType:'jpg',
-          // createTime:string($date-time),
-        }],
+        
         model: '',
         roomNo: 1,
         roomType: '',
@@ -223,6 +212,38 @@ export default {
         linkAdd:'',
         http:''
       },
+    editFormImgs:[{
+        // id:integer($int64),
+        imgUrl:'',
+        description:'',
+        // goodsSource:integer($int32),//来源
+        //商品来源，0-如家；1-其它
+        size:'16:9',
+        imgType:0,
+        //影像类型:1-图片,2-视频
+        // mediaType:'jpg',
+        // createTime:string($date-time),
+      },{
+        imgUrl:'',
+        description:'',
+        size:'1:1',
+        imgType:0,
+      },{
+        imgUrl:'',
+        description:'',
+        size:'318x658',
+        imgType:0,
+      },{
+        imgUrl:'',
+        description:'',
+        size:'1314x658',
+        imgType:0,
+      },{
+        imgUrl:'',
+        description:'',
+        size:'318x207',
+        imgType:0,
+      }],
       addForm: {
         storeId: '',
         storeName: '',
