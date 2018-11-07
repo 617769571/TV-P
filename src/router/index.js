@@ -65,7 +65,13 @@ export const constantRouterMap = [
         path: 'contantLibrary',
         name: 'contantLibrary',
         component: () => import('@/views/contantLibrary/index'),
-        meta: { title: '内容库管理', icon: 'table' }
+        meta: { title: '内容库管理', icon: 'table' },
+      },
+      {
+        path: 'contantLibrary/editContant',
+        name: 'editContant',
+        component: () => import('@/views/contantLibrary/updatePage'),
+        hidden: true
       },
       {
         path: 'secondaryPages',

@@ -33,9 +33,15 @@ export function GET_DEVICE_LIST(data, pageIndex = 0, pageSize = 20, roomNoSortTy
 }
 
 export function GET_CONTANT_FIND(params,data) {
-  // for(let i in data){
-  //   params[i] = data[i];
-  // }
+  for(let i in data){
+    if(!data[i]){
+      delete data[i];
+      continue;
+    }
+    if(data[i].length == 0){    
+      delete data[i];
+    }
+  }
   return request({
     url: process.env.BASE_API + '/content/find',
     method: 'post',
