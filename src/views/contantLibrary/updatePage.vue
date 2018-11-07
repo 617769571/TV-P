@@ -201,10 +201,21 @@ export default {
       editVisible: false,
       addVisible: false,
       editForm: {
-        storeId: '',
-        storeName: '',
-        brandCode: '',
-        typeCode: '',
+        contentName: '',
+        contentType: 0,
+        showMode: '',
+        imgs:[{
+          // id:integer($int64),
+          imgUrl:'',
+          description:'',
+          // goodsSource:integer($int32),//来源
+          //商品来源，0-如家；1-其它
+          size:'',
+          imgType:0,
+          //影像类型:1-图片,2-视频
+          // mediaType:'jpg',
+          // createTime:string($date-time),
+        }],
         model: '',
         roomNo: 1,
         roomType: '',
