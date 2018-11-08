@@ -16,42 +16,92 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item :label-width="labelWidth" label="展现形式" prop="roomNo">
-          <el-radio-group v-model="editForm.roomNo">
-            <el-radio-button :disabled="editOrAddFlag" label="1">图片</el-radio-button>
-            <el-radio-button :disabled="editOrAddFlag" label="2">视频</el-radio-button>
+        <el-form-item :label-width="labelWidth" label="展现形式" prop="showMode">
+          <el-radio-group v-model="editForm.showMode">
+            <el-radio-button :disabled="!editOrAddFlag" label="1">图片</el-radio-button>
+            <el-radio-button :disabled="!editOrAddFlag" label="2">视频</el-radio-button>
           </el-radio-group>
-          <el-form-item v-if="editForm.roomNo==1" :label-width="labelWidth" label="上传图片：" prop="images"></el-form-item>
-          <el-form-item v-if="editForm.roomNo==2" :label-width="labelWidth" label="上传视频：" prop="videos">
+          <div v-if="editForm.showMode==1" class="imgsBox">
+            <el-upload style="background:#F2F2F2;width:233px;height:233px;"
+              class="avatar-uploader"
+              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :show-file-list="false"
+              :on-success="handleAvatar0Success"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="editFormImgs[0].imgUrl" :src="editFormImgs[0].imgUrl" class="avatar" style="width:233px;height:233px;">
+              <span  v-if="!editFormImgs[0].imgUrl">1:1</span>
+            </el-upload>
+            <el-upload style="background:#F2F2F2;width:144px;height:234px;"
+              class="avatar-uploader"
+              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :show-file-list="false"
+              :on-success="handleAvatar1Success"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="editFormImgs[1].imgUrl" :src="editFormImgs[1].imgUrl" class="avatar" style="width:144px;height:234px;">
+              <span  v-if="!editFormImgs[1].imgUrl">318x658</span>
+            </el-upload>
+            <el-upload style="background:#F2F2F2;width:208px;height:104px;"
+              class="avatar-uploader"
+              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :show-file-list="false"
+              :on-success="handleAvatar2Success"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="editFormImgs[2].imgUrl" :src="editFormImgs[2].imgUrl" class="avatar" style="width:208px;height:104px;">
+              <span  v-if="!editFormImgs[2].imgUrl">1314x658</span>
+            </el-upload>
+            <el-upload style="background:#F2F2F2;width:207px;height:116px;"
+              class="avatar-uploader"
+              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :show-file-list="false"
+              :on-success="handleAvatar3Success"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="editFormImgs[3].imgUrl" :src="editFormImgs[3].imgUrl" class="avatar" style="width:207px;height:116px;">
+              <span  v-if="!editFormImgs[3].imgUrl">16:9</span>
+            </el-upload>
+            <el-upload style="background:#F2F2F2;width:113px;height:74px;"
+              class="avatar-uploader"
+              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :show-file-list="false"
+              :on-success="handleAvatar4Success"
+              :before-upload="beforeAvatarUpload">
+              <img v-if="editFormImgs[4].imgUrl" :src="editFormImgs[4].imgUrl" class="avatar" style="width:113px;height:74px;">
+              <span  v-if="!editFormImgs[4].imgUrl">318x207</span>
+            </el-upload>
+
+          </div>
+          
+          <el-form-item v-if="editForm.showMode==2" :label-width="labelWidth" label="上传视频：" prop="videos">
             
           </el-form-item>
         </el-form-item>
-        <el-form-item :label-width="labelWidth" label="触发方式" prop="roomType">
-          <el-select v-model="editForm.roomType" placeholder="请选择触发方式">
+        <el-form-item :label-width="labelWidth" label="触发方式" prop="triggerMode">
+          <el-select v-model="editForm.triggerMode" placeholder="请选择触发方式">
             <el-option v-for="(rt, index) in roomTypeNames" :key="index" :label="rt.text" :value="rt.value">
               {{ rt.text }}
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item  v-if="editForm.roomType==1" :label-width="labelWidth" label="目标URL" prop="uuid">
-          <el-input placeholder="请输入内容" v-model="editForm.uuid" class="input-with-select">
+        <el-form-item  v-if="editForm.triggerMode==1" :label-width="labelWidth" label="目标URL" prop="triggerParam">
+          <!-- <el-input placeholder="请输入内容" v-model="editForm.triggerParam" class="input-with-select">
             <el-select v-model="editForm.http" slot="prepend" placeholder="请选择">
               <el-option label="Http://" value="Http://"></el-option>
               <el-option label="Https://" value="Https://"></el-option>
             </el-select>
-          </el-input>
+          </el-input> -->
+          <el-input v-model="editForm.triggerParam" placeholder="请输入目标URL" />
         </el-form-item>
-        <el-form-item v-if="editForm.roomType==2" :label-width="labelWidth" label="应用" prop="uuid">
-          <el-select v-model="editForm.uuid" placeholder="请选择触发方式">
-            <el-option v-for="(rt, index) in applications" :key="index" :label="rt.text" :value="rt.value">
-              {{ rt.text }}
+        <el-form-item v-if="editForm.triggerMode==2" :label-width="labelWidth" label="应用" prop="triggerId">
+          <el-select v-model="editForm.triggerId" placeholder="请选择触发方式">
+            <!-- <el-option label="" value=""></el-option> -->
+            <el-option v-for="(rt, index) in applications" :key="index" :label="rt.value" :value="rt.key">
+              {{ rt.value }}
             </el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer text-center">
-        <el-button class="btn-default" size="medium" @click="cancelSubmit('editForm', 'editVisible')">取消</el-button>
-        <el-button class="btn-primary" size="medium" @click="submitEdit">确定</el-button>
+        <el-button class="btn-default" size="medium" @click="goBack">返回</el-button>
+        <el-button class="btn-primary" size="medium" @click="submitEdit">提交</el-button>
       </div>
     </div>
   
@@ -62,16 +112,24 @@
 import EnabledType from './types/enable-type'
 import { Message } from 'element-ui'
 import DeviceDetailDialog from './dialog/device-detail-dialog.vue'
+// import {
+//   GET_CONTANT_APP,
+//   GET_MODEL_LIST,
+//   GET_DEVICE_LIST,
+//   GET_STORES,
+//   GET_CONTANT_FIND,
+//   CHANGE_DEVICE_STATUS,
+//   UPDATE_INFO,
+//   DEVICE_DETAIL,
+//   REGISTER_CHECK,
+//   REGISTER_DEVICE
+// } from '@/api/contantLibraryAPI/contantLibraryAPI'
 import {
-  GET_MODEL_LIST,
-  GET_DEVICE_LIST,
-  GET_STORES,
-  GET_CONTANT_FIND,
-  CHANGE_DEVICE_STATUS,
-  UPDATE_INFO,
-  DEVICE_DETAIL,
-  REGISTER_CHECK,
-  REGISTER_DEVICE
+  GET_CONTANT_APP,
+  CONTENT_CREATE,
+  CONTANT_GET,
+  CONTENT_UPDATE
+
 } from '@/api/contantLibraryAPI/contantLibraryAPI'
 import { GET_ROOM_TYPE, GET_ALL_ROOM_TYPE } from '@/api/storeManage/storeManage'
 import RoomTypeConfig from '@/constants/room-type-config'
@@ -155,9 +213,9 @@ export default {
         callback()
       }
     }
-    const validateRoomTypeA = (rule, value, callback) => {
+    const validatetriggerModeA = (rule, value, callback) => {
       if ((Number.isSafeInteger(value * 1) && ('' + value)).trim().length < 1) {
-        this.addForm.roomType = ''
+        this.addForm.triggerMode = ''
         callback(new Error('房间类型必须填'))
       } else {
         callback()
@@ -173,17 +231,18 @@ export default {
     }
     return {
       editOrAddFlag:false, //用于判断当前是新建还是编辑
+      APILeft:'http://192.168.16.170:80',
       contentTypes:[{ text: '影视', value: 1 }, { text: '直播', value: 2 }, { text: '广告', value: 3 }, { text: '购物', value: 4 }, { text: '服务', value: 5 }, { text: '周边', value: 6 }],
       editRules: {
-        storeName: [{ required: true, trigger: 'blur', validator: validateStoreNameE }],
-        brandCode: [{ required: true, trigger: 'blur', validator: validateBrandCodeE }],
-        typeCode: [{ required: true, trigger: 'blur', validator: validateTypeCodeE }],
-        roomNo: [{ required: true, trigger: 'blur', validator: validateRoomNoE }],
-        roomType: [{ required: true, trigger: 'blur', validator: validateRoomTypeE }],
-        uuid: [{ required: true, trigger: 'blur', validator: validateUuidE }]
+        // storeName: [{ required: true, trigger: 'blur', validator: validateStoreNameE }],
+        // brandCode: [{ required: true, trigger: 'blur', validator: validateBrandCodeE }],
+        // typeCode: [{ required: true, trigger: 'blur', validator: validateTypeCodeE }],
+        // // roomNo: [{ required: true, trigger: 'blur', validator: validateRoomNoE }],
+        triggerMode: [{ required: true, trigger: 'blur', validator: validateRoomTypeE }],
+       
       },
       addRules: {
-        storeId: [
+        contentName: [
           { required: true, message: '请输入内容名称', trigger: 'blur' },
           { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
         ],
@@ -202,48 +261,56 @@ export default {
       addVisible: false,
       editForm: {
         contentName: '',
-        contentType: 0,
-        showMode: '',
-        
-        model: '',
-        roomNo: 1,
-        roomType: '',
-        uuid: '',
-        linkAdd:'',
-        http:''
+        contentType: '',
+        showMode: 1,
+        imgs:[],
+        triggerMode: '',
+        triggerParam: '',
+        triggerId:''
       },
-    editFormImgs:[{
+    editFormImgs:[
+      {
+        imgUrl:'',
+        description:'',
+        size:'1:1',
+        imgType:1,
+        mediaType:'未知'
+      },
+      {
+        imgUrl:'',
+        description:'',
+        size:'318x658',
+        imgType:1,
+        mediaType:'未知'
+      },
+      {
+        imgUrl:'',
+        description:'',
+        size:'1314x658',
+        imgType:1,
+        mediaType:'未知'
+      },
+      {
         // id:integer($int64),
         imgUrl:'',
         description:'',
         // goodsSource:integer($int32),//来源
         //商品来源，0-如家；1-其它
         size:'16:9',
-        imgType:0,
+        imgType:1,
+        mediaType:'未知'
         //影像类型:1-图片,2-视频
-        // mediaType:'jpg',
+        
         // createTime:string($date-time),
-      },{
-        imgUrl:'',
-        description:'',
-        size:'1:1',
-        imgType:0,
-      },{
-        imgUrl:'',
-        description:'',
-        size:'318x658',
-        imgType:0,
-      },{
-        imgUrl:'',
-        description:'',
-        size:'1314x658',
-        imgType:0,
-      },{
+      },
+      {
         imgUrl:'',
         description:'',
         size:'318x207',
-        imgType:0,
-      }],
+        imgType:1,
+        mediaType:'未知'
+      }
+      ],
       addForm: {
         storeId: '',
         storeName: '',
@@ -254,7 +321,7 @@ export default {
         roomType: '',
         uuid: '',
         linkAdd:'',
-        http:''
+       
       },
       needShow: false,
       deviceBrands: [],
@@ -280,22 +347,22 @@ export default {
       RoomTypeConfig,
       sortType: null,
       applications:[
-        {
-          text:'爱奇艺',
-          value:'1'
-        },{
-          text:'腾讯视频',
-          value:'2'
-        },{
-          text:'Bilibili',
-          value:'3'
-        },{
-          text:'优酷',
-          value:'4'
-        },
+        // {
+        //   text:'爱奇艺',
+        //   value:'1'
+        // },{
+        //   text:'腾讯视频',
+        //   value:'2'
+        // },{
+        //   text:'Bilibili',
+        //   value:'3'
+        // },{
+        //   text:'优酷',
+        //   value:'4'
+        // },
         
       ],
-      contId:''
+      contentObj:''
     }
   },
   computed: {
@@ -307,52 +374,117 @@ export default {
     }
   },
   mounted() {
-    this.editOrAddFlag = this.$route.query.edit;
-    if(this.editOrAddFlag){
-      this.contId = this.$route.query.id;
-    }
+    window.addEventListener('pageshow', this.onShow);
+    this.onShow();
   },
   methods: {
-    filterData(array, key, targetKey) {
-      if (!Array.isArray(array)) return
-      const set = new Set()
-      const res = []
-      for (const item of array) {
-        const name = item[key]
-        if (set.has(name)) continue
-        set.add(name)
-        res.push({ text: name, value: item.typeCode })
+    onShow(){
+      GET_CONTANT_APP().then(res=>{
+        this.applications = res;
+      })
+      this.loading = true;
+      this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
+      if(!this.editOrAddFlag){
+        CONTANT_GET(this.$route.params.contentObj.id).then(res=>{
+          this.contentObj = res;
+          for(let i in this.editForm){
+            this.editForm[i] = this.contentObj[i];
+          }
+          this.editForm.id = this.contentObj.id;
+          // this.editFormImgs = this.contentObj.imgs;
+          for(let j in this.contentObj.imgs){
+            this.imgSort(this.contentObj.imgs[j])
+          }
+          this.loading = false;
+        })
+        
       }
-      this[targetKey] = res
+      
     },
-    // getAllRoomType() {
-    //   GET_ALL_ROOM_TYPE().then(value => {
-    //     this.filterData(value, 'typeName', 'roomTypeNames')
-    //   }).catch(() => {})
-    // },
+    imgSort(imgObj){
+      switch(imgObj.size){
+        case '1:1':
+          this.editFormImgs[0] = imgObj; 
+          break;      
+        case '318x658':
+          this.editFormImgs[1] = imgObj; 
+          break;      
+        case '1314x658':
+          this.editFormImgs[2] = imgObj; 
+          break;      
+        case '16:9':
+          this.editFormImgs[3] = imgObj; 
+          break;      
+        case '318x207':
+          this.editFormImgs[4] = imgObj; 
+          break;
+      }
+      
+            
+    },
+    handleAvatarSuccess(res, file,ind) {
+      // this.editFormImgs[ind].imgUrl = URL.createObjectURL(file.raw);
+      this.editFormImgs[ind].imgUrl = this.APILeft+res[0].split('$}')[1];
+     
+      this.editFormImgs[ind].mediaType = file.name.split('.')[1];
+
+    },
+    handleAvatar0Success(res, file,ind) {
+      this.handleAvatarSuccess(res, file,0)
+    },
+    handleAvatar1Success(res, file,ind) {
+      this.handleAvatarSuccess(res, file,1)
+    },
+    handleAvatar2Success(res, file,ind) {
+      this.handleAvatarSuccess(res, file,2)
+    },
+    handleAvatar3Success(res, file,ind) {
+      this.handleAvatarSuccess(res, file,3)
+    },
+    handleAvatar4Success(res, file,ind) {
+      this.handleAvatarSuccess(res, file,4)
+    },
+    
+    beforeAvatarUpload(file) {
+      debugger;
+      let isJPG = false;
+      if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/gif'){
+        isJPG = true;
+      }
+      // const isJPG = (file.type === 'image/jpeg')||;
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!');
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!');
+      }
+      return isJPG && isLt2M;
+    },
     handleBrandChange(val) {
       this.deviceModels = []
       if (!val) {
         this.filterForm.deviceModel = ''
         return
       }
-      GET_MODEL_LIST(val).then(deviceModels => {
-        this.deviceModels = deviceModels
-      }).catch(() => {
-        this.deviceModels = []
-      })
+      // GET_MODEL_LIST(val).then(deviceModels => {
+      //   this.deviceModels = deviceModels
+      // }).catch(() => {
+      //   this.deviceModels = []
+      // })
     },
     handleBrandChangeAdd(val) {
       this.deviceModels = []
       if (!val) {
         return
       }
-      GET_MODEL_LIST(val).then(deviceModels => {
-        this.deviceModels = deviceModels
-        this.addForm.typeCode = ''
-      }).catch(() => {
-        this.deviceModels = []
-      })
+      // GET_MODEL_LIST(val).then(deviceModels => {
+      //   this.deviceModels = deviceModels
+      //   this.addForm.typeCode = ''
+      // }).catch(() => {
+      //   this.deviceModels = []
+      // })
     },
     handleBrandChangeEdit(val) {
       this.editForm.typeCode = ''
@@ -360,12 +492,12 @@ export default {
       if (!val) {
         return
       }
-      GET_MODEL_LIST(val).then(deviceModels => {
-        this.deviceModels = deviceModels
-        this.editForm.typeCode = ''
-      }).catch(() => {
-        this.deviceModels = []
-      })
+      // GET_MODEL_LIST(val).then(deviceModels => {
+      //   this.deviceModels = deviceModels
+      //   this.editForm.typeCode = ''
+      // }).catch(() => {
+      //   this.deviceModels = []
+      // })
     },
    
 
@@ -436,246 +568,100 @@ export default {
         var s = date.getSeconds();
         return Y+M+D+h+m+s;
     },
-    showDeviceDetail(rowData) {
-      DEVICE_DETAIL({ deviceUuid: rowData.deviceUuid }).then(value => {
-        this.needShow = true
-        this.dialogData = value
-      }).catch(() => {})
-    },
 
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.queryData()
     },
  
-  
-    submitEnableType(status) {
-      if (this.multipleSelection.length === 0) {
-        Message.info('应当选择一条数据')
-        return
-      }
-      // 获取选中的单元格行数据
-      const uSet = new Set()
-      for (const item of this.multipleSelection) {
-        if (item.deviceUuid) {
-          uSet.add(item.deviceUuid)
-        }
-      }
-      CHANGE_DEVICE_STATUS([...uSet], { status: status })
-        .then(value => value)
-        .catch(() => {})
-        .finally(() => {
-          this.queryForm('filterForm', Object.assign({}, this.condition, this.filterForm))
-        })
-      this.enableType = EnabledType.NONE
-    },
- 
+    submitEdit(){
+      if(this.editForm.showMode==1){
+        this.editForm.imgs = [];
+        for(let i in this.editFormImgs){
+          if(this.editFormImgs[i].imgUrl){
+            this.editForm.imgs.push(this.editFormImgs[i]);
 
-    handleStoreName(storeId, form) {
-      const result = this.selStoreList.filter(item => item.value === storeId)
-      const name = result[0] && result[0].key || ''
-      if (!result.length || !name) {
-        Message({ showClose: true, message: '门店名称不能为空', type: 'error' })
-        return
-      }
-      this[form].storeName = name
-      this[form].storeId = storeId
-    },
-    submitAdd() {
-      if (JSON.stringify(this.addForm) === '{}') {
-        Message({ showClose: true, message: '必填字段不能为空', type: 'error' })
-        return
-      }
-      const name = this.addForm.storeName || ''
-      if (!name && !name.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '门店名称不能为空', type: 'error' })
-        return
-      }
-      const brandCode = this.addForm.brandCode || ''
-      if (!brandCode && !brandCode.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '设备品牌不能为空', type: 'error' })
-        return
-      }
-      const typeCode = this.addForm.typeCode || ''
-      if (!typeCode && !typeCode.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '设备型号不能为空', type: 'error' })
-        return
-      }
-      const roomNo = this.addForm.roomNo || ''
-      if (!roomNo && !roomNo.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '房间号不能为空', type: 'error' })
-        return
-      }
-      const roomType = this.addForm.roomType || ''
-      if (!roomType && !roomType.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '设备房间类型不能为空', type: 'error' })
-        return
-      }
-      const uuid = this.addForm.uuid || ''
-      if (!uuid && !uuid.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: 'uuid不能为空', type: 'error' })
-        return
-      }
-      // 检查是否已经存在
-      REGISTER_CHECK(this.addForm.uuid).then(result => {
-        if (result.value) {
-          Message({ showClose: true, message: '此设备已注册', type: 'error' })
-          return
-        }
-        // 注册
-        REGISTER_DEVICE({
-          brandCode: this.addForm.brandCode,
-          typeCode: this.addForm.typeCode,
-          roomNo: this.addForm.roomNo,
-          roomType: this.addForm.roomType,
-          storeId: this.addForm.storeId,
-          uuid: this.addForm.uuid
-        }).then(value => {
-          this.resetForm('addForm')
-          this.deviceModels = []
-          Message({ showClose: true, message: '添加成功', type: 'success' })
-        }).catch(() => {
-          this.resetForm('addForm')
-          this.deviceModels = []
-          Message({ showClose: true, message: '添加失败', type: 'error' })
-        }).finally(() => {
-          this.addVisible = false
-        })
-      })
-    },
-    checkSelection() {
-      if (this.multipleSelection.length < 1) {
-        Message.info('选择一条数据')
-        return
-      }
-      return true
-    },
-    handleEdit(data) {
-      this.editOrAddFlag = false;
-      this.editVisible = true;
-      GET_ROOM_TYPE({ storeId: data.storeId }).then(value => {
-        this.roomTypes = value
-        this.editForm.storeName = data.storeName
-        this.editForm.storeId = data.storeId
-        this.editForm.brandCode = data.deviceBrand
-        this.editForm.typeCode = data.deviceModel
-        this.editForm.roomNo = data.roomNo
-        this.editForm.roomType = (() => {
-          switch (data.roomTypeName) {
-            case '智能电视':
-              return 1001
-            case '影音房':
-              return 1002
           }
-        })()
-        this.editForm.uuid = data.deviceUuid
-        this.editForm.devicesId = data.deviceId
-      })
-    },
-    showDialog(prop, value) {
-      if(prop == 'addVisible'){
-        this.editOrAddFlag = true;
+        }
+        // this.editForm.imgs = this.editFormImgs;
       }else{
-        this.editOrAddFlag = false;
-      }
-      this[prop] = value
-    },
-    cancelSubmit(form, visibleType) {
-      this[visibleType] = false
-      this.resetForm(form)
-    },
-    handleCloseE(done) {
-      this.resetForm('editForm')
-      done()
-    },
-    handleCloseA(done) {
-      this.resetForm('addForm')
-      done()
-    },
-    submitEdit() {
-      let result = {}
-      for (const item of this.roomTypes) {
-        if (item && item.typeCode === this.editForm.roomType && !item.status) {
-          result = item
-          break
+        
         }
-      }
-      if (result.typeCode) {
-        Message({ showClose: true, message: '当前门店尚未开启' + result.typeName + '业务', type: 'error' })
-        return
-      }
-      if (JSON.stringify(this.editForm) === '{}') {
-        Message({ showClose: true, message: '必填字段不能为空', type: 'error' })
-        return
-      }
-      const name = this.editForm.storeName || ''
-      if (!name && !name.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '门店名称不能为空', type: 'error' })
-        return
-      }
-      const brandCode = this.editForm.brandCode || ''
-      if (!brandCode && !brandCode.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '设备品牌不能为空', type: 'error' })
-        return
-      }
-      const brandModel = this.editForm.typeCode || ''
-      if (!brandModel && !brandModel.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '设备型号不能为空', type: 'error' })
-        return
-      }
-      const roomNo = this.editForm.roomNo || ''
-      if (!roomNo && !roomNo.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '房间号不能为空', type: 'error' })
-        return
-      }
-      const roomType = this.editForm.roomType || ''
-      if (!roomType && !roomType.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: '设备房间类型不能为空', type: 'error' })
-        return
-      }
-      const uuid = this.editForm.uuid || ''
-      if (!uuid && !uuid.replace(/\s+$|^\s+/, '')) {
-        Message({ showClose: true, message: 'uuid不能为空', type: 'error' })
-        return
-      }
-      // 校验是否已经开通`电视门户/影音房`业务
-      GET_ROOM_TYPE({ storeId: this.editForm.storeId }).then(value => {
-        for (let i = 0; i < value.length; i++) {
-          const item = value[i]
-          if (!item.status && item.typeCode === this.editForm.roomType) {
-            return Message({ showClose: true, message: '当前门店尚未开启' + item.typeName + '业务', type: 'error' })
-          }
-        }
-        // 开通过则可更新数据
-        UPDATE_INFO({
-          brandCode: this.editForm.brandCode,
-          typeCode: this.editForm.typeCode,
-          devicesId: this.editForm.devicesId,
-          roomNo: this.editForm.roomNo,
-          roomType: this.editForm.roomType,
-          storeId: this.editForm.storeId,
-          uuid: this.editForm.uuid
-        }).then(value => {
-          this.editVisible = false
-          this.resetForm('editForm')
-          this.queryData()
-        }).catch(() => {})
-      })
-    },
-    searchStoreList(query) {
-      if (query !== '') {
-        this.loading = true
-        setTimeout(() => {
-          this.loading = false
-          GET_STORES(query).then(value => {
-            this.selStoreList = value.filter(item => {
-              return item.key.toLowerCase().indexOf(query.toLowerCase()) > -1
-            })
+      
+      if(this.editOrAddFlag){
+          CONTENT_CREATE(this.editForm).then(res=>{
+            Message({ showClose: true, message: '创建成功', type: 'success' })
+            history.go(-1);
           })
-        }, 200)
-      } else {
-        this.selStoreList = []
+
+      }else{
+        CONTENT_UPDATE(this.editForm).then(res=>{
+          Message({ showClose: true, message: '编辑成功', type: 'success' })
+            history.go(-1);
+        })
       }
+    },
+    // submitEdit() {
+    //   if (JSON.stringify(this.editForm) === '{}') {
+    //     Message({ showClose: true, message: '必填字段不能为空', type: 'error' })
+    //     return
+    //   }
+    //   const name = this.editForm.storeName || ''
+    //   if (!name && !name.replace(/\s+$|^\s+/, '')) {
+    //     Message({ showClose: true, message: '门店名称不能为空', type: 'error' })
+    //     return
+    //   }
+    //   const brandCode = this.editForm.brandCode || ''
+    //   if (!brandCode && !brandCode.replace(/\s+$|^\s+/, '')) {
+    //     Message({ showClose: true, message: '设备品牌不能为空', type: 'error' })
+    //     return
+    //   }
+    //   const brandModel = this.editForm.typeCode || ''
+    //   if (!brandModel && !brandModel.replace(/\s+$|^\s+/, '')) {
+    //     Message({ showClose: true, message: '设备型号不能为空', type: 'error' })
+    //     return
+    //   }
+    //   const roomNo = this.editForm.roomNo || ''
+    //   if (!roomNo && !roomNo.replace(/\s+$|^\s+/, '')) {
+    //     Message({ showClose: true, message: '房间号不能为空', type: 'error' })
+    //     return
+    //   }
+    //   const roomType = this.editForm.roomType || ''
+    //   if (!roomType && !roomType.replace(/\s+$|^\s+/, '')) {
+    //     Message({ showClose: true, message: '设备房间类型不能为空', type: 'error' })
+    //     return
+    //   }
+    //   const uuid = this.editForm.uuid || ''
+    //   if (!uuid && !uuid.replace(/\s+$|^\s+/, '')) {
+    //     Message({ showClose: true, message: 'uuid不能为空', type: 'error' })
+    //     return
+    //   }
+    //   // 校验是否已经开通`电视门户/影音房`业务
+    //   // GET_ROOM_TYPE({ storeId: this.editForm.storeId }).then(value => {
+    //   //   for (let i = 0; i < value.length; i++) {
+    //   //     const item = value[i]
+    //   //     if (!item.status && item.typeCode === this.editForm.roomType) {
+    //   //       return Message({ showClose: true, message: '当前门店尚未开启' + item.typeName + '业务', type: 'error' })
+    //   //     }
+    //   //   }
+    //   //   // 开通过则可更新数据
+    //   //   // UPDATE_INFO({
+    //   //   //   brandCode: this.editForm.brandCode,
+    //   //   //   typeCode: this.editForm.typeCode,
+    //   //   //   devicesId: this.editForm.devicesId,
+    //   //   //   roomNo: this.editForm.roomNo,
+    //   //   //   roomType: this.editForm.roomType,
+    //   //   //   storeId: this.editForm.storeId,
+    //   //   //   uuid: this.editForm.uuid
+    //   //   // }).then(value => {
+    //   //   //   this.editVisible = false
+    //   //   //   this.resetForm('editForm')
+    //   //   //   this.queryData()
+    //   //   // }).catch(() => {})
+    //   // })
+    // },
+    goBack(){
+      history.go(-1);
     }
   }
 }
@@ -692,6 +678,33 @@ $pr: 24px;
   padding: 10px;
   .el-input{
     max-width: 500px;
+  }
+  .imgsBox{
+    width: 750px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+  .avatar-uploader{
+    margin-top: 13px;
+    margin-right: 13px;
+    vertical-align: middle;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    span{
+      color: #676a6c;
+      // display: block;
+      width: 100%;
+      height: 100%;
+      vertical-align: middle;
+
+    }
+    .el-form-item__content{
+      line-height: 0 !important;
+    }
   }
 }
 </style>
