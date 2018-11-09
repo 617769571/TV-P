@@ -80,6 +80,9 @@ export function GET_CONTANT_FIND(params,data) {
       delete data[i];
     }
   }
+  if(params.pageIndex){
+    params.pageIndex = params.pageIndex-1
+  }
   return request({
     url: process.env.BASE_API + '/content/find',
     method: 'post',

@@ -10,7 +10,7 @@
           <div class="select-box">
             <el-row>
               <el-col :span="10">
-                <el-button size="small" class="btn-primary" @click="showDialog('addVisible', true)">新建二级页面</el-button>
+                <el-button size="small" class="btn-primary" @click="showDialog(false)">新建二级页面</el-button>
                
               </el-col>
               <el-col :span="10">
@@ -20,7 +20,6 @@
                     <el-input
                       class="searchInput"
                       v-model="filterForm.pageName"
-                    
                       placeholder="请输入二级页面名称搜索"
                      />
                      
@@ -28,7 +27,7 @@
                 </el-form>
               </el-col>
               <el-col :span="4">
-                <el-button size="medium" class="btn-primary" @click="queryData">查询</el-button>
+                <el-button size="medium" class="btn-primary" @click="queryData(true)">查询</el-button>
                 <!-- <el-button size="medium" class="btn-default" @click="resetForm('filterForm')">重置</el-button> -->
               </el-col>
             </el-row>
@@ -38,13 +37,13 @@
         <div class="device-table-wrapper">
           <el-table :data="dataList" stripe border class="device-table" >
             <el-table-column type="selection"/>
-            <el-table-column prop="storeName" label="二级页面名称" width="240"/>
-            <el-table-column prop="storeName" label="布局样式" width="200"/>
-            <el-table-column prop="storeName" label="内容个数" width="200"/>
+            <el-table-column prop="pageName" label="二级页面名称" width="240"/>
+            <el-table-column prop="pageLayoutType" label="布局样式" width="200"/>
+            <el-table-column prop="contentNum" label="内容个数" width="200"/>
             <el-table-column prop="edit" label="操作" width="160">
               <template slot-scope="scope">
                 <el-button type="primary" size="mini"  @click="handleEdit(scope.row)">预览</el-button>
-                <el-button type="primary" size="mini" class="btn-primary" @click="handleEdit(scope.row)">编辑</el-button>
+                <el-button type="primary" size="mini" class="btn-primary" @click="showDialog(true,scope.row)">编辑</el-button>
               </template>
             </el-table-column> 
           </el-table>
@@ -71,8 +70,7 @@ import EnabledType from './types/enable-type'
 import { Message } from 'element-ui'
 import DeviceDetailDialog from './dialog/device-detail-dialog.vue'
 import {
-  
-  
+  SECONDPAGE_FIND
 } from '@/api/secondPage/secondPage'
 
 import RoomTypeConfig from '@/constants/room-type-config'
@@ -83,18 +81,13 @@ export default {
     DeviceDetailDialog
   },
   data() {
-    
     return {
-      
-      
+      pageIndex: 0,
+      pageSize: 20,
       labelWidth: '120px',
       editVisible: false,
       addVisible: false,
-  
       needShow: false,
-      pageIndex: 1,
-      pageSize: 20,
-     
       deviceModels: [],
       filterForm: {//用于条件筛选搜索的表单内容
         pageName: '',
@@ -119,7 +112,7 @@ export default {
     // // 获取品牌
     // this.getDeviceBrands()
     // // 首次获取前20条数据
-    // this.fetchData({})
+    this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
     // // 获取所有房间类型
     // this.getAllRoomType()
   },
@@ -142,24 +135,41 @@ export default {
         this.dialogData = value
       }).catch(() => {})
     },
-    fetchData(data) { // 获取表格数据
-      GET_DEVICE_LIST(data, this.pageIndex - 1, this.pageSize, this.sortType).then(value => {
-        this.dataList = value.list
-        this.total = value.total
-        if (this.total && !value.list.length) {
-          this.pageIndex = 1
-          GET_DEVICE_LIST(data, this.pageIndex - 1, this.pageSize, this.sortType).then(value => {
-            this.dataList = value.list
-            this.total = value.total
-          })
+    fetchData(params) { // 获取表格数据
+      SECONDPAGE_FIND(params).then(res=>{
+        this.dataList = res.list;
+        this.total = res.total;
+        for(let i =0;i<res.list.length;i++){
+          this.dataList[i].pageLayoutType=(res.list[i].pageLayoutType==1)?'电视样式':''
         }
-      }).catch(() => {})
+      })
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.queryData()
     },
-    queryData(){},
+    queryData(flag){
+      if(flag){
+        this.pageIndex = 0;
+      }
+      let params = {
+        pageIndex: this.pageIndex,
+        pageSize:this.pageSize,
+        pageName:this.filterForm.pageName
+      }
+      this.fetchData(params);
+    },
+    showDialog(editFlag, item) {
+      
+      if(editFlag){
+        this.$router.push({ name: 'editSecondPage', query: { edit: editFlag },params:{contentObj:item}});
+        
+      }else{
+        this.$router.push({ name: 'editSecondPage', query: { edit: editFlag }});
+
+      }
+      
+    },
   
   }
 }

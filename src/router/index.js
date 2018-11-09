@@ -74,6 +74,12 @@ export const constantRouterMap = [
         hidden: true
       },
       {
+        path: 'secondaryPages/editSecondPage',
+        name: 'editSecondPage',
+        component: () => import('@/views/secondaryPages/updatePage'),
+        hidden: true
+      },
+      {
         path: 'secondaryPages',
         name: 'secondaryPages',
         component: () => import('@/views/secondaryPages/index'),
@@ -105,7 +111,14 @@ export const constantRouterMap = [
         name: 'secondaryPages',
         component: () => import('@/views/secondaryPages/index'),
         meta: { title: '版本管理', icon: 'table' }
-      }
+      },
+      {
+        path: 'templateManagement/editTemplate',
+        name: 'editTemplate',
+        component: () => import('@/views/templateManagement/updatePage'),
+        hidden: true
+      },
+
     ]
   },
   // {

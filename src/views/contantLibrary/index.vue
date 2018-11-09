@@ -512,7 +512,7 @@ export default {
       this.$router.push('/ott/storeDetail/' + rowData.storeId)
     },
     pageChanged(value) {
-      this.pageIndex = value
+      this.pageIndex = value;
       this.queryData()
     },
     sizeChanged(pageSize) {
@@ -526,12 +526,12 @@ export default {
       }).catch(() => {})
     },
     fetchData(data) { // 获取表格数据
-      GET_DEVICE_LIST(data, this.pageIndex - 1, this.pageSize, this.sortType).then(value => {
+      GET_DEVICE_LIST(data, this.pageIndex, this.pageSize, this.sortType).then(value => {
         this.dataList = value.list
         this.total = value.total
         if (this.total && !value.list.length) {
           this.pageIndex = 1
-          GET_DEVICE_LIST(data, this.pageIndex - 1, this.pageSize, this.sortType).then(value => {
+          GET_DEVICE_LIST(data, this.pageIndex, this.pageSize, this.sortType).then(value => {
             this.dataList = value.list
             this.total = value.total
           })

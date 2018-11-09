@@ -1,7 +1,7 @@
 <template>
   <div class="device-list app-container">
     <div class="title-box">
-      <span class="main-title">内容库管理>{{editOrAddFlag?'编辑':'新建'}}内容</span>
+      <span class="main-title">内容库管理>{{!editOrAddFlag?'编辑':'新建'}}内容</span>
       <!-- <span class="device-tip">（点击门店名称查看门店详情、点击终端UUID查看设备详情）</span> -->
     </div>
     <div class="content-container">
@@ -311,6 +311,19 @@ export default {
         mediaType:'未知'
       }
       ],
+      editFormVideos:[{
+        imgUrl:'',
+        description:'',
+        size:'1920x1080',
+        imgType:2,
+        mediaType:'未知'
+      },{
+        imgUrl:'',
+        description:'',
+        size:'1280x720',
+        imgType:2,
+        mediaType:'未知'
+      }],
       addForm: {
         storeId: '',
         storeName: '',
