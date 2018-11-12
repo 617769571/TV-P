@@ -21,7 +21,7 @@
         </div>
         <div class="cont_right">
           <div style="line-height:80px;padding-left:10px;">编辑模版</div>
-            <div class="left_list flex" >
+            <div class="left_list flex" @click="goToAddContent(1)" >
               <div>
                 <img src="../../assets/templateImg/1.jpg" width="200" alt="">
               </div>
@@ -34,7 +34,7 @@
                 </div>
               </div>
             </div>
-            <div class="left_list flex" >
+            <div class="left_list flex" @click="goToAddContent(2)" >
               <div>
                 <img src="../../assets/templateImg/2.jpg" width="200" alt="">
               </div>
@@ -47,7 +47,7 @@
                 </div>
               </div>
             </div>
-            <div class="left_list flex" v-if="(editForm.showMode!=2)&&(editForm.showMode!=4)">
+            <div class="left_list flex" @click="goToAddContent(3)" v-if="(editForm.showMode!=2)&&(editForm.showMode!=4)">
               <div>
                 <img src="../../assets/templateImg/3.jpg" width="200" alt="">
               </div>
@@ -60,7 +60,7 @@
                 </div>
               </div>
             </div>
-            <div class="left_list flex" v-if="(editForm.showMode!=3)&&(editForm.showMode!=4)">
+            <div class="left_list flex" @click="goToAddContent(4)" v-if="(editForm.showMode!=3)&&(editForm.showMode!=4)">
               <div>
                 <img src="../../assets/templateImg/4.jpg" width="200" alt="">
               </div>
@@ -369,16 +369,16 @@ export default {
       
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       if(!this.editOrAddFlag){
-      this.loading = true;
-        SECONDPAGE_GET(this.$route.params.contentObj.id).then(res=>{
-          this.contentObj = res;
-          for(let i in this.editForm){
-            this.editForm[i] = this.contentObj[i];
-          }
-          this.editForm.id = this.contentObj.id;
+        this.loading = true;
+        // SECONDPAGE_GET(this.$route.params.contentObj.id).then(res=>{
+        //   this.contentObj = res;
+        //   for(let i in this.editForm){
+        //     this.editForm[i] = this.contentObj[i];
+        //   }
+        //   this.editForm.id = this.contentObj.id;
           
-          this.loading = false;
-        })
+        //   this.loading = false;
+        // })
         
       }
       
@@ -583,65 +583,10 @@ export default {
         })
       }
     },
-    // submitEdit() {
-    //   if (JSON.stringify(this.editForm) === '{}') {
-    //     Message({ showClose: true, message: '必填字段不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const name = this.editForm.storeName || ''
-    //   if (!name && !name.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '门店名称不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const brandCode = this.editForm.brandCode || ''
-    //   if (!brandCode && !brandCode.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '设备品牌不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const brandModel = this.editForm.typeCode || ''
-    //   if (!brandModel && !brandModel.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '设备型号不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const roomNo = this.editForm.roomNo || ''
-    //   if (!roomNo && !roomNo.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '房间号不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const roomType = this.editForm.roomType || ''
-    //   if (!roomType && !roomType.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '设备房间类型不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const uuid = this.editForm.uuid || ''
-    //   if (!uuid && !uuid.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: 'uuid不能为空', type: 'error' })
-    //     return
-    //   }
-    //   // 校验是否已经开通`电视门户/影音房`业务
-    //   // GET_ROOM_TYPE({ storeId: this.editForm.storeId }).then(value => {
-    //   //   for (let i = 0; i < value.length; i++) {
-    //   //     const item = value[i]
-    //   //     if (!item.status && item.typeCode === this.editForm.roomType) {
-    //   //       return Message({ showClose: true, message: '当前门店尚未开启' + item.typeName + '业务', type: 'error' })
-    //   //     }
-    //   //   }
-    //   //   // 开通过则可更新数据
-    //   //   // UPDATE_INFO({
-    //   //   //   brandCode: this.editForm.brandCode,
-    //   //   //   typeCode: this.editForm.typeCode,
-    //   //   //   devicesId: this.editForm.devicesId,
-    //   //   //   roomNo: this.editForm.roomNo,
-    //   //   //   roomType: this.editForm.roomType,
-    //   //   //   storeId: this.editForm.storeId,
-    //   //   //   uuid: this.editForm.uuid
-    //   //   // }).then(value => {
-    //   //   //   this.editVisible = false
-    //   //   //   this.resetForm('editForm')
-    //   //   //   this.queryData()
-    //   //   // }).catch(() => {})
-    //   // })
-    // },
+    goToAddContent(index){
+      this.$router.push({ name: 'addContent', query: { index: index }});
+
+    },
     goBack(){
       history.go(-1);
     }

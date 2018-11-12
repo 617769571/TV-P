@@ -118,6 +118,13 @@ export const constantRouterMap = [
         component: () => import('@/views/templateManagement/updatePage'),
         hidden: true
       },
+      {
+        path: 'templateManagement/addContent',
+        name: 'addContent',
+        component: () => import('@/views/templateManagement/addContent'),
+        hidden: true
+      },
+      
 
     ]
   },
