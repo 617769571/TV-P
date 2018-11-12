@@ -18,17 +18,31 @@
         </el-form-item>
         
         <el-form-item :label-width="labelWidth" label="背景图">
-          <el-button>选择内容</el-button>
+          <el-button @click="showAndGetData(1,'16:9',true)">选择内容</el-button>
           <span style="color:#dcdfe6">只支持图片形式的内容，尺寸16:9，只能添加一个</span>
-          <div style="width:100%;height:300px;">
-            <!-- <img :src="contentMapperBg." alt=""> -->
+          <div style="width:100%;min-height:300px;">
+            <img v-if="contentMapper1" style="width:100%;" :src="contentMapper1.imgs.imgUrl" alt="">
+            <el-button v-if="contentMapper1" size="medium" class="btn-default" @click="contentMapper1=''">重置</el-button>
           </div>
         </el-form-item>
         <el-form-item  :label-width="labelWidth" label="广告内容">
-          <el-button>选择内容</el-button>
+          <el-button @click="showAndGetData(1,'1:1',false)">选择内容</el-button>
           <span style="color:#dcdfe6">只支持图片形式的内容，尺寸1:1，个数限制在2～15个</span>
-          <div style="width:100%;height:300px;">
-            <!-- <img :src="contentMapperBg." alt=""> -->
+          <div style="width:100%;min-height:300px;">
+            <div class="flex" v-if="contentMapper2.length>0">
+              <div class="flex-item" v-for="(item,index) in contentMapper2">
+                  <div >
+                      <img :src="item.imgs.imgUrl" >
+                  </div>
+                  <div style="text-align:center;margin-top:8px;">{{item.contentName}}<el-button size="medium" class="btn-default" @click="contentMapper2.splice(index,1);">删除</el-button></div>
+                  <div class="checkBox" v-if="item.checked">
+                    <img src="../../assets/templateImg/check.png" alt="">
+                  </div>
+              </div>
+              <div style="clear:both"></div>
+              
+          </div>
+            <div></div>
           </div>
         </el-form-item>
         <el-form-item v-if="editForm.triggerMode==2" :label-width="labelWidth" label="应用" prop="triggerId">
@@ -45,41 +59,106 @@
         <el-button class="btn-primary" size="medium" @click="submitEdit">提交</el-button>
       </div>
     </div>
-  
+    <el-dialog
+        title="选择内容"
+        :visible.sync="dialogVisible"
+        width="1000px"
+       >
+       <div class="">
+    <div class="content-container">
+      <div class="detail-content">
+        <div class="select-wrapper">
+          <div class="select-box">
+            <el-row>
+              <el-col :span="19">
+                <el-form ref="filterForm" :model="filterForm" :inline="true" label-width="100px" class="filter-form">
+                  <el-form-item label="" prop="contentType">
+                    <el-select v-model="filterForm.contentType" placeholder="请选择内容分类">
+                      <el-option v-for="(rt, index) in contentTypes" :key="index" :label="rt.text" :value="rt.value">
+                        {{ rt.text }}
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                    
+                  <el-form-item label="" prop="contentName">
+                   
+                    <el-input
+                      v-model="filterForm.contentName"
+                      placeholder="请输入内容名称"
+                     >
+                    </el-input>
+                  </el-form-item>
+                </el-form>
+              </el-col>
+              <el-col :span="5">
+                <el-button size="medium" class="btn-primary" @click="queryData">查询</el-button>
+                <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentType=''">重置</el-button>
+
+              </el-col>
+            </el-row>
+          </div>
+        </div>
+       
+        <div class="device-table-wrapper">
+          <div class="flex">
+              <div class="flex-item" v-for="(item,index) in dataList"  @click="itemClick(index)">
+                  <div >
+                      <img :src="item.imgs.imgUrl" >
+                  </div>
+                  <div style="text-align:center;margin-top:8px;">{{item.contentName}}</div>
+                  <div class="checkBox" v-if="item.checked">
+                    <img src="../../assets/templateImg/check.png" alt="">
+                  </div>
+              </div>
+              <div style="clear:both"></div>
+              
+          </div>
+        </div>
+        <div class="pagination-wrapper">
+          <el-pagination
+            :total="total"
+            :current-page="pageIndex"
+           
+            :page-size="pageSize"
+            class="text-center"
+            background
+            layout="prev, pager, next, jumper, sizes, total"
+            @current-change="pageChanged"
+            @size-change="sizeChanged"/>
+        </div>
+      </div>
+    </div>
+  <div slot="footer" class="dialog-footer text-center">
+        <el-button class="btn-default" size="medium" @click="dialogVisible=false">取消</el-button>
+        <el-button class="btn-primary" size="medium" @click="takeImgData">确定</el-button>
+      </div>
   </div>
+        <!-- <contentDialod></contentDialod> -->
+      </el-dialog>
+  </div>
+    
 </template>
 
 <script>
 import EnabledType from './types/enable-type'
 import { Message } from 'element-ui'
-import DeviceDetailDialog from './dialog/device-detail-dialog.vue'
-// import {
-//   GET_CONTANT_APP,
-//   GET_MODEL_LIST,
-//   GET_DEVICE_LIST,
-//   GET_STORES,
-//   GET_CONTANT_FIND,
-//   CHANGE_DEVICE_STATUS,
-//   UPDATE_INFO,
-//   DEVICE_DETAIL,
-//   REGISTER_CHECK,
-//   REGISTER_DEVICE
-// } from '@/api/contantLibraryAPI/contantLibraryAPI'
+// import contentDialod from './dialog/device-detail-dialog.vue'
+
 import {
-  
   SECONDPAGE_CREATE,
   SECONDPAGE_GET,
   SECONDPAGE_UPDATE
 
 } from '@/api/secondPage/secondPage'
+import {
+  GET_CONTANT_FIND
+} from '@/api/contantLibraryAPI/contantLibraryAPI'
 import { GET_ROOM_TYPE, GET_ALL_ROOM_TYPE } from '@/api/storeManage/storeManage'
 import RoomTypeConfig from '@/constants/room-type-config'
 
 export default {
   name: 'DeviceList',
-  components: {
-    DeviceDetailDialog
-  },
+ 
   data() {
     const validateStoreNameE = (rule, value, callback) => {
       if (value.length < 1) {
@@ -313,7 +392,36 @@ export default {
         // },
         
       ],
-      contentObj:''
+      contentObj:'',
+      dialogVisible:false,
+      condition:{},
+      pageIndex:0,
+      pageSize:10,
+      filterForm: {//用于条件筛选搜索的表单内容
+        contentName: '',
+        contentTypes:'',
+        imgSizes:''
+      },
+      filterDataF:{},
+      dataList: [],
+      total: 0,
+      roomTypeNames: [
+        {text: '打开网址',value:1},
+        {text: '打开应用',value:2},
+        {text: '无触发',value:0}
+      ], // 设备管理列表表格筛选
+      contentTypes:[
+          { text: '全部', value: '' }, 
+          { text: '影视', value: 1 }, 
+          { text: '直播', value: 2 }, 
+          { text: '广告', value: 3 }, 
+          { text: '购物', value: 4 }, 
+          { text: '服务', value: 5 }, 
+          { text: '周边', value: 6 }
+      ],
+      dialogChecked:false,//判断当前框是单选还是多选
+      contentMapper1:'',
+      contentMapper2:[],
     }
   },
   computed: {
@@ -391,60 +499,8 @@ export default {
       this.handleAvatarSuccess(res, file,4)
     },
     
-    beforeAvatarUpload(file) {
-      debugger;
-      let isJPG = false;
-      if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/gif'){
-        isJPG = true;
-      }
-      // const isJPG = (file.type === 'image/jpeg')||;
-      const isLt2M = file.size / 1024 / 1024 < 2;
+   
 
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
-      }
-      return isJPG && isLt2M;
-    },
-    handleBrandChange(val) {
-      this.deviceModels = []
-      if (!val) {
-        this.filterForm.deviceModel = ''
-        return
-      }
-      // GET_MODEL_LIST(val).then(deviceModels => {
-      //   this.deviceModels = deviceModels
-      // }).catch(() => {
-      //   this.deviceModels = []
-      // })
-    },
-    handleBrandChangeAdd(val) {
-      this.deviceModels = []
-      if (!val) {
-        return
-      }
-      // GET_MODEL_LIST(val).then(deviceModels => {
-      //   this.deviceModels = deviceModels
-      //   this.addForm.typeCode = ''
-      // }).catch(() => {
-      //   this.deviceModels = []
-      // })
-    },
-    handleBrandChangeEdit(val) {
-      this.editForm.typeCode = ''
-      this.deviceModels = []
-      if (!val) {
-        return
-      }
-      // GET_MODEL_LIST(val).then(deviceModels => {
-      //   this.deviceModels = deviceModels
-      //   this.editForm.typeCode = ''
-      // }).catch(() => {
-      //   this.deviceModels = []
-      // })
-    },
    
 
     fieldConversion(item){
@@ -519,93 +575,116 @@ export default {
       this.$refs[formName].resetFields()
       this.queryData()
     },
+ queryData(){
+   
+   this.getContantLibraryAPI(this.filterForm)
+ },
+ getContantLibraryAPI(data) {
+      const that = this;
+      let params = {
+        pageIndex:that.pageIndex,
+        pageSize:that.pageSize
+      }
+      GET_CONTANT_FIND(params,data?data:{}).then(value => {
  
-    submitEdit(){
-      if(this.editForm.showMode==1){
-        this.editForm.imgs = [];
-        for(let i in this.editFormImgs){
-          if(this.editFormImgs[i].imgUrl){
-            this.editForm.imgs.push(this.editFormImgs[i]);
-
+        this.dataList = [];
+        this.total = value.total;
+        for(let i = 0;i<value.list.length;i++){
+          for(let j = 0;j<value.list[i].imgs.length;j++){
+            if(value.list[i].imgs[j].size == this.filterForm.imgSizes[0]){
+              value.list[i].imgs = value.list[i].imgs[j]
+            }
           }
+          value.list[i].checked = false
         }
-        // this.editForm.imgs = this.editFormImgs;
-      }else{
-        
-        }
+        this.dataList = value.list;
       
+       console.log(this.dataList);
+      }).catch(() => {})
+      
+    },
+    pageChanged(value) {
+      this.pageIndex = value;
+      this.queryData()
+    },
+    sizeChanged(pageSize) {
+      this.pageSize = pageSize
+      this.queryData()
+    },
+    submitEdit(){
       if(this.editOrAddFlag){
-          CONTENT_CREATE(this.editForm).then(res=>{
+        this.editForm.contentMapper = this.editFormatData();
+        debugger;
+          SECONDPAGE_CREATE(this.editForm).then(res=>{
             Message({ showClose: true, message: '创建成功', type: 'success' })
             history.go(-1);
           })
 
       }else{
-        CONTENT_UPDATE(this.editForm).then(res=>{
+        SECONDPAGE_UPDATE(this.editForm).then(res=>{
           Message({ showClose: true, message: '编辑成功', type: 'success' })
             history.go(-1);
         })
       }
     },
-    // submitEdit() {
-    //   if (JSON.stringify(this.editForm) === '{}') {
-    //     Message({ showClose: true, message: '必填字段不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const name = this.editForm.storeName || ''
-    //   if (!name && !name.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '门店名称不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const brandCode = this.editForm.brandCode || ''
-    //   if (!brandCode && !brandCode.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '设备品牌不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const brandModel = this.editForm.typeCode || ''
-    //   if (!brandModel && !brandModel.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '设备型号不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const roomNo = this.editForm.roomNo || ''
-    //   if (!roomNo && !roomNo.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '房间号不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const roomType = this.editForm.roomType || ''
-    //   if (!roomType && !roomType.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '设备房间类型不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const uuid = this.editForm.uuid || ''
-    //   if (!uuid && !uuid.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: 'uuid不能为空', type: 'error' })
-    //     return
-    //   }
-    //   // 校验是否已经开通`电视门户/影音房`业务
-    //   // GET_ROOM_TYPE({ storeId: this.editForm.storeId }).then(value => {
-    //   //   for (let i = 0; i < value.length; i++) {
-    //   //     const item = value[i]
-    //   //     if (!item.status && item.typeCode === this.editForm.roomType) {
-    //   //       return Message({ showClose: true, message: '当前门店尚未开启' + item.typeName + '业务', type: 'error' })
-    //   //     }
-    //   //   }
-    //   //   // 开通过则可更新数据
-    //   //   // UPDATE_INFO({
-    //   //   //   brandCode: this.editForm.brandCode,
-    //   //   //   typeCode: this.editForm.typeCode,
-    //   //   //   devicesId: this.editForm.devicesId,
-    //   //   //   roomNo: this.editForm.roomNo,
-    //   //   //   roomType: this.editForm.roomType,
-    //   //   //   storeId: this.editForm.storeId,
-    //   //   //   uuid: this.editForm.uuid
-    //   //   // }).then(value => {
-    //   //   //   this.editVisible = false
-    //   //   //   this.resetForm('editForm')
-    //   //   //   this.queryData()
-    //   //   // }).catch(() => {})
-    //   // })
-    // },
+    showAndGetData(type,size,checked){
+      this.dialogVisible = true;
+      this.filterForm.imgSizes = [size];
+      this.filterForm.contentTypes = [type];
+      this.dialogChecked = checked;
+      this.queryData();
+
+    },
+    itemClick(index){
+      if(this.dialogChecked){
+        for(let i in this.dataList){
+          this.dataList[i].checked = false;
+        }
+        this.dataList[index].checked = !this.dataList[index].checked;
+      }else{
+        this.dataList[index].checked = !this.dataList[index].checked;
+
+      }
+      console.log(this.dataList[index]);
+    },
+    takeImgData(){
+      if(this.filterForm.imgSizes[0] == '16:9'){
+        for(let i in this.dataList){
+          if(this.dataList[i].checked){
+            this.contentMapper1 = this.dataList[i]
+            break;
+          }
+        }
+      }else{
+        for(let i in this.dataList){
+          if(this.dataList[i].checked){
+            this.contentMapper2.push(this.dataList[i]);
+          }
+        }
+        if(this.contentMapper2.length>=15){
+          this.contentMapper2.length=15
+        }
+      }
+      this.dialogVisible = false;
+    },
+    editFormatData(){
+      let contentMapper = [];
+      if(this.contentMapper1){
+        let obj = {};
+        obj.contentId = this.contentMapper1.id;
+        obj.contentOrder = 1;
+        obj.type = 1;
+        contentMapper.push(obj);
+      }
+      for(let i = 0;i<this.contentMapper2.length;i++){
+        let obj = {}
+        obj.contentId = this.contentMapper2[i].id;
+        obj.contentOrder = i+1;
+        obj.type = 2;
+        contentMapper.push(obj);
+      }
+      return contentMapper;
+    },
     goBack(){
       history.go(-1);
     }
@@ -650,6 +729,35 @@ $pr: 24px;
     }
     .el-form-item__content{
       line-height: 0 !important;
+    }
+  }
+  .flex{
+    // display: flex;
+    width: 100%;
+    height: 420px;
+    overflow: auto;
+    
+}
+  .flex-item{
+    position: relative;
+    float: left;
+    padding: 6px;
+    box-sizing: border-box;
+    width: 20%;
+    img{
+        width: 100%;
+        height: 171px;
+    }
+    .checkBox{
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20px;
+      height: 20px;
+      img{
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 }
