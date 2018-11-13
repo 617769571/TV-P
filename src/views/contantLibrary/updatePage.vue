@@ -28,7 +28,7 @@
               :show-file-list="false"
               :on-success="handleAvatar0Success"
               :before-upload="beforeAvatarUpload">
-              <img v-if="editFormImgs[0].imgUrl" :src="editFormImgs[0].imgUrl" class="avatar" style="width:233px;height:233px;">
+              <img v-if="editFormImgs[0].imgUrl" :src="getImgUrl(editFormImgs[0].imgUrl)" class="avatar" style="width:233px;height:233px;">
               <span  v-if="!editFormImgs[0].imgUrl">1:1</span>
             </el-upload>
             <el-upload style="background:#F2F2F2;width:144px;height:234px;"
@@ -37,7 +37,7 @@
               :show-file-list="false"
               :on-success="handleAvatar1Success"
               :before-upload="beforeAvatarUpload">
-              <img v-if="editFormImgs[1].imgUrl" :src="editFormImgs[1].imgUrl" class="avatar" style="width:144px;height:234px;">
+              <img v-if="editFormImgs[1].imgUrl" :src="getImgUrl(editFormImgs[1].imgUrl)" class="avatar" style="width:144px;height:234px;">
               <span  v-if="!editFormImgs[1].imgUrl">318x658</span>
             </el-upload>
             <el-upload style="background:#F2F2F2;width:208px;height:104px;"
@@ -46,7 +46,7 @@
               :show-file-list="false"
               :on-success="handleAvatar2Success"
               :before-upload="beforeAvatarUpload">
-              <img v-if="editFormImgs[2].imgUrl" :src="editFormImgs[2].imgUrl" class="avatar" style="width:208px;height:104px;">
+              <img v-if="editFormImgs[2].imgUrl" :src="getImgUrl(editFormImgs[2].imgUrl)" class="avatar" style="width:208px;height:104px;">
               <span  v-if="!editFormImgs[2].imgUrl">1314x658</span>
             </el-upload>
             <el-upload style="background:#F2F2F2;width:207px;height:116px;"
@@ -55,7 +55,7 @@
               :show-file-list="false"
               :on-success="handleAvatar3Success"
               :before-upload="beforeAvatarUpload">
-              <img v-if="editFormImgs[3].imgUrl" :src="editFormImgs[3].imgUrl" class="avatar" style="width:207px;height:116px;">
+              <img v-if="editFormImgs[3].imgUrl" :src="getImgUrl(editFormImgs[3].imgUrl)" class="avatar" style="width:207px;height:116px;">
               <span  v-if="!editFormImgs[3].imgUrl">16:9</span>
             </el-upload>
             <el-upload style="background:#F2F2F2;width:113px;height:74px;"
@@ -64,7 +64,7 @@
               :show-file-list="false"
               :on-success="handleAvatar4Success"
               :before-upload="beforeAvatarUpload">
-              <img v-if="editFormImgs[4].imgUrl" :src="editFormImgs[4].imgUrl" class="avatar" style="width:113px;height:74px;">
+              <img v-if="editFormImgs[4].imgUrl" :src="getImgUrl(editFormImgs[4].imgUrl)" class="avatar" style="width:113px;height:74px;">
               <span  v-if="!editFormImgs[4].imgUrl">318x207</span>
             </el-upload>
 
@@ -437,10 +437,14 @@ export default {
     },
     handleAvatarSuccess(res, file,ind) {
       // this.editFormImgs[ind].imgUrl = URL.createObjectURL(file.raw);
-      this.editFormImgs[ind].imgUrl = this.APILeft+res[0].split('$}')[1];
+      this.editFormImgs[ind].imgUrl = res[0];
      
       this.editFormImgs[ind].mediaType = file.name.split('.')[1];
 
+    },
+    getImgUrl:function(url){
+      let SRC = this.APILeft+url.split('$}')[1];
+      return SRC;
     },
     handleAvatar0Success(res, file,ind) {
       this.handleAvatarSuccess(res, file,0)
@@ -614,65 +618,7 @@ export default {
         })
       }
     },
-    // submitEdit() {
-    //   if (JSON.stringify(this.editForm) === '{}') {
-    //     Message({ showClose: true, message: '必填字段不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const name = this.editForm.storeName || ''
-    //   if (!name && !name.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '门店名称不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const brandCode = this.editForm.brandCode || ''
-    //   if (!brandCode && !brandCode.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '设备品牌不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const brandModel = this.editForm.typeCode || ''
-    //   if (!brandModel && !brandModel.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '设备型号不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const roomNo = this.editForm.roomNo || ''
-    //   if (!roomNo && !roomNo.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '房间号不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const roomType = this.editForm.roomType || ''
-    //   if (!roomType && !roomType.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: '设备房间类型不能为空', type: 'error' })
-    //     return
-    //   }
-    //   const uuid = this.editForm.uuid || ''
-    //   if (!uuid && !uuid.replace(/\s+$|^\s+/, '')) {
-    //     Message({ showClose: true, message: 'uuid不能为空', type: 'error' })
-    //     return
-    //   }
-    //   // 校验是否已经开通`电视门户/影音房`业务
-    //   // GET_ROOM_TYPE({ storeId: this.editForm.storeId }).then(value => {
-    //   //   for (let i = 0; i < value.length; i++) {
-    //   //     const item = value[i]
-    //   //     if (!item.status && item.typeCode === this.editForm.roomType) {
-    //   //       return Message({ showClose: true, message: '当前门店尚未开启' + item.typeName + '业务', type: 'error' })
-    //   //     }
-    //   //   }
-    //   //   // 开通过则可更新数据
-    //   //   // UPDATE_INFO({
-    //   //   //   brandCode: this.editForm.brandCode,
-    //   //   //   typeCode: this.editForm.typeCode,
-    //   //   //   devicesId: this.editForm.devicesId,
-    //   //   //   roomNo: this.editForm.roomNo,
-    //   //   //   roomType: this.editForm.roomType,
-    //   //   //   storeId: this.editForm.storeId,
-    //   //   //   uuid: this.editForm.uuid
-    //   //   // }).then(value => {
-    //   //   //   this.editVisible = false
-    //   //   //   this.resetForm('editForm')
-    //   //   //   this.queryData()
-    //   //   // }).catch(() => {})
-    //   // })
-    // },
+ 
     goBack(){
       history.go(-1);
     }

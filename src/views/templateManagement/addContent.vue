@@ -3,40 +3,65 @@
     <div class="title-box">
       <span class="main-title">模板管理>{{!editOrAddFlag?'编辑':'新建'}}模板>{{pageTitle}}</span>
     </div>
-    <div class="content-container">
-      <div class="TVBox" >
-        <img src="../../assets/templateImg/TV.png" width="581" alt="">
-
-      </div>
+    <div class="content-box">
+      <!-- <h5 class="container-header">{{pageTitle}}展示</h5> -->
+      
       <el-form ref="editForm" :model="editForm">
-        <el-form-item :label-width="labelWidth" label="添加内容">
-          <el-button @click="showAndGetData(1,'16:9',true)">选择内容</el-button>
-          <span style="color:#dcdfe6">只支持图片形式的内容，尺寸16:9，只能添加一个</span>
-          <div style="width:100%;min-height:300px;">
-            <img v-if="contentMapper1" style="width:100%;" :src="contentMapper1.imgs.imgUrl" alt="">
-            <el-button v-if="contentMapper1" size="medium" class="btn-default" @click="contentMapper1=''">重置</el-button>
-          </div>
-        </el-form-item>
-        <el-form-item  :label-width="labelWidth" label="添加内容">
-          <el-button @click="showAndGetData(1,'1:1',false)">选择内容</el-button>
-          <span style="color:#dcdfe6">只支持图片形式的内容，尺寸1:1，个数限制在2～15个</span>
-          <div style="width:100%;min-height:300px;">
-            <div class="flex" v-if="contentMapper2.length>0">
-              <div class="flex-item" v-for="(item,index) in contentMapper2">
-                  <div >
-                      <img :src="item.imgs.imgUrl" >
-                  </div>
-                  <div style="text-align:center;margin-top:8px;">{{item.contentName}}<el-button size="medium" class="btn-default" @click="contentMapper2.splice(index,1);">删除</el-button></div>
-                  <div class="checkBox" v-if="item.checked">
-                    <img src="../../assets/templateImg/check.png" alt="">
-                  </div>
-              </div>
-              <div style="clear:both"></div>
+        <el-form-item  :label-width="labelWidth" :label="pageTitle+'展示'">
+          <div class="TVBox" >
+            <img src="../../assets/templateImg/TV.png" width="581" alt="">
+            <div class="tvScreen">
               
-          </div>
-            <div></div>
+            </div>
           </div>
         </el-form-item>
+        <el-form-item v-if="appSwitch[0].isThis" :label-width="labelWidth" label="添加内容">
+          <el-button @click="showAndGetData(1,['16:9'],true)">选择图片内容</el-button>
+          <span style="color:#dcdfe6">只支持图片形式的内容，尺寸16:9，只能添加一个</span>
+          <div style="width:500px;min-height:300px;margin-top:10px;text-align:center">
+            <img v-if="templateContent.contentImgUrl" style="width:100%;" :src="getImgUrl(templateContent.contentImgUrl)" alt="">
+            <el-button v-if="templateContent.contentImgUrl" size="medium" class="btn-default" @click="templateContent.contentImgUrl='';templateContent.contentId=''">重置</el-button>
+          </div>
+        </el-form-item>
+        <el-form-item v-if="appSwitch[1].isThis" :label-width="labelWidth" label="添加内容">
+          <el-button @click="showAndGetData(2,['1920x1080','1280x720'],true)">选择视频内容</el-button>
+          <span style="color:#dcdfe6">只支持视频形式的内容，1920x1080或1280x720，只能添加一个</span>
+          <div style="width:500px;min-height:300px;margin-top:10px;text-align:center">
+            <img v-if="templateContent.contentImgUrl" style="width:100%;" :src="getImgUrl(templateContent.contentImgUrl)" alt="">
+            <el-button v-if="templateContent.contentImgUrl" size="medium" class="btn-default" @click="templateContent.contentImgUrl='';templateContent.contentId=''">重置</el-button>
+          </div>
+        </el-form-item>
+        <el-form-item v-if="appSwitch[2].isThis" :label-width="labelWidth" label="添加内容">
+          <el-button @click="showAndGetData(1,['16:9'],true)">选择图片内容</el-button>
+          <span style="color:#dcdfe6">只支持图片形式的内容，尺寸16:9，只能添加一个</span>
+          <div style="width:500px;min-height:300px;margin-top:10px;text-align:center">
+            <img v-if="templateContent.contentImgUrl" style="width:100%;" :src="getImgUrl(templateContent.contentImgUrl)" alt="">
+            <el-button v-if="templateContent.contentImgUrl" size="medium" class="btn-default" @click="templateContent.contentImgUrl='';templateContent.contentId=''">重置</el-button>
+          </div>
+        </el-form-item>
+        <div v-if="appSwitch[3].isThis">
+          <el-form-item  :label-width="labelWidth" label="添加内容">
+            <el-button @click="showAndGetData(1,['1:1'],false)">选择内容</el-button>
+            <span style="color:#dcdfe6">只支持图片形式的内容，尺寸1:1，个数限制在2～15个</span>
+            <div style="width:100%;min-height:300px;">
+              <div class="flex" v-if="contentMapper2.length>0">
+                <div class="flex-item" v-for="(item,index) in contentMapper2">
+                    <div >
+                        <img :src="getImgUrl(item.imgs.imgUrl)" >
+                    </div>
+                    <div style="text-align:center;margin-top:8px;">{{item.contentName}}<el-button size="medium" class="btn-default" @click="contentMapper2.splice(index,1);">删除</el-button></div>
+                    <div class="checkBox" v-if="item.checked">
+                      <img src="../../assets/templateImg/check.png" alt="">
+                    </div>
+                </div>
+                <div style="clear:both"></div>
+                
+            </div>
+              <div></div>
+            </div>
+          </el-form-item>
+
+        </div>
    
       </el-form>
       <div slot="footer" class="dialog-footer text-center">
@@ -50,7 +75,7 @@
         width="1000px"
        >
        <div class="">
-        <div class="content-container">
+        <div class="content-box">
           <div class="detail-content">
             <div class="select-wrapper">
               <div class="select-box">
@@ -81,10 +106,10 @@
               </div>
             </div>
             <div class="device-table-wrapper">
-              <div class="flex">
+              <div class="floatBox" v-if="thisInd!=2">
                   <div class="flex-item" v-for="(item,index) in dataList"  @click="itemClick(index)">
                       <div >
-                          <img :src="item.imgs.imgUrl" >
+                          <img :src="getImgUrl(item.imgs.imgUrl)">
                       </div>
                       <div style="text-align:center;margin-top:8px;">{{item.contentName}}</div>
                       <div class="checkBox" v-if="item.checked">
@@ -92,6 +117,18 @@
                       </div>
                   </div>
                   <div style="clear:both"></div>
+              </div>
+              <div v-if="thisInd==2" style="width:100%;max-height:420px;">
+                <!-- <div  v-for="(item,index) in dataList"  @click="itemClick(index)">
+                  <div >
+                      <img :src="getImgUrl(item.imgs.imgUrl)">
+                  </div>
+                  <div style="text-align:center;margin-top:8px;">{{item.contentName}}</div>
+                  <div class="checkBox" v-if="item.checked">
+                    <img src="../../assets/templateImg/check.png" alt="">
+                  </div>
+                </div> -->
+                
               </div>
             </div>
             <div class="pagination-wrapper">
@@ -119,7 +156,6 @@
 </template>
 
 <script>
-import EnabledType from './types/enable-type'
 import { Message } from 'element-ui'
 import {
   SECONDPAGE_CREATE,
@@ -130,7 +166,6 @@ import {
   GET_CONTANT_FIND
 } from '@/api/contantLibraryAPI/contantLibraryAPI'
 import { GET_ROOM_TYPE, GET_ALL_ROOM_TYPE } from '@/api/storeManage/storeManage'
-import RoomTypeConfig from '@/constants/room-type-config'
 
 export default {
   name: 'DeviceList',
@@ -161,124 +196,37 @@ export default {
       pageLayoutTypes:[{ text: '电视布局', value: 1 }],
      
       dialogData: {},
-      multipleSelection: [],
-      EnabledType,
-      enableType: EnabledType.NONE, // 启用/禁用设备
+ 
+     
       labelWidth: '120px',
-      editVisible: false,
-      addVisible: false,
+     
       editForm: {
         pageName: '',
         pageLayoutType: '',
         contentMapper:[],
 
       },
-    editFormImgs:[
-      {
-        imgUrl:'',
-        description:'',
-        size:'1:1',
-        imgType:1,
-        mediaType:'未知'
-      },
-      {
-        imgUrl:'',
-        description:'',
-        size:'318x658',
-        imgType:1,
-        mediaType:'未知'
-      },
-      {
-        imgUrl:'',
-        description:'',
-        size:'1314x658',
-        imgType:1,
-        mediaType:'未知'
-      },
-      {
-        // id:integer($int64),
-        imgUrl:'',
-        description:'',
-        // goodsSource:integer($int32),//来源
-        //商品来源，0-如家；1-其它
-        size:'16:9',
-        imgType:1,
-        mediaType:'未知'
-        //影像类型:1-图片,2-视频
-        
-        // createTime:string($date-time),
-      },
-      {
-        imgUrl:'',
-        description:'',
-        size:'318x207',
-        imgType:1,
-        mediaType:'未知'
-      }
-      ],
-      editFormVideos:[{
-        imgUrl:'',
-        description:'',
-        size:'1920x1080',
-        imgType:2,
-        mediaType:'未知'
-      },{
-        imgUrl:'',
-        description:'',
-        size:'1280x720',
-        imgType:2,
-        mediaType:'未知'
-      }],
-      addForm: {
-        storeId: '',
-        storeName: '',
-        brandCode: '',
-        typeCode: '',
-        model: '',
-        roomNo: 1,
-        roomType: '',
-        uuid: '',
-        linkAdd:'',
-       
-      },
-      needShow: false,
-      deviceBrands: [],
-      deviceModels: [],
+     
       filterForm: {//用于条件筛选搜索的表单内容
         contentName: '',
         daterange: ''
       },
      
-      roomTypeNames: [
-        {text: '打开网址',value:1},
-        {text: '打开应用',value:2},
-        {text: '无触发',value:0}
-      ], // 设备管理列表表格筛选
-      storeNames: [],
-      selStoreList: [], // 编辑对话框/所属门店
+    
       loading: false,
-      roomTypes: [], // 编辑对话框/设备房间类型
-      condition: {
-        roomTypeName: null,
-        status: null
-      },
-      RoomTypeConfig,
+    
       sortType: null,
      
       contentObj:'',
       dialogVisible:false,
-      condition:{},
+     
       pageIndex:0,
       pageSize:10,
    
       filterDataF:{},
       dataList: [],
       total: 0,
-      roomTypeNames: [
-        {text: '打开网址',value:1},
-        {text: '打开应用',value:2},
-        {text: '无触发',value:0}
-      ], // 设备管理列表表格筛选
+    
       contentTypes:[
           { text: '全部', value: '' }, 
           { text: '影视', value: 1 }, 
@@ -291,6 +239,11 @@ export default {
       dialogChecked:false,//判断当前框是单选还是多选
       contentMapper1:'',
       contentMapper2:[],
+      templateContent:{
+
+        contentImgUrl: ""
+      },
+      templateContentIndex:'',
     }
   },
   computed: {
@@ -311,19 +264,49 @@ export default {
       return header;
     },
     onShow(){
+      this.thisInd = this.$route.query.index;
+      this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
+      let tpObj = JSON.parse(window.sessionStorage.templateObj);
+      if(this.thisInd != 4){
+        if(JSON.stringify(tpObj.templateContentList)!='[]'){
+          for(let i in tpObj.templateContentList){
+            if(tpObj.templateContentList[i].pageContentType==this.thisInd){
+              this.templateContent = tpObj.templateContentList[i];
+              this.templateContentIndex = i;
+              break;
+            }else{
+              this.templateContentIndex = '';
+            }
+          }
+        }
+        this.templateContent.pageContentType = this.thisInd;
+      }else{
+        
+      }
       
+      /**
+       * pageContentType*	integer($int32)
+minimum: 1
+maximum: 4
+
+页面内容类型:1-开机画面, 2-开机视频, 3-欢迎页, 4-智能主页
+contentId	integer($int64)
+
+内容主键
+imgId	integer($int32)
+       */
       switch(this.$route.query.index){
         case 1:
-          this.appSwitch[1].isThis = true;
+          this.appSwitch[0].isThis = true;
           break;
         case 2:
-          this.appSwitch[2].isThis = true;
+          this.appSwitch[1].isThis = true;
           break;
         case 3:
-          this.appSwitch[3].isThis = true;
+          this.appSwitch[2].isThis = true;
           break;
         case 4:
-          this.appSwitch[4].isThis = true;
+          this.appSwitch[3].isThis = true;
           break;
       }
       if(!this.editOrAddFlag){
@@ -395,25 +378,24 @@ export default {
       this.queryData()
     },
     submitEdit(){
-      if(this.editOrAddFlag){
-        this.editForm.contentMapper = this.editFormatData();
-        debugger;
-          SECONDPAGE_CREATE(this.editForm).then(res=>{
-            Message({ showClose: true, message: '创建成功', type: 'success' })
-            history.go(-1);
-          })
-
+      let tpObj = JSON.parse(window.sessionStorage.templateObj)
+      if(this.thisInd!=4){
+        
+        if(this.templateContentIndex!=''){
+          tpObj.templateContentList[this.templateContentIndex] = this.templateContent;
+        }else{
+          tpObj.templateContentList = [this.templateContent]
+        }
       }else{
-        SECONDPAGE_UPDATE(this.editForm).then(res=>{
-          Message({ showClose: true, message: '编辑成功', type: 'success' })
-            history.go(-1);
-        })
+        
       }
+      window.sessionStorage.templateObj = JSON.stringify(tpObj);
     },
     showAndGetData(type,size,checked){
       this.dialogVisible = true;
-      this.filterForm.imgSizes = [size];
-      this.filterForm.contentTypes = [type];
+      this.filterForm.imgSizes = size;
+      this.filterForm.showModes = [type];
+      this.filterForm.contentTypes = [];
       this.dialogChecked = checked;
       this.queryData();
 
@@ -431,24 +413,42 @@ export default {
       console.log(this.dataList[index]);
     },
     takeImgData(){
-      if(this.filterForm.imgSizes[0] == '16:9'){
+      if(this.thisInd!=4){
         for(let i in this.dataList){
           if(this.dataList[i].checked){
             this.contentMapper1 = this.dataList[i]
             break;
           }
         }
-      }else{
-        for(let i in this.dataList){
-          if(this.dataList[i].checked){
-            this.contentMapper2.push(this.dataList[i]);
-          }
-        }
-        if(this.contentMapper2.length>=15){
-          this.contentMapper2.length=15
-        }
+        this.templateContent.pageContentType = this.thisInd;
+        this.templateContent.contentId = this.contentMapper1.id;
+        this.templateContent.contentImgUrl = this.contentMapper1.imgs.imgUrl;
+        this.templateContent.templateSmartPageVOList = null;
       }
-      this.dialogVisible = false;
+      // if(this.dialogChecked){
+      //   for(let i in this.dataList){
+      //     if(this.dataList[i].checked){
+      //       this.contentMapper1 = this.dataList[i]
+      //       break;
+      //     }
+      //   }
+      // }else{
+      //   for(let i in this.dataList){
+      //     if(this.dataList[i].checked){
+      //       this.contentMapper2.push(this.dataList[i]);
+      //     }
+      //   }
+      //   if(this.contentMapper2.length>=15){
+      //     this.contentMapper2.length=15
+      //   }
+      // }
+      // this.dialogVisible = false;
+      // debugger
+    },
+    getImgUrl:function(url){
+      
+      let SRC = this.APILeft+url.split('$}')[1];
+      return SRC;
     },
     editFormatData(){
       let contentMapper = [];
@@ -481,7 +481,7 @@ export default {
 
 $pl: 20px;
 $pr: 24px;
-.content-container{
+.content-box{
   background: #fff;
   padding: 10px;
   .el-input{
@@ -514,41 +514,47 @@ $pr: 24px;
       line-height: 0 !important;
     }
   }
-  .flex{
+  .floatBox{
     // display: flex;
     width: 100%;
     // height: 420px;
     overflow: auto;
-    
-}
-  .flex-item{
-    position: relative;
-    float: left;
-    padding: 6px;
-    box-sizing: border-box;
-    width: 20%;
-    img{
-        width: 100%;
-        height: 171px;
-    }
-    .checkBox{
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 20px;
-      height: 20px;
+    .flex-item{
+      position: relative;
+      float: left;
+      padding: 6px;
+      box-sizing: border-box;
+      width: 20%;
       img{
-        width: 100%;
-        height: 100%;
+          width: 100%;
+          height: 171px;
+      }
+      .checkBox{
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        img{
+          width: 100%;
+          height: 100%;
+        }
       }
     }
-  }
+    
+}
   .TVBox{
-    margin: auto;
     width: 581px;
     height: 362px;
     position: relative;
-    
+    .tvScreen{
+      position: absolute;
+      width: 569px;
+      height: 282px;
+      top: 5px;
+      left: 6px;
+      border-radius: 1px;
+    } 
   }
 }
 </style>

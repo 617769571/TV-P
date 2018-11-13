@@ -239,7 +239,7 @@ export default {
       editForm: {
         templateName: '',
         showMode: 1,
-        contentMapper:[],
+        templateContentList:[],
 
       },
     editFormImgs:[
@@ -366,8 +366,10 @@ export default {
   },
   methods: {
     onShow(){
-      
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
+      if(window.sessionStorage.templateObj){
+        this.editForm = JSON.parse(window.sessionStorage.templateObj);
+      }
       if(!this.editOrAddFlag){
         this.loading = true;
         // SECONDPAGE_GET(this.$route.params.contentObj.id).then(res=>{
@@ -584,7 +586,16 @@ export default {
       }
     },
     goToAddContent(index){
-      this.$router.push({ name: 'addContent', query: { index: index }});
+      let tpObj = new Object();
+      if(window.sessionStorage.templateObj){
+        tpObj = JSON.parse(window.sessionStorage.templateObj);
+        tpObj.templateName = this.editForm.templateName;
+        tpObj.showMode = this.editForm.showMode;
+      }else{
+        tpObj = this.editForm;
+      }
+      window.sessionStorage.templateObj = JSON.stringify(tpObj);
+      this.$router.push({ name: 'addContent', query: { index: index ,edit:!this.editOrAddFlag}});
 
     },
     goBack(){

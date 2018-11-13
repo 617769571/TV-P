@@ -4,7 +4,7 @@
       <span class="main-title">二级页面管理>{{!editOrAddFlag?'编辑':'新建'}}二级页面</span>
       <!-- <span class="device-tip">（点击门店名称查看门店详情、点击终端UUID查看设备详情）</span> -->
     </div>
-    <div class="content-container">
+    <div class="content-box">
       <el-form ref="editForm" :model="editForm" >
         <el-form-item :label-width="labelWidth" label="二级页面名称" prop="pageName" style="white-space:nowrap">
           <el-input v-model="editForm.pageName" placeholder="请输入内容名称" :maxlength="30"/><span style="color:#dcdfe6">&nbsp;{{editForm.pageName.length}}/30</span>
@@ -21,7 +21,7 @@
           <el-button @click="showAndGetData(1,'16:9',true)">选择内容</el-button>
           <span style="color:#dcdfe6">只支持图片形式的内容，尺寸16:9，只能添加一个</span>
           <div style="width:100%;min-height:300px;margin-top:10px;">
-            <img v-if="contentMapper1" style="width: 600px;" :src="contentMapper1.imgs.imgUrl" alt="">
+            <img v-if="contentMapper1" style="width: 600px;" :src="getImgUrl(contentMapper1.imgs.imgUrl)" alt="">
             <el-button v-if="contentMapper1" size="medium" class="btn-default" @click="contentMapper1=''">重置</el-button>
           </div>
         </el-form-item>
@@ -29,10 +29,10 @@
           <el-button @click="showAndGetData(1,'1:1',false)">选择内容</el-button>
           <span style="color:#dcdfe6">只支持图片形式的内容，尺寸1:1，个数限制在2～15个</span>
           <div style="width:100%;min-height:300px;">
-            <div class="flex" v-if="contentMapper2.length>0">
+            <div class="floatBox" v-if="contentMapper2.length>0">
               <div class="flex-item" v-for="(item,index) in contentMapper2">
-                  <div >
-                      <img :src="item.imgs.imgUrl" >
+                  <div>
+                      <img :src="getImgUrl(item.imgs.imgUrl)">
                   </div>
                   <div style="text-align:center;margin-top:8px;">{{item.contentName}}&nbsp;&nbsp;&nbsp;<el-button size="medium" class="btn-default" @click="contentMapper2.splice(index,1);">删除</el-button></div>
              
@@ -63,7 +63,7 @@
         width="1000px"
        >
        <div class="">
-    <div class="content-container">
+    <div class="content-box">
       <div class="detail-content">
         <div class="select-wrapper">
           <div class="select-box">
@@ -71,7 +71,7 @@
               <el-col :span="19">
                 <el-form ref="filterForm" :model="filterForm" :inline="true" label-width="100px" class="filter-form">
                   <el-form-item label="" prop="contentType">
-                    <el-select v-model="filterForm.contentType" placeholder="请选择内容分类">
+                    <el-select v-model="filterForm.contentTypes[0]" placeholder="请选择内容分类">
                       <el-option v-for="(rt, index) in contentTypes" :key="index" :label="rt.text" :value="rt.value">
                         {{ rt.text }}
                       </el-option>
@@ -90,7 +90,7 @@
               </el-col>
               <el-col :span="5">
                 <el-button size="medium" class="btn-primary" @click="queryData">查询</el-button>
-                <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentType=''">重置</el-button>
+                <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentTypes=''">重置</el-button>
 
               </el-col>
             </el-row>
@@ -98,10 +98,10 @@
         </div>
        
         <div class="device-table-wrapper">
-          <div class="flex">
+          <div class="floatBox">
               <div class="flex-item" v-for="(item,index) in dataList"  @click="itemClick(index)">
                   <div >
-                      <img :src="item.imgs.imgUrl" >
+                      <img :src="getImgUrl(item.imgs.imgUrl)" >
                   </div>
                   <div style="text-align:center;margin-top:8px;">{{item.contentName}}</div>
                   <div class="checkBox" v-if="item.checked">
@@ -290,7 +290,7 @@ export default {
       pageSize:10,
       filterForm: {//用于条件筛选搜索的表单内容
         contentName: '',
-        contentTypes:'',
+        contentTypes:[0],
         imgSizes:''
       },
       filterDataF:{},
@@ -329,7 +329,6 @@ export default {
   },
   methods: {
     onShow(){
-      
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       if(!this.editOrAddFlag){
       this.loading = true;
@@ -474,7 +473,11 @@ export default {
         var s = date.getSeconds();
         return Y+M+D+h+m+s;
     },
-
+    getImgUrl:function(url){
+      debugger;
+      let SRC = this.APILeft+url.split('$}')[1];
+      return SRC;
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.queryData()
@@ -489,6 +492,7 @@ export default {
         pageIndex:that.pageIndex,
         pageSize:that.pageSize
       }
+      debugger;
       GET_CONTANT_FIND(params,data?data:{}).then(value => {
  
         this.dataList = [];
@@ -516,7 +520,7 @@ export default {
       this.queryData()
     },
     submitEdit(){
-      debugger;
+     
       if(this.editOrAddFlag){
         this.editForm.contentMapper = this.editFormatData();
           SECONDPAGE_CREATE(this.editForm).then(res=>{
@@ -525,7 +529,12 @@ export default {
           })
 
       }else{
-        this.editForm.contentMapper = this.oldSecondPage.concat(this.editFormatData())
+        let contMapArr = this.editFormatData();
+        for(let j in contMapArr){
+          delete contMapArr[j].id;
+        }
+        this.editForm.contentMapper = this.oldSecondPage.concat(contMapArr)
+        
         SECONDPAGE_UPDATE(this.editForm).then(res=>{
           Message({ showClose: true, message: '编辑成功', type: 'success' })
             history.go(-1);
@@ -535,10 +544,11 @@ export default {
     showAndGetData(type,size,checked){
       this.dialogVisible = true;
       this.filterForm.imgSizes = [size];
-      this.filterForm.contentTypes = [type];
+      // this.filterForm.contentTypes = [type];
+      delete this.filterForm.contentTypes;
       this.dialogChecked = checked;
       this.queryData();
-
+      this.filterForm.contentTypes = [];
     },
     itemClick(index){
       if(this.dialogChecked){
@@ -556,6 +566,8 @@ export default {
       if(this.filterForm.imgSizes[0] == '16:9'){
         for(let i in this.dataList){
           if(this.dataList[i].checked){
+            this.dataList[i].contentId = this.dataList[i].id;
+
             this.contentMapper1 = this.dataList[i]
             break;
           }
@@ -563,6 +575,7 @@ export default {
       }else{
         for(let i in this.dataList){
           if(this.dataList[i].checked){
+            this.dataList[i].contentId = this.dataList[i].id;
             this.contentMapper2.push(this.dataList[i]);
           }
         }
@@ -578,19 +591,21 @@ export default {
       if(!this.editOrAddFlag){
         if(this.contentMapper1){
         let obj = {};
+        obj.id = this.contentMapper1.id;
         obj.contentId = this.contentMapper1.contentId;
         obj.contentOrder = 1;
         obj.type = 1;
-        obj.imgId = this.contentMapper1.imgs.imgId;
+        obj.imgId = this.contentMapper1.imgs.id;
         obj.operateType = 1;
         contentMapper.push(obj);
       }
       for(let i = 0;i<this.contentMapper2.length;i++){
         let obj = {}
+        obj.id = this.contentMapper2[i].id;
         obj.contentId = this.contentMapper2[i].contentId;
         obj.contentOrder = i+1;
         obj.type = 2;
-        obj.imgId = this.contentMapper2[i].imgs.imgId;
+        obj.imgId = this.contentMapper2[i].imgs.id;
         obj.operateType = 1;
         contentMapper.push(obj);
       }
@@ -628,7 +643,7 @@ export default {
 
 $pl: 20px;
 $pr: 24px;
-.content-container{
+.content-box{
   background: #fff;
   padding: 10px;
   .el-input{
@@ -661,34 +676,34 @@ $pr: 24px;
       line-height: 0 !important;
     }
   }
-  .flex{
+  .floatBox{
     // display: flex;
     width: 100%;
     height: 420px;
     overflow: auto;
-    
-}
-  .flex-item{
-    position: relative;
-    float: left;
-    padding: 6px;
-    box-sizing: border-box;
-    width: 20%;
-    img{
-        width: 100%;
-        height: 171px;
-    }
-    .checkBox{
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 20px;
-      height: 20px;
+    .flex-item{
+      position: relative;
+      float: left;
+      padding: 6px;
+      box-sizing: border-box;
+      width: 20%;
       img{
-        width: 100%;
-        height: 100%;
+          width: 100%;
+          height: 171px;
+      }
+      .checkBox{
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 20px;
+        height: 20px;
+        img{
+          width: 100%;
+          height: 100%;
+        }
       }
     }
-  }
+    
+}
 }
 </style>

@@ -183,6 +183,7 @@ export default {
         this.$router.push({ name: 'editTemplate', query: { edit: editFlag },params:{contentObj:item}});
         
       }else{
+        window.sessionStorage.templateObj = '';
         this.$router.push({ name: 'editTemplate', query: { edit: editFlag }});
 
       }
