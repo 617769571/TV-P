@@ -102,11 +102,11 @@ import DeviceDetailDialog from './dialog/device-detail-dialog.vue'
 // } from '@/api/contantLibraryAPI/contantLibraryAPI'
 import {
   
-  SECONDPAGE_CREATE,
-  SECONDPAGE_GET,
-  SECONDPAGE_UPDATE
+  TEMPLATE_ADD,
+  TEMPLATE_DETAIL,
+  TEMPLATE_UPDATE
 
-} from '@/api/secondPage/secondPage'
+} from '@/api/templateAPI/templateAPI'
 import { GET_ROOM_TYPE, GET_ALL_ROOM_TYPE } from '@/api/storeManage/storeManage'
 import RoomTypeConfig from '@/constants/room-type-config'
 
@@ -369,19 +369,22 @@ export default {
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       if(window.sessionStorage.templateObj){
         this.editForm = JSON.parse(window.sessionStorage.templateObj);
-      }
-      if(!this.editOrAddFlag){
-        this.loading = true;
-        // SECONDPAGE_GET(this.$route.params.contentObj.id).then(res=>{
-        //   this.contentObj = res;
-        //   for(let i in this.editForm){
-        //     this.editForm[i] = this.contentObj[i];
-        //   }
-        //   this.editForm.id = this.contentObj.id;
+      }else{
+        if(!this.editOrAddFlag){
+          // this.loading = true;
+          TEMPLATE_DETAIL(this.$route.params.contentObj.id).then(res=>{
+            let objStr = JSON.stringify(res);
+            let str2 = objStr.replace(/"templateContentVOList"/gm,'"templateContentList"').replace(/"templateSmartPageVOList"/gm,'"smartPageList"').replace(/"contentSecondPageVOList"/gm,'"contentSecondPageBOList"');
+            this.editForm.templateName = JSON.parse(str2).templateName;
+            this.editForm.showMode = JSON.parse(str2).showMode;
+            this.editForm.id = JSON.parse(str2).id;
+            this.editForm.templateContentList = JSON.parse(str2).templateContentList;
+            window.sessionStorage.templateObj = JSON.stringify(this.editForm);
+
+          })
           
-        //   this.loading = false;
-        // })
-        
+        }
+
       }
       
     },
@@ -557,29 +560,42 @@ export default {
       this.$refs[formName].resetFields()
       this.queryData()
     },
- 
+    // deleteUrl(obj,key){
+    //   if(typeof obj == 'object'){
+    //     for(let i in obj){
+    //       this.deleteUrl(obj[1],i)
+    //     }
+    //   }else{
+    //     if(key == 'contentImgUrl'){
+    //       return false;
+    //     }else{
+    //       return obj;
+    //     }
+    //   }
+    // },
     submitEdit(){
-      if(this.editForm.showMode==1){
-        this.editForm.imgs = [];
-        for(let i in this.editFormImgs){
-          if(this.editFormImgs[i].imgUrl){
-            this.editForm.imgs.push(this.editFormImgs[i]);
-
-          }
-        }
-        // this.editForm.imgs = this.editFormImgs;
+      var thisdata = window.sessionStorage.templateObj.replace(/"contentImgUrl":".*?",/gm,'').replace(/"contentImgUrl":null,/gm,'').replace(/"contentImgUrl":".*?"/gm,'').replace(/"contentImgUrl":null/gm,'')
+      let data= JSON.parse(thisdata);
+      if(!this.editForm.templateName){
+        this.$message({
+          message: '模版名称不能为空',
+          type: 'warning'
+        });
+        return;
       }else{
-        
-        }
-      
+        data.templateName = this.editForm.templateName;
+        data.showMode = this.editForm.showMode;
+      }
       if(this.editOrAddFlag){
-          CONTENT_CREATE(this.editForm).then(res=>{
+          TEMPLATE_ADD(data).then(res=>{
             Message({ showClose: true, message: '创建成功', type: 'success' })
             history.go(-1);
           })
 
       }else{
-        CONTENT_UPDATE(this.editForm).then(res=>{
+        debugger;
+
+        TEMPLATE_UPDATE(data).then(res=>{
           Message({ showClose: true, message: '编辑成功', type: 'success' })
             history.go(-1);
         })

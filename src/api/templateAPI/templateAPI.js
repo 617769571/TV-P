@@ -2,9 +2,9 @@ import request from '@/utils/request'
 import { getToken } from '@/utils/auth'
 
 
-export function SECONDPAGE_CREATE(data) {
+export function TEMPLATE_ADD(data) {
   return request({
-    url: process.env.BASE_API + '/secondPage/create',
+    url: process.env.BASE_API + '/template/add',
     method: 'post',
     data,
     headers: {
@@ -12,9 +12,9 @@ export function SECONDPAGE_CREATE(data) {
     }
   })
 }
-export function SECONDPAGE_UPDATE(data) {
+export function TEMPLATE_UPDATE(data) {
   return request({
-    url: process.env.BASE_API + '/secondPage/update',
+    url: process.env.BASE_API + '/template/edit',
     method: 'post',
     data,
     headers: {
@@ -23,9 +23,9 @@ export function SECONDPAGE_UPDATE(data) {
   })
 }
 
-export function SECONDPAGE_GET(id) {
+export function TEMPLATE_DETAIL(id) {
   return request({
-    url: process.env.BASE_API + '/secondPage/get?secondPageId='+id,
+    url: process.env.BASE_API + '/template/detail?template_id='+id,
     method: 'get',
     headers: {
       'token': getToken()
@@ -45,4 +45,15 @@ export function TEMPLATE_FIND(params) {
     }
   })
 }
+export function TEMPLATE_DEL(id) {
+  // 
+  return request({
+    url: process.env.BASE_API + '/template/del/'+id+'/?template_id='+id,
+    method: 'DELETE',
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+
 
