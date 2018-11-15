@@ -1,7 +1,7 @@
 <template>
   <div class="device-list app-container">
     <div class="title-box">
-      <span class="main-title">模板管理</span>
+      <span class="main-title">版本管理</span>
       <!-- <span class="device-tip">（点击门店名称查看门店详情、点击终端UUID查看设备详情）</span> -->
     </div>
     <div class="content-container">
@@ -10,19 +10,17 @@
           <div class="select-box">
             <el-row>
               <el-col :span="10">
-                <el-button size="small" class="btn-primary" @click="showDialog(false)">新建模板</el-button>
+                <!-- <el-button size="small" class="btn-primary" @click="showDialog(false)">新建模板</el-button> -->
                
               </el-col>
               <el-col :span="10">
                 <el-form ref="filterForm" :model="filterForm" :inline="true" label-width="100px" class="filter-form">
-                
-                  <el-form-item label="" prop="template_name"  style="float:right;margin-right:20px;">
+                  <el-form-item label="" prop="edition_name"  style="float:right;margin-right:20px;">
                     <el-input
                       class="searchInput"
-                      v-model="filterForm.template_name"
-                      placeholder="请输入模板名称搜索"
+                      v-model="filterForm.edition_name"
+                      placeholder="请输入版本名称搜索"
                      />
-                     
                   </el-form-item>
                 </el-form>
               </el-col>
@@ -33,24 +31,26 @@
             </el-row>
           </div>
         </div>
-        
         <div class="device-table-wrapper">
           <el-table :data="dataList" stripe border class="device-table" @filter-change="filterChanged">
             <el-table-column type="selection"/>
-            <el-table-column prop="templateName" label="模板名称" width="240"/>
+            <el-table-column prop="editionName" label="模板名称" width="240"/>
             <el-table-column
               :column-key="'show_modes'"
               :filters="[{ text: '开机画面+开机视频+欢迎页+智能主页', value: 1 }, { text: '开机画面+开机视频+智能主页', value: 2 }, { text: '开机画面+开机视频+欢迎页', value: 3 }, { text: '开机画面+开机视频', value: 4 }]"
               prop="showModeName" 
               label="页面展现方式" 
               width="200"/>
-            <el-table-column prop="updateTimeStr" label="更新时间" width="200"/>
+            <el-table-column prop="deviceCount" label="关联设备" width="100"/>
+            <el-table-column prop="updateTimeStr" label="更新时间" width="150"/>
+
+            <el-table-column prop="statusName" label="状态" width="100"/>
             <el-table-column prop="edit" label="操作" width="300">
               <template slot-scope="scope">
                 <el-button type="primary" size="mini"  @click="handleEdit(scope.row)">预览</el-button>
                 <el-button type="primary" size="mini" class="btn-primary" @click="showDialog(true,scope.row)">编辑</el-button>
-                <el-button type="primary" size="mini" class="btn-primary" @click="delTemplate(scope.row)">删除</el-button>
-                <el-button type="primary" size="mini" class="btn-primary" @click="getoPublishTemplate(scope.row)">发布</el-button>
+                <!-- <el-button type="primary" size="mini" class="btn-primary" @click="delTemplate(scope.row)">删除</el-button> -->
+                <el-button type="primary" size="mini" class="btn-primary">关联设备</el-button>
               </template>
             </el-table-column> 
           </el-table>
@@ -73,21 +73,16 @@
 </template>
 
 <script>
-import EnabledType from './types/enable-type'
-import { Message } from 'element-ui'
-import DeviceDetailDialog from './dialog/device-detail-dialog.vue'
+import { Message } from 'element-ui';
 import {
-  TEMPLATE_FIND,
+  EDITION_FIND,
   TEMPLATE_DEL
-} from '@/api/templateAPI/templateAPI'
+} from '@/api/editionAPI/editionAPI';
 
-import RoomTypeConfig from '@/constants/room-type-config'
 
 export default {
-  name: 'DeviceList',
-  components: {
-    DeviceDetailDialog
-  },
+  name: 'editionList',
+
   data() {
     return {
       pageIndex: 0,
@@ -98,7 +93,7 @@ export default {
       needShow: false,
       deviceModels: [],
       filterForm: {//用于条件筛选搜索的表单内容
-        template_name: '',
+        edition_name: '',
         show_modes:[]
       },
       dataList: [],
@@ -110,12 +105,7 @@ export default {
     }
   },
   computed: {
-    enableText() {
-      return this.enableType === EnabledType.ENABLED ? '确认启用所选设备？' : this.enableType === EnabledType.DISABLED ? '确认禁用所选设备？' : ''
-    },
-    enableVisible() {
-      return this.enableType === EnabledType.ENABLED || this.enableType === EnabledType.DISABLED
-    }
+    
   },
   mounted() {
     // // 获取品牌
@@ -151,7 +141,7 @@ export default {
       }).catch(() => {})
     },
     fetchData(params) { // 获取表格数据
-      TEMPLATE_FIND(params).then(res=>{
+      EDITION_FIND(params).then(res=>{
         this.dataList = res.list;
         this.total = res.total;
         for(let i =0;i<res.list.length;i++){
@@ -170,7 +160,7 @@ export default {
       let params = {
         pageIndex: this.pageIndex,
         pageSize:this.pageSize,
-        template_name:this.filterForm.template_name
+        edition_name:this.filterForm.edition_name
         
       }
       if(this.filterForm.show_modes.length>0){
@@ -215,9 +205,6 @@ export default {
           });          
         });
      
-    },
-    getoPublishTemplate(item){
-        this.$router.push({ name: 'publishTemplate', query: { id: item.id }});
     }
   
   }

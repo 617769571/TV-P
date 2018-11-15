@@ -6,13 +6,21 @@
     </div>
     <div class="content-container">
       <div class="detail-content">
+        <div style="padding:10px">
+          <el-form ref="addForm" :model="addForm">
+            <el-form-item :label-width="labelWidth" label="版本名称" prop="templateName" style="white-space:nowrap">
+              <el-input
+                class="searchInput"
+                v-model="addForm.editionName"
+                placeholder="请输入版本名称搜索"
+                />
+            </el-form-item>
+          </el-form>
+        </div>
         <div class="select-wrapper">
           <div class="select-box">
-            <el-row>
-              <el-col :span="10">
-                <el-button size="small" class="btn-primary" @click="showDialog(false)">新建模板</el-button>
-               
-              </el-col>
+            <!-- <el-row>
+             
               <el-col :span="10">
                 <el-form ref="filterForm" :model="filterForm" :inline="true" label-width="100px" class="filter-form">
                 
@@ -28,9 +36,106 @@
               </el-col>
               <el-col :span="4">
                 <el-button size="medium" class="btn-primary" @click="queryData(true)">查询</el-button>
-                <!-- <el-button size="medium" class="btn-default" @click="resetForm('filterForm')">重置</el-button> -->
+                <el-button size="medium" class="btn-default" @click="resetForm('filterForm')">重置</el-button>
               </el-col>
-            </el-row>
+            </el-row> -->
+            <el-form :inline="true" :model="filterForm" class="demo-form-inline">
+              <el-form-item label="集团名称">
+                <el-select v-model="filterForm.organizationName" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="门店编号">
+                <el-input v-model="filterForm.storeId" placeholder="门店编号"></el-input>
+              </el-form-item>
+              <el-form-item label="门店外部编号">
+                <el-input v-model="filterForm.externalId" placeholder="门店外部编号"></el-input>
+              </el-form-item>
+              <el-form-item label="品牌">
+                <el-select v-model="filterForm.deviceBrand" placeholder="请选择品牌">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="门店名称">
+                <el-select v-model="filterForm.organizationName" filterable placeholder="请选择">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="所属省">
+                <el-select v-model="filterForm.provinceId" placeholder="请选择">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="所属市">
+                <el-select v-model="filterForm.cityId" placeholder="请选择">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <!-- <el-form-item label="终端UUID">
+                <el-input v-model="filterForm.externalId" placeholder="终端UUID"></el-input>
+              </el-form-item> -->
+              <!-- <el-form-item label="终端型号">
+                <el-select v-model="filterForm.cityId" placeholder="请选择">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item> -->
+              <!-- <el-form-item label="终端品牌">
+                <el-select v-model="filterForm.cityId" placeholder="请选择">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item> -->
+              <el-form-item label="房间类型">
+                <el-select v-model="filterForm.roomTypeName" placeholder="请选择">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="房间号">
+                <el-input v-model="filterForm.roomNo" placeholder="房间号"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="queryData">查询</el-button>
+              </el-form-item>
+            </el-form>
           </div>
         </div>
         
@@ -50,7 +155,7 @@
                 <el-button type="primary" size="mini"  @click="handleEdit(scope.row)">预览</el-button>
                 <el-button type="primary" size="mini" class="btn-primary" @click="showDialog(true,scope.row)">编辑</el-button>
                 <el-button type="primary" size="mini" class="btn-primary" @click="delTemplate(scope.row)">删除</el-button>
-                <el-button type="primary" size="mini" class="btn-primary" @click="getoPublishTemplate(scope.row)">发布</el-button>
+                <el-button type="primary" size="mini" class="btn-primary">发布</el-button>
               </template>
             </el-table-column> 
           </el-table>
@@ -90,6 +195,11 @@ export default {
   },
   data() {
     return {
+      addForm:{
+        templateId: 0,
+        editionName: '',
+        deviceIdList: []
+      },
       pageIndex: 0,
       pageSize: 20,
       labelWidth: '120px',
@@ -97,15 +207,57 @@ export default {
       addVisible: false,
       needShow: false,
       deviceModels: [],
-      filterForm: {//用于条件筛选搜索的表单内容
-        template_name: '',
-        show_modes:[]
-      },
+      filterForm: {
+        deviceId:"",//($int32)
+        //主键
+        organizationId:"",//
+        //所属集团编号
+        organizationName:"",//
+        //所属集团
+        storeId:"",//
+        //门店编号
+        internalId:"",//
+        //门店内部编号
+        externalId:"",//
+        //门店外部编码
+        storeName:"",//
+        //所属门店
+        deviceBrand:"",//
+        //设备品牌
+        deviceModel:"",//
+        //设备型号
+        roomNo:"",//
+        //所属房间
+        roomTypeName:"",//
+        //房间类型
+        createdTime:"",//($date-time)
+        //安装时间
+        updateTime:"",//($date-time)
+        //更新时间
+        apkVersion:"",//
+        //apk版本号
+        status:"",//($int32)
+        //设备状态:2//-启用，4-停用
+        brandCode:"",//
+        //品牌备用编码
+        typeCode:"",//
+        //品牌备用编码
+        provinceId:"",//($int32)
+        //省代码
+        cityId:"",//($int32)
+        //市代码
+        editionId:"",//($int64)
+        //版本主键
+        deviceJoinEditionStatus:"",//($int32)
+        //设备关联版本状态:0-未关联,1//-已关联
+        deviceUuid:"",//
+        },
       dataList: [],
       total: 0,
 
      
       loading: false,
+      options:[],
      
     }
   },
@@ -215,9 +367,6 @@ export default {
           });          
         });
      
-    },
-    getoPublishTemplate(item){
-        this.$router.push({ name: 'publishTemplate', query: { id: item.id }});
     }
   
   }

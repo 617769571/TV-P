@@ -65,7 +65,7 @@ export const constantRouterMap = [
         path: 'contantLibrary',
         name: 'contantLibrary',
         component: () => import('@/views/contantLibrary/index'),
-        meta: { title: '内容库管理', icon: 'table' },
+        meta: { title: '内容库管理', icon: 'table' }
       },
       {
         path: 'contantLibrary/editContant',
@@ -107,9 +107,9 @@ export const constantRouterMap = [
         meta: { title: '模板管理', icon: 'table' }
       },
       {
-        path: 'secondaryPages',
-        name: 'secondaryPages',
-        component: () => import('@/views/secondaryPages/index'),
+        path: 'edition',
+        name: 'edition',
+        component: () => import('@/views/edition/index'),
         meta: { title: '版本管理', icon: 'table' }
       },
       {
@@ -124,8 +124,24 @@ export const constantRouterMap = [
         component: () => import('@/views/templateManagement/addContent'),
         hidden: true
       },
-      
-
+      {
+        path: 'edition/editTemplate',
+        name: 'editTemplate',
+        component: () => import('@/views/edition/updatePage'),
+        hidden: true
+      },
+      {
+        path: 'edition/addContent',
+        name: 'addContent',
+        component: () => import('@/views/edition/addContent'),
+        hidden: true
+      },
+      {
+        path: 'templateManagement/publishTemplate',
+        name: 'publishTemplate',
+        component: () => import('@/views/templateManagement/publishTemplate'),
+        hidden: true
+      }
     ]
   },
   // {
