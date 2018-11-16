@@ -35,7 +35,6 @@ export function TEMPLATE_DETAIL(id) {
 
 
 export function TEMPLATE_FIND(params) {
-  // 
   return request({
     url: process.env.BASE_API + '/template/list-page',
     method: 'get',
@@ -46,7 +45,6 @@ export function TEMPLATE_FIND(params) {
   })
 }
 export function TEMPLATE_DEL(id) {
-  // 
   return request({
     url: process.env.BASE_API + '/template/del/'+id+'/?template_id='+id,
     method: 'DELETE',
@@ -56,4 +54,106 @@ export function TEMPLATE_DEL(id) {
   })
 }
 
+export function OTT_DEVICE_LIST(params,data) {
+  for(let i in data){
+    if(!data[i]){
+      delete data[i];
+    }
+  }
+  return request({
+    url: process.env.BASE_API + '/ott/device/list',
+    method: 'post',
+    params,
+    data,
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+export function region_province() {
+  return request({
+    url: process.env.BASE_API + '/region/province',
+    method: 'get',
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+export function region_city(params) {
+  return request({
+    url: process.env.BASE_API + '/region/city',
+    method: 'get',
+    params,
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+export function get_store_org() {
+  return request({
+    url: process.env.BASE_API + '/ott/store/org',
+    method: 'get',
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+export function get_store_brand(params) {
+  return request({
+    url: process.env.BASE_API + '/ott/store/brand',
+    method: 'get',
+    params,
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+export function get_device_brand() {
+  return request({
+    url: process.env.BASE_API + '/ott/device/brand',
+    method: 'get',
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+export function get_store(params) {
+  return request({
+    url: process.env.BASE_API + '/ott/store',
+    method: 'get',
+    params,
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+export function get_device_model(brandCode) {
+  return request({
+    url: process.env.BASE_API + `/ott/device/model/${brandCode}?brandCode=${brandCode}`,
+    method: 'get',
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+export function edition_check_join_device(data) {
+  return request({
+    url: process.env.BASE_API + '/edition/check-join-device',
+    method: 'post',
+    data,
+    headers: {
+      'token': getToken()
+    }
+  })
+}
+export function template_publish(data) {
+  return request({
+    url: process.env.BASE_API + '/template/publish',
+    method: 'post',
+    data,
+    headers: {
+      'token': getToken()
+    }
+  })
+}
 

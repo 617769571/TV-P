@@ -1,44 +1,18 @@
 <template>
   <div class="device-list app-container">
     <div class="title-box">
-      <span class="main-title">模板管理</span>
-      <!-- <span class="device-tip">（点击门店名称查看门店详情、点击终端UUID查看设备详情）</span> -->
+      <span class="main-title">版本管理 > 关联设备</span>
     </div>
     <div class="content-container">
-      <div class="detail-content">
-        <div style="padding:10px">
-          <el-form ref="addForm" :model="addForm">
-            <el-form-item :label-width="labelWidth" label="版本名称" prop="templateName" style="white-space:nowrap">
-              <el-input
-                class="searchInput"
-                v-model="addForm.editionName"
-                placeholder="请输入版本名称搜索"
-                />
-            </el-form-item>
-          </el-form>
-        </div>
+      <el-tabs v-model="thisList" type="card" @tab-click="handleClick">
+        <el-tab-pane label="已关联设备" name="1">
+        </el-tab-pane>
+        <el-tab-pane label="添加设备" name="2">
+        </el-tab-pane>
+      </el-tabs>
+      <div class="detail-content" >
         <div class="select-wrapper">
           <div class="select-box">
-            <!-- <el-row>
-             
-              <el-col :span="10">
-                <el-form ref="filterForm" :model="filterForm" :inline="true" label-width="100px" class="filter-form">
-                
-                  <el-form-item label="" prop="template_name"  style="float:right;margin-right:20px;">
-                    <el-input
-                      class="searchInput"
-                      v-model="filterForm.template_name"
-                      placeholder="请输入模板名称搜索"
-                     />
-                     
-                  </el-form-item>
-                </el-form>
-              </el-col>
-              <el-col :span="4">
-                <el-button size="medium" class="btn-primary" @click="queryData(true)">查询</el-button>
-               
-              </el-col>
-            </el-row> -->
             <el-form :inline="true" :model="filterForm" class="demo-form-inline">
               <el-form-item label="集团名称">
                 <el-select @change="organizationChange" v-model="filterForm.organizationId" filterable placeholder="请选择">
@@ -211,8 +185,9 @@ export default {
   },
   data() {
     return {
+      thisList:'1',
       addForm:{
-        templateId: 0,
+        editionId: 0,
         editionName: '',
         deviceIdList: []
       },
@@ -289,7 +264,6 @@ export default {
     // // 获取品牌
     // this.getDeviceBrands()
     // // 首次获取前20条数据
-    this.addForm.templateId =this.$route.query.id;
     this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
     // // 获取所有房间类型
     // this.getAllRoomType()
@@ -298,7 +272,16 @@ export default {
   },
   methods: {
     onShow(){
-      this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
+      this.addForm.editionId =this.$route.query.id;
+      this.filterForm.editionId = this.$route.query.id;
+      if(this.thisList=='1'){
+        this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize},{editionId:this.filterForm.editionId})
+
+      }else{
+        this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
+
+      }
+
       region_province().then(res=>{
         this.province = res;
       })
@@ -308,6 +291,9 @@ export default {
       get_device_brand().then(res=>{
         this.deviceBrands = res;
       })
+      
+    },
+    handleClick(){
       
     },
     organizationChange(){

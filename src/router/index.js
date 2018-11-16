@@ -137,6 +137,12 @@ export const constantRouterMap = [
         hidden: true
       },
       {
+        path: 'edition/devicesList',
+        name: 'devicesList',
+        component: () => import('@/views/edition/devicesList'),
+        hidden: true
+      },
+      {
         path: 'templateManagement/publishTemplate',
         name: 'publishTemplate',
         component: () => import('@/views/templateManagement/publishTemplate'),
