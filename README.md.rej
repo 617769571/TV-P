@@ -1,0 +1,27 @@
+diff a/README.md b/README.md	(rejected hunks)
+@@ -1,23 +0,11 @@
+-# tv-portal
+ 
+-# api 说明
+-
+-> OTT api(电视门户)
+-地址栏输入：http://192.168.16.170:8080/ott-manage/swagger/swagger-ui.html，
+-然后把http://localhost:8080/ott-manage/rest/swagger.json替换为下面的地址：
+-http://192.168.16.170:8080/ott-manage/rest/swagger.json
+-
+-> GAIA_API(云门户)
+-地址栏输入：http://192.168.16.170:8080/swagger/#/，
+-然后把http://192.168.16.170:8080/gaia/rest/swagger.json替换为下面的地址：
+-http://192.168.16.170:8081/gaia/rest/swagger.json
+ 
+ # token 和 EVA-ACCESS-TOKEN 的区别
+ |key              |          value          |       接口平台        |     环境接口<process.env>
+ ---------------------------------------------------------------------------------------------------
+-|token            |      ad2a234df5234      |       电视门户        |     BASE_API
++|token            |      ad2a234df5234      |       tv-portal        |     BASE_API
+ ---------------------------------------------------------------------------------------------------
+-|ENV-ACCESS-TOKEN |      aSDAd2as23d4d      |       云门户          |     GAIA_API
++|ENV-ACCESS-TOKEN |      aSDAd2as23d4d      |       ott          |     GAIA_API
+ 
+ # headers书写规范
+ key一律用`'`包装
