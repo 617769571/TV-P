@@ -582,7 +582,6 @@ export default {
       this.enableType = EnabledType.NONE
     },
     handleSelectionChange(selections) {
-      debugger
       this.multipleSelection = selections
     },
     handleSortChanged({ column, prop, order }) {

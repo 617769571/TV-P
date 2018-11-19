@@ -436,7 +436,6 @@ export default {
     },
     
     beforeAvatarUpload(file) {
-      debugger;
       let isJPG = false;
       if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/gif'){
         isJPG = true;
@@ -596,8 +595,6 @@ export default {
           })
 
       }else{
-        debugger;
-
         TEMPLATE_UPDATE(data).then(res=>{
           Message({ showClose: true, message: '编辑成功', type: 'success' })
             history.go(-1);

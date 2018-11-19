@@ -2,19 +2,12 @@
   <div class="device-list app-container">
     <div class="title-box">
       <span class="main-title">版本管理>{{!editOrAddFlag?'编辑':'新建'}}版本</span>
-      <!-- <span class="device-tip">（点击门店名称查看门店详情、点击终端UUID查看设备详情）</span> -->
+      
     </div>
     <div class="content-container">
       
       <div class="cont">
-        <!-- <div class="cont_left">
-          <div style="line-height:80px;">页面展现方式</div>
-         
-          <div :class="editForm.showMode==1?'bgf2 left_list':'left_list'" @click="editForm.showMode=1"><span>A</span>开机画面+开机视频+欢迎页+智能主页</div>
-          <div :class="editForm.showMode==2?'bgf2 left_list':'left_list'" @click="editForm.showMode=2"><span>B</span>开机画面+开机视频+智能主页</div>
-          <div :class="editForm.showMode==3?'bgf2 left_list':'left_list'" @click="editForm.showMode=3"><span>C</span>开机画面+开机视频+欢迎页</div>
-          <div :class="editForm.showMode==4?'bgf2 left_list':'left_list'" @click="editForm.showMode=4"><span>D</span>开机画面+开机视频</div>
-        </div> -->
+        
         <div class="cont_right">
           <div style="line-height:80px;padding-left:10px;">编辑版本</div>
             <div class="left_list flex" @click="goToAddContent(1)" >
@@ -83,18 +76,7 @@
 <script>
 import EnabledType from './types/enable-type'
 import { Message } from 'element-ui'
-// import {
-//   GET_CONTANT_APP,
-//   GET_MODEL_LIST,
-//   GET_DEVICE_LIST,
-//   GET_STORES,
-//   GET_CONTANT_FIND,
-//   CHANGE_DEVICE_STATUS,
-//   UPDATE_INFO,
-//   DEVICE_DETAIL,
-//   REGISTER_CHECK,
-//   REGISTER_DEVICE
-// } from '@/api/contantLibraryAPI/contantLibraryAPI'
+
 import {
   EDITION_UPDATE,
   EDITION_DETAIL
@@ -199,27 +181,6 @@ export default {
       editOrAddFlag:false, //用于判断当前是新建还是编辑
       APILeft:'',
       pageLayoutTypes:[{ text: '电视布局', value: 1 }],
-      editRules: {
-        // storeName: [{ required: true, trigger: 'blur', validator: validateStoreNameE }],
-        // brandCode: [{ required: true, trigger: 'blur', validator: validateBrandCodeE }],
-        // typeCode: [{ required: true, trigger: 'blur', validator: validateTypeCodeE }],
-        // // roomNo: [{ required: true, trigger: 'blur', validator: validateRoomNoE }],
-        triggerMode: [{ required: true, trigger: 'blur', validator: validateRoomTypeE }],
-       
-      },
-      addRules: {
-        contentName: [
-          { required: true, message: '请输入内容名称', trigger: 'blur' },
-          { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
-        ],
-        // brandCode: [{ required: true, trigger: 'blur', validator: validateBrandCodeA }],
-        // typeCode: [{ required: true, trigger: 'blur', validator: validateTypeCodeA }],
-        // roomNo: [{ required: true, trigger: 'blur', validator: validateRoomNoA }],
-        // roomType: [{ required: true, trigger: 'blur', validator: validateRoomTypeA }],
-        // uuid: [{ required: true, trigger: 'blur', validator: validateUuidA }]
-      },
-      dialogData: {},
-      multipleSelection: [],
       EnabledType,
       enableType: EnabledType.NONE, // 启用/禁用设备
       labelWidth: '120px',
@@ -422,7 +383,6 @@ export default {
     },
     
     beforeAvatarUpload(file) {
-      debugger;
       let isJPG = false;
       if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/gif'){
         isJPG = true;
@@ -568,9 +528,6 @@ export default {
       
         data.showMode = this.editForm.showMode;
      
-      
-        debugger;
-
         EDITION_UPDATE(data).then(res=>{
           Message({ showClose: true, message: '编辑成功', type: 'success' })
             history.go(-1);

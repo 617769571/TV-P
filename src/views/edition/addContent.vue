@@ -417,7 +417,6 @@ export default {
       this.thisInd = this.$route.query.index;
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       let tpObj = JSON.parse(window.sessionStorage.templateObj);
-      debugger;
       if(this.thisInd != 4){
         if(JSON.stringify(tpObj.templateContentList)!='[]'){
           for(let i in tpObj.templateContentList){
@@ -721,7 +720,7 @@ export default {
             obj.contentOrder = this.collapseInds[1]+1;
             this.smartPageList[this.collapseInds[0]].contentSecondPageBOList.push(obj);
           }
-          debugger
+         
         }
       }
      

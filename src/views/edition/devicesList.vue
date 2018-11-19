@@ -276,8 +276,6 @@ export default {
     onShow(){
       this.addForm.editionId =this.$route.query.id;
       this.filterForm.editionId = this.$route.query.id;
-    
-      debugger
       if(this.thisList=='1'){
         this.filterForm.editionId = this.$route.query.id;
         this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize},{editionId:this.filterForm.editionId})
@@ -445,7 +443,6 @@ export default {
       
     },
     submitEdit(){
-      debugger;
       edition_check_join_device({editionId:0,deviceIdList:this.addForm.deviceIdList}).then(res=>{
         if(res.value == '0'){
           this.editEdition();
@@ -469,7 +466,6 @@ export default {
      
       this.addForm.deviceIdList = this.addForm.deviceIdList;
       edition_join_device(this.addForm).then(res=>{
-        debugger;
          this.$message({
         type: 'success',
         message: '发布成功!'

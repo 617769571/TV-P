@@ -483,7 +483,6 @@ export default {
      
       this.addForm.deviceIdList = this.addForm.deviceIdList;
       template_publish(this.addForm).then(res=>{
-        debugger;
          this.$message({
         type: 'success',
         message: '发布成功!'

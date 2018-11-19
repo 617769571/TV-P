@@ -107,7 +107,8 @@
                 <el-button @click="showAndGetData(1,['318x207'],true)">选择图片内容</el-button>
                 <span style="color:#dcdfe6">只支持图片形式的内容，尺寸318x207，只能添加一个</span>
                 <div style="width:500px;min-height:300px;margin-top:10px;text-align:center">
-                  <img v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" style="width:100%;" :src="getImgUrl(smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl)" alt="">
+                  <img v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" style="width:100%;" :src="getImgUrl(smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl)" alt="" />
+                  <!-- <el-switch v-model=""></el-switch> -->
                   <el-button v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" size="medium" class="btn-default" @click="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl='';smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentId=''">重置</el-button>
                 </div>
               </el-form-item>

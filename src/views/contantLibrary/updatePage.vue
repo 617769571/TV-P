@@ -496,7 +496,6 @@ export default {
     },
     
     beforeAvatarUpload(file) {
-      debugger;
       let isJPG = false;
       if(this.editForm.showMode == 1){
         if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/gif'){

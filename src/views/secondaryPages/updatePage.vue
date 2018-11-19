@@ -350,7 +350,6 @@ export default {
               this.contentMapper2.push(res.contents[i]);
             }
           }
-          debugger;
           this.loading = false;
           this.oldSecondPage = this.editFormatData();
           for (let i in this.oldSecondPage){
@@ -477,7 +476,6 @@ export default {
         return Y+M+D+h+m+s;
     },
     getImgUrl:function(url){
-      debugger;
       let SRC = this.APILeft+url.split('$}')[1];
       return SRC;
     },
@@ -495,7 +493,6 @@ export default {
         pageIndex:that.pageIndex,
         pageSize:that.pageSize
       }
-      debugger;
       GET_CONTANT_FIND(params,data?data:{}).then(value => {
  
         this.dataList = [];
@@ -589,7 +586,6 @@ export default {
       this.dialogVisible = false;
     },
     editFormatData(){
-      debugger;
       let contentMapper = [];
       if(!this.editOrAddFlag){
         if(this.contentMapper1){
