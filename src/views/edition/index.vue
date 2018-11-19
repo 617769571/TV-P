@@ -73,7 +73,6 @@
 import { Message } from 'element-ui';
 import {
   EDITION_FIND,
-  TEMPLATE_DEL
 } from '@/api/editionAPI/editionAPI';
 
 
@@ -169,31 +168,31 @@ export default {
       
       window.sessionStorage.templateObj = '';
       if(editFlag){
-        this.$router.push({ name: 'editTemplate', query: { edit: editFlag },params:{contentObj:item}});
+        this.$router.push({ name: 'editEdition', query: { edit: editFlag },params:{contentObj:item}});
       }else{
-        this.$router.push({ name: 'editTemplate', query: { edit: editFlag }});
+        this.$router.push({ name: 'editEdition', query: { edit: editFlag }});
       }
     },
-    delTemplate(item){
-      this.$confirm('此操作将永久删除该模板, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        TEMPLATE_DEL(item.id).then(res=>{
-          this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });
-      });
-    },
+    // delTemplate(item){
+    //   this.$confirm('此操作将永久删除该模板, 是否继续?', '提示', {
+    //     confirmButtonText: '确定',
+    //     cancelButtonText: '取消',
+    //     type: 'warning'
+    //   }).then(() => {
+    //     TEMPLATE_DEL(item.id).then(res=>{
+    //       this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
+    //       this.$message({
+    //         type: 'success',
+    //         message: '删除成功!'
+    //       });
+    //     })
+    //   }).catch(() => {
+    //     this.$message({
+    //       type: 'info',
+    //       message: '已取消删除'
+    //     });
+    //   });
+    // },
     goDevicesList(item){
       this.$router.push({ name: 'devicesList', query: { id: item.id }});
     }

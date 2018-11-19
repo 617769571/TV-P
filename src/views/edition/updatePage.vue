@@ -5,20 +5,16 @@
       <!-- <span class="device-tip">（点击门店名称查看门店详情、点击终端UUID查看设备详情）</span> -->
     </div>
     <div class="content-container">
-      <el-form ref="editForm" :model="editForm" :rules="editRules">
-        <el-form-item :label-width="labelWidth" label="模板名称" prop="templateName" style="white-space:nowrap">
-          <el-input v-model="editForm.templateName" placeholder="请输入内容名称" :maxlength="30"/><span style="color:#dcdfe6">&nbsp;{{editForm.templateName.length}}/30</span>
-        </el-form-item>
-      </el-form>
+      
       <div class="cont">
-        <div class="cont_left">
+        <!-- <div class="cont_left">
           <div style="line-height:80px;">页面展现方式</div>
-          <!-- [{ text: '开机画面+开机视频+欢迎页+智能主页', value: 1 }, { text: '开机画面+开机视频+智能主页', value: 2 }, { text: '开机画面+开机视频+欢迎页', value: 3 }, { text: '开机画面+开机视频', value: 4 }] -->
+         
           <div :class="editForm.showMode==1?'bgf2 left_list':'left_list'" @click="editForm.showMode=1"><span>A</span>开机画面+开机视频+欢迎页+智能主页</div>
           <div :class="editForm.showMode==2?'bgf2 left_list':'left_list'" @click="editForm.showMode=2"><span>B</span>开机画面+开机视频+智能主页</div>
           <div :class="editForm.showMode==3?'bgf2 left_list':'left_list'" @click="editForm.showMode=3"><span>C</span>开机画面+开机视频+欢迎页</div>
           <div :class="editForm.showMode==4?'bgf2 left_list':'left_list'" @click="editForm.showMode=4"><span>D</span>开机画面+开机视频</div>
-        </div>
+        </div> -->
         <div class="cont_right">
           <div style="line-height:80px;padding-left:10px;">编辑模版</div>
             <div class="left_list flex" @click="goToAddContent(1)" >
@@ -87,7 +83,6 @@
 <script>
 import EnabledType from './types/enable-type'
 import { Message } from 'element-ui'
-import DeviceDetailDialog from './dialog/device-detail-dialog.vue'
 // import {
 //   GET_CONTANT_APP,
 //   GET_MODEL_LIST,
@@ -101,20 +96,12 @@ import DeviceDetailDialog from './dialog/device-detail-dialog.vue'
 //   REGISTER_DEVICE
 // } from '@/api/contantLibraryAPI/contantLibraryAPI'
 import {
-  
-  TEMPLATE_ADD,
-  TEMPLATE_DETAIL,
-  TEMPLATE_UPDATE
+  EDITION_UPDATE,
+  EDITION_DETAIL
 
-} from '@/api/templateAPI/templateAPI'
-import { GET_ROOM_TYPE, GET_ALL_ROOM_TYPE } from '@/api/storeManage/storeManage'
-import RoomTypeConfig from '@/constants/room-type-config'
-
+} from '@/api/editionAPI/editionAPI'
 export default {
   name: 'DeviceList',
-  components: {
-    DeviceDetailDialog
-  },
   data() {
     const validateStoreNameE = (rule, value, callback) => {
       if (value.length < 1) {
@@ -237,7 +224,7 @@ export default {
       editVisible: false,
       addVisible: false,
       editForm: {
-        templateName: '',
+        
         showMode: 1,
         templateContentList:[],
 
@@ -331,7 +318,6 @@ export default {
         roomTypeName: null,
         status: null
       },
-      RoomTypeConfig,
       sortType: null,
       applications:[
         // {
@@ -372,10 +358,9 @@ export default {
       }else{
         if(!this.editOrAddFlag){
           // this.loading = true;
-          TEMPLATE_DETAIL(this.$route.params.contentObj.id).then(res=>{
+          EDITION_DETAIL(this.$route.params.contentObj.id).then(res=>{
             let objStr = JSON.stringify(res);
             let str2 = objStr.replace(/"templateContentVOList"/gm,'"templateContentList"').replace(/"templateSmartPageVOList"/gm,'"smartPageList"').replace(/"contentSecondPageVOList"/gm,'"contentSecondPageBOList"');
-            this.editForm.templateName = JSON.parse(str2).templateName;
             this.editForm.showMode = JSON.parse(str2).showMode;
             this.editForm.id = JSON.parse(str2).id;
             this.editForm.templateContentList = JSON.parse(str2).templateContentList;
@@ -574,38 +559,24 @@ export default {
     //   }
     // },
     submitEdit(){
-      var thisdata = window.sessionStorage.templateObj.replace(/"contentImgUrl":".*?",/gm,'').replace(/"contentImgUrl":null,/gm,'').replace(/"contentImgUrl":".*?"/gm,'').replace(/"contentImgUrl":null/gm,'')
+      var thisdata = window.sessionStorage.templateObj.replace(/"contentImgUrl":".*?",/gm,'').replace(/"contentImgUrl":null,/gm,'').replace(/"contentImgUrl":".*?"/gm,'').replace(/"contentImgUrl":null/gm,'').replace(/"showMode":".*?",/gm,'').replace(/"showMode":".*?"/gm,'').replace(/"editionName":".*?"/gm,'').replace(/"editionName":".*?",/gm,'');
       let data= JSON.parse(thisdata);
-      if(!this.editForm.templateName){
-        this.$message({
-          message: '模版名称不能为空',
-          type: 'warning'
-        });
-        return;
-      }else{
-        data.templateName = this.editForm.templateName;
+      
         data.showMode = this.editForm.showMode;
-      }
-      if(this.editOrAddFlag){
-          TEMPLATE_ADD(data).then(res=>{
-            Message({ showClose: true, message: '创建成功', type: 'success' })
-            history.go(-1);
-          })
-
-      }else{
+     
+      
         debugger;
 
-        TEMPLATE_UPDATE(data).then(res=>{
+        EDITION_UPDATE(data).then(res=>{
           Message({ showClose: true, message: '编辑成功', type: 'success' })
             history.go(-1);
         })
-      }
+      
     },
     goToAddContent(index){
       let tpObj = new Object();
       if(window.sessionStorage.templateObj){
         tpObj = JSON.parse(window.sessionStorage.templateObj);
-        tpObj.templateName = this.editForm.templateName;
         tpObj.showMode = this.editForm.showMode;
       }else{
         tpObj = this.editForm;

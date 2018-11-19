@@ -175,6 +175,9 @@ import {
   edition_check_join_device,
   template_publish
 } from '@/api/templateAPI/templateAPI'
+import {
+  edition_join_device
+} from '@/api/editionAPI/editionAPI'
 
 import RoomTypeConfig from '@/constants/room-type-config'
 
@@ -188,7 +191,6 @@ export default {
       thisList:'1',
       addForm:{
         editionId: 0,
-        editionName: '',
         deviceIdList: []
       },
       pageIndex: 0,
@@ -278,6 +280,7 @@ export default {
         this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize},{editionId:this.filterForm.editionId})
 
       }else{
+        this.filterForm.editionId = 0;
         this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
 
       }
@@ -294,7 +297,7 @@ export default {
       
     },
     handleClick(){
-      
+      this.onShow()
     },
     organizationChange(){
       get_store_brand({organization_id:this.filterForm.organizationId}).then(res=>{
@@ -442,14 +445,14 @@ export default {
       debugger;
       edition_check_join_device({editionId:0,deviceIdList:this.addForm.deviceIdList}).then(res=>{
         if(res.value == '0'){
-          this.addEdition();
+          this.editEdition();
         }else{
           this.$confirm(`当前有${res.value}个设备在使用其它版本，确认发布该版本？`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.addEdition();  
+          this.editEdition();  
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -459,10 +462,10 @@ export default {
         }
       })
     },
-    addEdition(){
+    editEdition(){
      
       this.addForm.deviceIdList = this.addForm.deviceIdList;
-      template_publish(this.addForm).then(res=>{
+      edition_join_device(this.addForm).then(res=>{
         debugger;
          this.$message({
         type: 'success',

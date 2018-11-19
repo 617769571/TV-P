@@ -131,8 +131,14 @@ export const constantRouterMap = [
         hidden: true
       },
       {
+        path: 'edition/editTemplate',
+        name: 'editEdition',
+        component: () => import('@/views/edition/updatePage'),
+        hidden: true
+      },
+      {
         path: 'edition/addContent',
-        name: 'addContent',
+        name: 'editionContent',
         component: () => import('@/views/edition/addContent'),
         hidden: true
       },
