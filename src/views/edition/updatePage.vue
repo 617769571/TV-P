@@ -1,7 +1,7 @@
 <template>
   <div class="device-list app-container">
     <div class="title-box">
-      <span class="main-title">模板管理>{{!editOrAddFlag?'编辑':'新建'}}模板</span>
+      <span class="main-title">版本管理>{{!editOrAddFlag?'编辑':'新建'}}版本</span>
       <!-- <span class="device-tip">（点击门店名称查看门店详情、点击终端UUID查看设备详情）</span> -->
     </div>
     <div class="content-container">
@@ -16,7 +16,7 @@
           <div :class="editForm.showMode==4?'bgf2 left_list':'left_list'" @click="editForm.showMode=4"><span>D</span>开机画面+开机视频</div>
         </div> -->
         <div class="cont_right">
-          <div style="line-height:80px;padding-left:10px;">编辑模版</div>
+          <div style="line-height:80px;padding-left:10px;">编辑版本</div>
             <div class="left_list flex" @click="goToAddContent(1)" >
               <div>
                 <img src="../../assets/templateImg/1.jpg" width="200" alt="">

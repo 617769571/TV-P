@@ -1,7 +1,7 @@
 <template>
   <div class="device-list app-container">
     <div class="title-box">
-      <span class="main-title">模板管理>{{!editOrAddFlag?'编辑':'新建'}}模板>{{pageTitle}}</span>
+      <span class="main-title">版本管理>{{!editOrAddFlag?'编辑':'新建'}}版本>{{pageTitle}}</span>
     </div>
     <div class="content-box">
       <!-- <h5 class="container-header">{{pageTitle}}展示</h5> -->
@@ -31,7 +31,7 @@
           <el-button @click="showAndGetData(2,['1920x1080','1280x720'],true)">选择视频内容</el-button>
           <span style="color:#dcdfe6">只支持视频形式的内容，1920x1080或1280x720，只能添加一个</span>
           <div style="width:500px;min-height:300px;margin-top:10px;text-align:center">
-            <img v-if="templateContent.contentImgUrl" style="width:100%;" :src="getImgUrl(templateContent.contentImgUrl)" alt="">
+            <video v-if="templateContent.contentImgUrl" style="width:100%;" :src="getImgUrl(templateContent.contentImgUrl)"  controls="controls"></video>
             <el-button v-if="templateContent.contentImgUrl" size="medium" class="btn-default" @click="templateContent.contentImgUrl='';templateContent.contentId=''">重置</el-button>
           </div>
         </el-form-item>

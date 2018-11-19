@@ -258,7 +258,7 @@ export default {
     return {
       editOrAddFlag:false, //用于判断当前是新建还是编辑
       BASE_API:'',
-      APILeft:'http://192.168.16.170:80',
+      APILeft:'',
       contentTypes:[{ text: '影视', value: 1 }, { text: '直播', value: 2 }, { text: '广告', value: 3 }, { text: '购物', value: 4 }, { text: '服务', value: 5 }, { text: '周边', value: 6 }],
       editRules: {
         // storeName: [{ required: true, trigger: 'blur', validator: validateStoreNameE }],
