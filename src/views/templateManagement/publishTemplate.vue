@@ -36,17 +36,17 @@
               </el-col>
               <el-col :span="4">
                 <el-button size="medium" class="btn-primary" @click="queryData(true)">查询</el-button>
-                <el-button size="medium" class="btn-default" @click="resetForm('filterForm')">重置</el-button>
+               
               </el-col>
             </el-row> -->
             <el-form :inline="true" :model="filterForm" class="demo-form-inline">
               <el-form-item label="集团名称">
-                <el-select v-model="filterForm.organizationName" filterable placeholder="请选择">
+                <el-select @change="organizationChange" v-model="filterForm.organizationId" filterable placeholder="请选择">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="(item,index) in storeOrg"
+                    :key="index"
+                    :label="item.labelName"
+                    :value="item.keyCode">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -57,70 +57,77 @@
                 <el-input v-model="filterForm.externalId" placeholder="门店外部编号"></el-input>
               </el-form-item>
               <el-form-item label="品牌">
-                <el-select v-model="filterForm.deviceBrand" placeholder="请选择品牌">
+                <el-select  v-model="filterForm.brandId" placeholder="请选择品牌">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in storeBrands"
+                    :key="item.keyCode"
+                    :label="item.labelName"
+                    :value="item.keyCode">
                   </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="门店名称">
-                <el-select v-model="filterForm.organizationName" filterable placeholder="请选择">
+                <el-select  v-model="filterForm.storeName" 
+                  
+                  filterable
+                  remote
+                  reserve-keyword
+                  placeholder="请输入门店名称"
+                  :remote-method="storeNameChange"
+                  :loading="loading">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="(rt,index) in storeNames"
+                    :key="index"
+                    :label="rt.key"
+                    :value="rt.key">
                   </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="所属省">
-                <el-select v-model="filterForm.provinceId" placeholder="请选择">
+                <el-select @change="getCitys()" v-model="filterForm.provinceId" placeholder="请选择">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in province"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="所属市">
-                <el-select v-model="filterForm.cityId" placeholder="请选择">
+                <el-select  v-model="filterForm.cityId" placeholder="请选择">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in citys"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
                   </el-option>
                 </el-select>
               </el-form-item>
-              <!-- <el-form-item label="终端UUID">
-                <el-input v-model="filterForm.externalId" placeholder="终端UUID"></el-input>
-              </el-form-item> -->
-              <!-- <el-form-item label="终端型号">
-                <el-select v-model="filterForm.cityId" placeholder="请选择">
+              <el-form-item label="终端UUID">
+                <el-input v-model="filterForm.deviceUuid" placeholder="终端UUID"></el-input>
+              </el-form-item>
+              <el-form-item label="终端型号">
+                <el-select v-model="filterForm.deviceModel" placeholder="请选择">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in deviceModels"
+                    :key="item"
+                    :label="item"
+                    :value="item">
                   </el-option>
                 </el-select>
-              </el-form-item> -->
-              <!-- <el-form-item label="终端品牌">
-                <el-select v-model="filterForm.cityId" placeholder="请选择">
+              </el-form-item>
+              <el-form-item label="终端品牌">
+                <el-select @change="deviceBrandsChange" v-model="filterForm.deviceBrand" placeholder="请选择">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in deviceBrands"
+                    :key="item"
+                    :label="item"
+                    :value="item">
                   </el-option>
                 </el-select>
-              </el-form-item> -->
+              </el-form-item>
               <el-form-item label="房间类型">
-                <el-select v-model="filterForm.roomTypeName" placeholder="请选择">
+                <el-select  v-model="filterForm.roomTypeName" placeholder="请选择">
                   <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -133,31 +140,26 @@
                 <el-input v-model="filterForm.roomNo" placeholder="房间号"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="queryData">查询</el-button>
+                <el-button size="medium" type="primary" @click="queryData(true)">查询</el-button>
+                 <el-button size="medium" class="btn-default" @click="resetForm('filterForm')">重置</el-button>
               </el-form-item>
             </el-form>
           </div>
         </div>
-        
+  
         <div class="device-table-wrapper">
-          <el-table :data="dataList" stripe border class="device-table" @filter-change="filterChanged">
+          <el-table ref="deviceTable" :data="dataList" stripe border class="device-table" @selection-change="handleSelectionChange">
             <el-table-column type="selection"/>
-            <el-table-column prop="templateName" label="模板名称" width="240"/>
-            <el-table-column
-              :column-key="'show_modes'"
-              :filters="[{ text: '开机画面+开机视频+欢迎页+智能主页', value: 1 }, { text: '开机画面+开机视频+智能主页', value: 2 }, { text: '开机画面+开机视频+欢迎页', value: 3 }, { text: '开机画面+开机视频', value: 4 }]"
-              prop="showModeName" 
-              label="页面展现方式" 
-              width="200"/>
-            <el-table-column prop="updateTimeStr" label="更新时间" width="200"/>
-            <el-table-column prop="edit" label="操作" width="300">
-              <template slot-scope="scope">
-                <el-button type="primary" size="mini"  @click="handleEdit(scope.row)">预览</el-button>
-                <el-button type="primary" size="mini" class="btn-primary" @click="showDialog(true,scope.row)">编辑</el-button>
-                <el-button type="primary" size="mini" class="btn-primary" @click="delTemplate(scope.row)">删除</el-button>
-                <el-button type="primary" size="mini" class="btn-primary">发布</el-button>
-              </template>
-            </el-table-column> 
+            <el-table-column prop="organizationName" label="集团名称" width="100"/>
+            <el-table-column prop="storeId" label="门店编号" width="200"/>
+            <el-table-column prop="externalId" label="门店外部编号" width="100"/>
+            <el-table-column prop="deviceBrand" label="品牌" width="150"/>
+            <el-table-column prop="storeName" label="门店名称" width="150"/>
+            <el-table-column prop="deviceUuid" label="终端UUID" width="150"/>
+            <el-table-column prop="deviceModel" label="终端型号" width="200"/>
+            <el-table-column prop="deviceBrand" label="终端品牌" width="200"/>
+            <el-table-column prop="roomNo" label="房间号" width="100"/>
+            <el-table-column prop="roomTypeName" label="房间类型" width="200"/>
           </el-table>
         </div>
         <div class="pagination-wrapper">
@@ -174,6 +176,10 @@
         </div>
       </div>
     </div>
+    <div slot="footer" class="dialog-footer text-center">
+        <el-button class="btn-default" size="medium" @click="goBack">返回</el-button>
+        <el-button class="btn-primary" size="medium" @click="submitEdit">提交</el-button>
+      </div>
   </div>
 </template>
 
@@ -183,7 +189,17 @@ import { Message } from 'element-ui'
 import DeviceDetailDialog from './dialog/device-detail-dialog.vue'
 import {
   TEMPLATE_FIND,
-  TEMPLATE_DEL
+  TEMPLATE_DEL,
+  OTT_DEVICE_LIST,
+  region_province,
+  region_city,
+  get_store_org,
+  get_store_brand,
+  get_device_brand,
+  get_store,
+  get_device_model,
+  edition_check_join_device,
+  template_publish
 } from '@/api/templateAPI/templateAPI'
 
 import RoomTypeConfig from '@/constants/room-type-config'
@@ -208,49 +224,44 @@ export default {
       needShow: false,
       deviceModels: [],
       filterForm: {
-        deviceId:"",//($int32)
+        deviceId:'',
+        brandId:'',
         //主键
-        organizationId:"",//
+        organizationId:'',
         //所属集团编号
-        organizationName:"",//
+     
         //所属集团
-        storeId:"",//
+        storeId:'',
         //门店编号
-        internalId:"",//
+        internalId:'',
         //门店内部编号
-        externalId:"",//
+        externalId:'',
         //门店外部编码
-        storeName:"",//
+        storeName:'',
         //所属门店
-        deviceBrand:"",//
+        deviceBrand:'',
         //设备品牌
-        deviceModel:"",//
+        deviceModel:'',
         //设备型号
-        roomNo:"",//
+        roomNo:'',
         //所属房间
-        roomTypeName:"",//
+        roomTypeName:'',
         //房间类型
-        createdTime:"",//($date-time)
+        createdTime:'',
         //安装时间
-        updateTime:"",//($date-time)
+        updateTime:'',
         //更新时间
-        apkVersion:"",//
+        apkVersion:'',
         //apk版本号
-        status:"",//($int32)
-        //设备状态:2//-启用，4-停用
-        brandCode:"",//
-        //品牌备用编码
-        typeCode:"",//
-        //品牌备用编码
-        provinceId:"",//($int32)
+        status:'',
+        //设备状态:2-启用，4-停用
+  
+        provinceId:'',
         //省代码
-        cityId:"",//($int32)
+        cityId:'',
         //市代码
-        editionId:"",//($int64)
-        //版本主键
-        deviceJoinEditionStatus:"",//($int32)
-        //设备关联版本状态:0-未关联,1//-已关联
-        deviceUuid:"",//
+    
+        deviceUuid:'',
         },
       dataList: [],
       total: 0,
@@ -258,7 +269,12 @@ export default {
      
       loading: false,
       options:[],
-     
+      province:[],
+      citys:[],
+      storeOrg:[],
+      storeBrands:[],
+      deviceBrands:[],
+      storeNames:[],
     }
   },
   computed: {
@@ -273,11 +289,66 @@ export default {
     // // 获取品牌
     // this.getDeviceBrands()
     // // 首次获取前20条数据
+    this.addForm.templateId =this.$route.query.id;
     this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
     // // 获取所有房间类型
     // this.getAllRoomType()
+    window.addEventListener('pageshow', this.onShow);
+    this.onShow();
   },
   methods: {
+    onShow(){
+      this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
+      region_province().then(res=>{
+        this.province = res;
+      })
+      get_store_org().then(res=>{
+        this.storeOrg = res;
+      })
+      get_device_brand().then(res=>{
+        this.deviceBrands = res;
+      })
+      
+    },
+    organizationChange(){
+      get_store_brand({organization_id:this.filterForm.organizationId}).then(res=>{
+        this.filterForm.storeBrand = null;
+        this.storeBrands = res;
+      })
+    },
+    deviceBrandsChange(){
+      get_device_model(deviceBrand).then(res=>{
+        this.deviceModels = res;
+      })
+    },
+    storeNameChange(query){
+      if (query !== '') {
+          this.loading = true;
+          // setTimeout(() => {
+          //   this.loading = false;
+          //   this.options4 = this.list.filter(item => {
+          //     return item.label.toLowerCase()
+          //       .indexOf(query.toLowerCase()) > -1;
+          //   });
+          // }, 200);
+          console.log(query);
+           get_store({storeName:query.toLowerCase()}).then(res=>{
+             this.filterForm.storeName = '';
+              this.storeNames = res;
+               this.loading = false;
+
+            })
+        } else {
+          this.storeNames = [];
+        }
+     
+    },
+    getCitys(){
+      region_city({parent_id:this.filterForm.provinceId}).then(res=>{
+        this.filterForm.cityId = '';
+        this.citys = res;
+      })
+    },
     filterData(array, key, targetKey) {
       
     },
@@ -302,8 +373,8 @@ export default {
         this.dialogData = value
       }).catch(() => {})
     },
-    fetchData(params) { // 获取表格数据
-      TEMPLATE_FIND(params).then(res=>{
+    fetchData(params,data) { // 获取表格数据
+      OTT_DEVICE_LIST(params,data).then(res=>{
         this.dataList = res.list;
         this.total = res.total;
         for(let i =0;i<res.list.length;i++){
@@ -312,23 +383,24 @@ export default {
       })
     },
     resetForm(formName) {
-      this.$refs[formName].resetFields()
+      for(let i in this[formName]){
+        this[formName][i] = '';
+      }
       this.queryData()
     },
     queryData(flag){
+
       if(flag){
         this.pageIndex = 0;
       }
       let params = {
         pageIndex: this.pageIndex,
         pageSize:this.pageSize,
-        template_name:this.filterForm.template_name
-        
       }
-      if(this.filterForm.show_modes.length>0){
-        params.show_modes = this.filterForm.show_modes.join(',');
-      }
-      this.fetchData(params);
+      // if(this.filterForm.show_modes.length>0){
+      //   params.show_modes = this.filterForm.show_modes.join(',');
+      // }
+      this.fetchData(params,flag?this.filterForm:{});
     },
     showDialog(editFlag, item) {
       
@@ -367,6 +439,50 @@ export default {
           });          
         });
      
+    },
+    goBack(){
+      history.go(-1);
+    },
+    handleSelectionChange(val){
+      var arr = [];
+      for(let i in val){
+        arr.push(val[i].deviceId);
+      }
+      this.addForm.deviceIdList = arr;
+      console.log(this.addForm.deviceIdList);
+      
+    },
+    submitEdit(){
+      debugger;
+      edition_check_join_device({editionId:0,deviceIdList:this.addForm.deviceIdList}).then(res=>{
+        if(res.value == '0'){
+          this.addEdition();
+        }else{
+          this.$confirm(`当前有${res.value}个设备在使用其它版本，确认发布该版本？`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.addEdition();  
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消版本发布'
+          });          
+        });
+        }
+      })
+    },
+    addEdition(){
+     
+      this.addForm.deviceIdList = this.addForm.deviceIdList;
+      template_publish(this.addForm).then(res=>{
+        debugger;
+         this.$message({
+        type: 'success',
+        message: '发布成功!'
+      });
+      })
     }
   
   }

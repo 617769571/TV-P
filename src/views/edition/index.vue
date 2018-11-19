@@ -9,10 +9,7 @@
         <div class="select-wrapper">
           <div class="select-box">
             <el-row>
-              <el-col :span="10">
-                <!-- <el-button size="small" class="btn-primary" @click="showDialog(false)">新建模板</el-button> -->
-               
-              </el-col>
+             
               <el-col :span="10">
                 <el-form ref="filterForm" :model="filterForm" :inline="true" label-width="100px" class="filter-form">
                   <el-form-item label="" prop="edition_name"  style="float:right;margin-right:20px;">
@@ -50,7 +47,7 @@
                 <el-button type="primary" size="mini"  @click="handleEdit(scope.row)">预览</el-button>
                 <el-button type="primary" size="mini" class="btn-primary" @click="showDialog(true,scope.row)">编辑</el-button>
                 <!-- <el-button type="primary" size="mini" class="btn-primary" @click="delTemplate(scope.row)">删除</el-button> -->
-                <el-button type="primary" size="mini" class="btn-primary">关联设备</el-button>
+                <el-button type="primary" size="mini" class="btn-primary" @click="goDevicesList(scope.row)">关联设备</el-button>
               </template>
             </el-table-column> 
           </el-table>
@@ -172,41 +169,34 @@ export default {
       
       window.sessionStorage.templateObj = '';
       if(editFlag){
-
         this.$router.push({ name: 'editTemplate', query: { edit: editFlag },params:{contentObj:item}});
-        
       }else{
-      
         this.$router.push({ name: 'editTemplate', query: { edit: editFlag }});
-
       }
-      
     },
     delTemplate(item){
       this.$confirm('此操作将永久删除该模板, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-           
-            TEMPLATE_DEL(item.id).then(res=>{
-             
-              this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
-
-              this.$message({
-                type: 'success',
-                message: '删除成功!'
-              });
-            })
-        }).catch(() => {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        TEMPLATE_DEL(item.id).then(res=>{
+          this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: 'success',
+            message: '删除成功!'
+          });
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         });
-     
+      });
+    },
+    goDevicesList(item){
+      this.$router.push({ name: 'devicesList', query: { id: item.id }});
     }
-  
   }
 }
 </script>
