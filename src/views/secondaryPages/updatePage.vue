@@ -153,6 +153,7 @@ import {
 } from '@/api/contantLibraryAPI/contantLibraryAPI'
 import { GET_ROOM_TYPE, GET_ALL_ROOM_TYPE } from '@/api/storeManage/storeManage'
 import RoomTypeConfig from '@/constants/room-type-config'
+import {getBaseAPI} from '@/api/contantLibraryAPI/contantLibraryAPI'
 
 export default {
   name: 'DeviceList',
@@ -160,7 +161,7 @@ export default {
   data() {
     return {
       editOrAddFlag:false, //用于判断当前是新建还是编辑
-      APILeft:'http://192.168.16.170:80',
+      APILeft:'',
       pageLayoutTypes:[{ text: '电视布局', value: 1 }],
     
       dialogData: {},
@@ -329,6 +330,8 @@ export default {
   },
   methods: {
     onShow(){
+      this.APILeft = getBaseAPI().IMG_URL;
+
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       if(!this.editOrAddFlag){
       this.loading = true;

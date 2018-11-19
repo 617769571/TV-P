@@ -453,7 +453,13 @@ export default {
       
     },
     submitEdit(){
-      debugger;
+      if(this.addForm.templateName == ''){
+        this.$message({
+            type: 'info',
+            message: '模版名称不能为空',
+          }); 
+          return;
+      }
       edition_check_join_device({editionId:0,deviceIdList:this.addForm.deviceIdList}).then(res=>{
         if(res.value == '0'){
           this.addEdition();

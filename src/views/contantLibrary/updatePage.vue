@@ -24,7 +24,7 @@
           <div v-if="editForm.showMode==1" class="imgsBox">
             <el-upload style="background:#F2F2F2;width:233px;height:233px;"
               class="avatar-uploader"
-              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
               :show-file-list="false"
               :on-success="handleAvatar0Success"
               :before-upload="beforeAvatarUpload">
@@ -33,7 +33,7 @@
             </el-upload>
             <el-upload style="background:#F2F2F2;width:144px;height:234px;"
               class="avatar-uploader"
-              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
               :show-file-list="false"
               :on-success="handleAvatar1Success"
               :before-upload="beforeAvatarUpload">
@@ -42,7 +42,7 @@
             </el-upload>
             <el-upload style="background:#F2F2F2;width:208px;height:104px;"
               class="avatar-uploader"
-              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
               :show-file-list="false"
               :on-success="handleAvatar2Success"
               :before-upload="beforeAvatarUpload">
@@ -51,7 +51,7 @@
             </el-upload>
             <el-upload style="background:#F2F2F2;width:207px;height:116px;"
               class="avatar-uploader"
-              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
               :show-file-list="false"
               :on-success="handleAvatar3Success"
               :before-upload="beforeAvatarUpload">
@@ -60,7 +60,7 @@
             </el-upload>
             <el-upload style="background:#F2F2F2;width:113px;height:74px;"
               class="avatar-uploader"
-              action="http://192.168.16.170:8080/ott-manage/rest/upload/file/upload?file-type=PICTURE"
+              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
               :show-file-list="false"
               :on-success="handleAvatar4Success"
               :before-upload="beforeAvatarUpload">
@@ -70,9 +70,33 @@
 
           </div>
           
-          <el-form-item v-if="editForm.showMode==2" :label-width="labelWidth" label="上传视频：" prop="videos">
+          <div v-if="editForm.showMode==2" class="imgsBox">
+            <el-upload style="background:#F2F2F2;width:207px;height:116px;"
+              class="avatar-uploader"
+              :action="BASE_API+'/upload/file/upload?file-type=VIDEO'"
+              :show-file-list="false"
+              :on-success="handleAvatar3Success"
+              :before-upload="beforeAvatarUpload">
+              <!-- <img v-if="editFormVideos[0].imgUrl" :src="getImgUrl(editFormVideos[0].imgUrl)" class="avatar" style="width:207px;height:116px;"> -->
+              <video v-if="editFormVideos[0].imgUrl" :src="getImgUrl(editFormVideos[0].imgUrl)" class="avatar" style="width:207px;height:116px;" controls="controls">
+                Your browser does not support the video tag.
+              </video>
+              <span  v-if="!editFormVideos[0].imgUrl">1920x1080</span>
+            </el-upload>
+            <el-upload style="background:#F2F2F2;width:207px;height:116px;"
+              class="avatar-uploader"
+              :action="BASE_API+'/upload/file/upload?file-type=VIDEO'"
+              :show-file-list="false"
+              :on-success="handleAvatar3Success"
+              :before-upload="beforeAvatarUpload">
+              <!-- <img v-if="editFormVideos[1].imgUrl" :src="getImgUrl(editFormVideos[1].imgUrl)" class="avatar" style="width:207px;height:116px;"> -->
+              <video v-if="editFormVideos[1].imgUrl" :src="getImgUrl(editFormVideos[1].imgUrl)" class="avatar" style="width:207px;height:116px;" controls="controls">
+                Your browser does not support the video tag.
+              </video>
+              <span  v-if="!editFormVideos[1].imgUrl">1280x720</span>
+            </el-upload>
             
-          </el-form-item>
+          </div>
         </el-form-item>
         <el-form-item :label-width="labelWidth" label="触发方式" prop="triggerMode">
           <el-select v-model="editForm.triggerMode" placeholder="请选择触发方式">
@@ -128,9 +152,11 @@ import {
   GET_CONTANT_APP,
   CONTENT_CREATE,
   CONTANT_GET,
-  CONTENT_UPDATE
-
+  CONTENT_UPDATE,
+  getBaseAPI
 } from '@/api/contantLibraryAPI/contantLibraryAPI'
+// import {  } from '@/api/contantLibraryAPI/contantLibraryAPI'
+
 import { GET_ROOM_TYPE, GET_ALL_ROOM_TYPE } from '@/api/storeManage/storeManage'
 import RoomTypeConfig from '@/constants/room-type-config'
 
@@ -231,6 +257,7 @@ export default {
     }
     return {
       editOrAddFlag:false, //用于判断当前是新建还是编辑
+      BASE_API:'',
       APILeft:'http://192.168.16.170:80',
       contentTypes:[{ text: '影视', value: 1 }, { text: '直播', value: 2 }, { text: '广告', value: 3 }, { text: '购物', value: 4 }, { text: '服务', value: 5 }, { text: '周边', value: 6 }],
       editRules: {
@@ -388,10 +415,16 @@ export default {
   },
   mounted() {
     window.addEventListener('pageshow', this.onShow);
+    
     this.onShow();
   },
   methods: {
     onShow(){
+      console.log(getBaseAPI());
+      this.BASE_API = getBaseAPI().BASE_API;
+      this.APILeft = getBaseAPI().IMG_URL;
+  
+
       GET_CONTANT_APP().then(res=>{
         this.applications = res;
       })
@@ -465,17 +498,23 @@ export default {
     beforeAvatarUpload(file) {
       debugger;
       let isJPG = false;
-      if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/gif'){
-        isJPG = true;
+      if(this.editForm.showMode == 1){
+        if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/gif'){
+          isJPG = true;
+        }
+      }else{
+        if(file.type === 'video/mp4'||file.type === 'video/ts'){
+          isJPG = true;
+        }
       }
       // const isJPG = (file.type === 'image/jpeg')||;
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      const isLt2M = file.size / 1024 / 1024 < 30;
 
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
+        this.$message.error(`上传${(this.editForm.showMode == 1)?'图片':'视频'}只能是 ${(this.editForm.showMode == 1)?'png':'mp4/ts'} 格式!`);
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
+        this.$message.error('上传视频大小不能超过 30MB!');
       }
       return isJPG && isLt2M;
     },

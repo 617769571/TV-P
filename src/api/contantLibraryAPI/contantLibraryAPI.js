@@ -2,7 +2,9 @@ import request from '@/utils/request'
 import { getToken } from '@/utils/auth'
 
 // apd --> http://192.168.16.170:8080/ott-manage/rest/swagger.json
-
+export function getBaseAPI(){
+  return process.env;
+}
 export function GET_STORES(storeName) {
   return request({
     url: process.env.BASE_API + '/ott/store?storeName=' + storeName,

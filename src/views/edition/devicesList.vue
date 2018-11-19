@@ -266,7 +266,7 @@ export default {
     // // 获取品牌
     // this.getDeviceBrands()
     // // 首次获取前20条数据
-    this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
+    // this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
     // // 获取所有房间类型
     // this.getAllRoomType()
     window.addEventListener('pageshow', this.onShow);
@@ -276,7 +276,10 @@ export default {
     onShow(){
       this.addForm.editionId =this.$route.query.id;
       this.filterForm.editionId = this.$route.query.id;
+    
+      debugger
       if(this.thisList=='1'){
+        this.filterForm.editionId = this.$route.query.id;
         this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize},{editionId:this.filterForm.editionId})
 
       }else{

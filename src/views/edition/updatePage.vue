@@ -100,6 +100,8 @@ import {
   EDITION_DETAIL
 
 } from '@/api/editionAPI/editionAPI'
+import {getBaseAPI} from '@/api/contantLibraryAPI/contantLibraryAPI'
+
 export default {
   name: 'DeviceList',
   data() {
@@ -195,7 +197,7 @@ export default {
     return {
 
       editOrAddFlag:false, //用于判断当前是新建还是编辑
-      APILeft:'http://192.168.16.170:80',
+      APILeft:'',
       pageLayoutTypes:[{ text: '电视布局', value: 1 }],
       editRules: {
         // storeName: [{ required: true, trigger: 'blur', validator: validateStoreNameE }],
@@ -352,6 +354,8 @@ export default {
   },
   methods: {
     onShow(){
+      this.APILeft = getBaseAPI().IMG_URL;
+
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       if(window.sessionStorage.templateObj){
         this.editForm = JSON.parse(window.sessionStorage.templateObj);
