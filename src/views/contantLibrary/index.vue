@@ -577,20 +577,11 @@ export default {
     },
 
     showDialog(editFlag, item) {
-      // if(prop == 'addVisible'){
-      //   this.editOrAddFlag = true;
-      // }else{
-      //   this.editOrAddFlag = false;
-      // }
-      // this[prop] = value
       if(editFlag){
         this.$router.push({ name: 'editContant', query: { edit: editFlag },params:{contentObj:item}});
-        
       }else{
         this.$router.push({ name: 'editContant', query: { edit: editFlag }});
-
       }
-      
     },
     navToDeviceDetail(item) {
       this.$router.push({ name: 'previewContant', query: { edit: true },params:{contentObj:item}});

@@ -344,10 +344,21 @@ export default {
           for(let i in res.contents){
             if(res.contents[i].type==1){
               this.contentMapper1 = res.contents[i];
-              this.contentMapper1.imgs = res.contents[i].imgs[0];
+              for(let j in res.contents[i].imgs){
+                if(res.contents[i].imgs[j].size == '16:9'){
+                  this.contentMapper1.imgs = res.contents[i].imgs[j];
+                  break;
+                }
+              }
             }else{
-              res.contents[i].imgs = res.contents[i].imgs[0];
-              this.contentMapper2.push(res.contents[i]);
+              // 
+              for(let j in res.contents[i].imgs){
+                if(res.contents[i].imgs[j].size == '1:1'){
+                  res.contents[i].imgs = res.contents[i].imgs[j];
+                  this.contentMapper2.push(res.contents[i]);
+                  break;
+                }
+              }
             }
           }
           this.loading = false;

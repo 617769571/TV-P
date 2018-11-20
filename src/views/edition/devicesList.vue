@@ -307,7 +307,7 @@ export default {
       })
     },
     deviceBrandsChange(){
-      get_device_model(deviceBrand).then(res=>{
+      get_device_model(this.filterForm.deviceBrand).then(res=>{
         this.deviceModels = res;
       })
     },

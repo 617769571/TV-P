@@ -69,6 +69,17 @@
         </div>
       </div>
     </div>
+    <el-dialog
+        title="预览"
+        :visible.sync="previewDialog"
+        width="1000px"
+        :before-close="handleEdit">
+        <el-carousel style="width:960px;height:540px;position:relative;" indicator-position="outside">
+          <el-carousel-item style="width:960px;height:540px;" v-for="item in 4" :key="item">
+            <h3>{{ item }}</h3>
+          </el-carousel-item>
+        </el-carousel>
+      </el-dialog>
   </div>
 </template>
 
@@ -106,6 +117,8 @@ export default {
 
      
       loading: false,
+      previewDialog:false,
+
      
     }
   },
@@ -218,7 +231,16 @@ export default {
     },
     getoPublishTemplate(item){
         this.$router.push({ name: 'publishTemplate', query: { id: item.id }});
-    }
+    },
+    handleEdit(item){
+      if(item){
+        
+      }else{
+        // this.previewCont = '';
+      }
+      this.previewDialog = !this.previewDialog;
+      
+    },
   
   }
 }

@@ -62,7 +62,59 @@
         </div>
       </div>
     </div>
+      <el-dialog
+        title="预览"
+        :visible.sync="previewDialog"
+        width="1000px"
+        :before-close="handleEdit">
+        <div style="width:960px;height:540px;background:#0f0;position:relative;">
+          <div style="width:100%;height:100%;">
+            <img :src="getImgUrl(backgroundUrl)" style="width:100%;height:100%;" alt="">
+          </div>
+          <div style="font-family: FZZhongDengXian&DevaIdeal-Book;
+            font-size: 25px;
+            font-weight: normal;
+            position:absolute;
+            top:78px;
+            left:58px;
+            color: #ffffff;">
+            {{secondName}}
+          </div>
+          <div style="width:339px;height:339px;position:absolute;top:131px;left:58px;">
+            <img :src="advertisList[0]?getImgUrl(advertisList[0]):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:131px;left:404px;">
+            <img :src="advertisList[1]?getImgUrl(advertisList[1]):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:304px;left:404px;">
+            <img :src="advertisList[2]?getImgUrl(advertisList[2]):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:131px;left:577px;">
+            <img :src="advertisList[3]?getImgUrl(advertisList[3]):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:304px;left:577px;">
+            <img :src="advertisList[4]?getImgUrl(advertisList[4]):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:131px;left:750px;">
+            <img :src="advertisList[5]?getImgUrl(advertisList[5]):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:304px;left:750px;">
+            <img :src="advertisList[6]?getImgUrl(advertisList[6]):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="previewDialog = false">返回</el-button>
+        </span>
+      </el-dialog>
   </div>
+
 </template>
 
 <script>
@@ -70,10 +122,13 @@ import EnabledType from './types/enable-type'
 import { Message } from 'element-ui'
 import DeviceDetailDialog from './dialog/device-detail-dialog.vue'
 import {
-  SECONDPAGE_FIND
+  SECONDPAGE_FIND,
+  SECONDPAGE_GET
 } from '@/api/secondPage/secondPage'
 
 import RoomTypeConfig from '@/constants/room-type-config'
+import {getBaseAPI} from '@/api/contantLibraryAPI/contantLibraryAPI'
+
 
 export default {
   name: 'DeviceList',
@@ -94,10 +149,14 @@ export default {
       },
       dataList: [],
       total: 0,
-
-     
       loading: false,
-     
+      previewDialog:false,
+      previewCont:'',
+      backgroundUrl:'',
+      APILeft:'',
+      advertisList:[],
+      secondName:'',
+
     }
   },
   computed: {
@@ -113,6 +172,7 @@ export default {
     // this.getDeviceBrands()
     // // 首次获取前20条数据
     this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
+    this.APILeft = getBaseAPI().IMG_URL;
     // // 获取所有房间类型
     // this.getAllRoomType()
   },
@@ -120,7 +180,40 @@ export default {
     filterData(array, key, targetKey) {
       
     },
-    handleEdit(){},
+    handleEdit(item){
+      if(item){
+        SECONDPAGE_GET(item.id).then(res=>{
+          this.previewCont = res;
+          this.secondName = res.pageName;
+          for(let i in res.contents){
+            if(res.contents[i].type==1){
+              for(let j in res.contents[i].imgs){
+                if(res.contents[i].imgs[j].size == '16:9'){
+                  this.backgroundUrl = res.contents[i].imgs[j].imgUrl;
+                  break;
+                }
+              }
+              // this.backgroundUrl = res.contents[i].imgs[0].;
+              // this.backgroundUrl.imgs = res.contents[i].imgs[0];
+            }else{
+              // res.contents[i].imgs = res.contents[i].imgs[0];
+              for(let j in res.contents[i].imgs){
+                if(res.contents[i].imgs[j].size == '1:1'){
+                  this.advertisList.push(res.contents[i].imgs[j].imgUrl);
+
+                  break;
+                }
+              }
+            }
+          }
+          
+        })
+      }else{
+        this.previewCont = '';
+      }
+      this.previewDialog = !this.previewDialog;
+      
+    },
     pageChanged(value) {
       this.pageIndex = value
       this.queryData()
@@ -147,6 +240,10 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields()
       this.queryData()
+    },
+     getImgUrl:function(url){
+      let SRC = this.APILeft+url.split('$}')[1];
+      return SRC;
     },
     queryData(flag){
       if(flag){
@@ -327,6 +424,9 @@ $pr: 24px;
         background-color: lighten(#eab, 15%);
       }
     }
+  }
+  .el-carousel__container{
+    height: 100%;
   }
 }
 .edit-form .el-dialog {
