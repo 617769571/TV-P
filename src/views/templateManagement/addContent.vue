@@ -15,7 +15,6 @@
               <video v-if="templateContent.contentImgUrl&&(thisInd==2)" :src="getImgUrl(templateContent.contentImgUrl)"  style="width:100%;height:100%" controls="controls">
                 Your browser does not support the video tag.
               </video>
-
             </div>
           </div>
         </el-form-item>
@@ -481,6 +480,18 @@ export default {
       }
       this.pageTitle = this.getHeader();
       
+    },
+    getSmartPageListToSess(){
+      if(this.appSwitch[3].isThis){
+        for(let i in this.templateContent){
+          if(this.templateContent[i].smartContentType == 2){
+            return this.templateContent[i]
+          }
+        }
+
+      }else{
+        return false;
+      }
     },
     getContentType(type){
       switch(type){

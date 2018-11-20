@@ -52,7 +52,11 @@
         <div class="device-table-wrapper">
           <el-table :data="dataList" stripe border class="device-table" style="width:100%" @sort-change="handleSortChanged" @selection-change="handleSelectionChange" @filter-change="filterChanged">
             <el-table-column type="selection"/>
-            <el-table-column prop="contentName" label="内容名称" width="160" />
+            <el-table-column prop="contentName" label="内容名称" width="160">
+              <template slot-scope="scope">
+                <span class="has-underline" @click="navToDeviceDetail(scope.row)">{{ scope.row.contentName }}</span>
+              </template>
+            </el-table-column>
             <el-table-column
               :column-key="'contentTypes'"
               :filters="[{ text: '影视', value: 1 }, { text: '直播', value: 2 }, { text: '广告', value: 3 }, { text: '购物', value: 4 }, { text: '服务', value: 5 }, { text: '周边', value: 6 }]"
@@ -403,16 +407,7 @@ export default {
       }).catch(() => {})
       
     },
-    /**         // contentType: 3
-// createTime: 1539766197000
-// id: 1739
-// imgs: [{id: 2284, imgUrl: "{$url$}\20181015\PICTURE\60bdae9d-1993-4e78-85a7-956b91e3c66c@ott.png",…},…]
-// 0: {id: 2284, imgUrl: "{$url$}\20181015\PICTURE\60bdae9d-1993-4e78-85a7-956b91e3c66c@ott.png",…}
-// 1: {id: 2283, imgUrl: "{$url$}\20181017\PICTURE\aa33ed8a-2f0a-49d0-9af9-206efd3d41ee@ott.png",…}
-// showMode: 1
-// status: 1
-// triggerId: 1
-// triggerMode: 1*/ 
+   
     fieldConversion(item){
       switch(item.status){
         case 0:
@@ -501,15 +496,7 @@ export default {
       for(let i in filters){
         this.filterDataF[i] = filters[i];
       }
-   
         this.queryData(true)
-        
-      
-    },
-  
-
-    navToDeviceDetail(rowData) {
-      this.$router.push('/ott/storeDetail/' + rowData.storeId)
     },
     pageChanged(value) {
       this.pageIndex = value;
@@ -604,6 +591,9 @@ export default {
 
       }
       
+    },
+    navToDeviceDetail(item) {
+      this.$router.push({ name: 'previewContant', query: { edit: true },params:{contentObj:item}});
     },
     cancelSubmit(form, visibleType) {
       this[visibleType] = false

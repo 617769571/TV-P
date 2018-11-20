@@ -74,6 +74,12 @@ export const constantRouterMap = [
         hidden: true
       },
       {
+        path: 'contantLibrary/previewContant',
+        name: 'previewContant',
+        component: () => import('@/views/contantLibrary/preview'),
+        hidden: true
+      },
+      {
         path: 'secondaryPages/editSecondPage',
         name: 'editSecondPage',
         component: () => import('@/views/secondaryPages/updatePage'),

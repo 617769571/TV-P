@@ -1,131 +1,87 @@
 <template>
   <div class="device-list app-container">
     <div class="title-box">
-      <span class="main-title">内容库管理>{{!editOrAddFlag?'编辑':'新建'}}内容</span>
-      <!-- <span class="device-tip">（点击门店名称查看门店详情、点击终端UUID查看设备详情）</span> -->
+      <span class="main-title">内容库管理>内容详情</span>
+      
     </div>
     <div class="content-container">
       <el-form ref="editForm" :model="editForm" :rules="editRules">
         <el-form-item :label-width="labelWidth" label="内容名称" prop="contentName" style="white-space:nowrap">
-          <el-input v-model="editForm.contentName" placeholder="请输入内容名称" :maxlength="30"/><span style="color:#dcdfe6">&nbsp;{{editForm.contentName.length}}/30</span>
+        <div>{{editForm.contentName}}</div>
+
         </el-form-item>
+        
         <el-form-item :label-width="labelWidth" label="内容分类" prop="brandCode">
-          <el-select v-model="editForm.contentType" placeholder="请选择内容分类">
-            <el-option v-for="(rt, index) in contentTypes" :key="index" :label="rt.text" :value="rt.value">
-              {{ rt.text }}
-            </el-option>
-          </el-select>
+         
+          <div>{{contentObj.contentType}}</div>
         </el-form-item>
         <el-form-item :label-width="labelWidth" label="展现形式" prop="showMode">
-          <el-radio-group v-model="editForm.showMode">
-            <el-radio-button :disabled="!editOrAddFlag" label="1">图片</el-radio-button>
-            <el-radio-button :disabled="!editOrAddFlag" label="2">视频</el-radio-button>
-          </el-radio-group>
+          
+          <div>{{contentObj.showMode}}</div>
           <div v-if="editForm.showMode==1" class="imgsBox">
-            <el-upload style="background:#F2F2F2;width:233px;height:233px;"
-              class="avatar-uploader"
-              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
-              :show-file-list="false"
-              :on-success="handleAvatar0Success"
-              :before-upload="beforeAvatarUpload">
+            <div v-if="editFormImgs[0].imgUrl" style="background:#F2F2F2;width:233px;height:233px;"
+              class="avatar-uploader">
               <img v-if="editFormImgs[0].imgUrl" :src="getImgUrl(editFormImgs[0].imgUrl)" class="avatar" style="width:233px;height:233px;">
-              <span  v-if="!editFormImgs[0].imgUrl">1:1</span>
-            </el-upload>
-            <el-upload style="background:#F2F2F2;width:144px;height:234px;"
-              class="avatar-uploader"
-              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
-              :show-file-list="false"
-              :on-success="handleAvatar1Success"
-              :before-upload="beforeAvatarUpload">
+            </div>
+            <div v-if="editFormImgs[1].imgUrl" style="background:#F2F2F2;width:144px;height:234px;"
+              class="avatar-uploader">
               <img v-if="editFormImgs[1].imgUrl" :src="getImgUrl(editFormImgs[1].imgUrl)" class="avatar" style="width:144px;height:234px;">
-              <span  v-if="!editFormImgs[1].imgUrl">318x658</span>
-            </el-upload>
-            <el-upload style="background:#F2F2F2;width:208px;height:104px;"
-              class="avatar-uploader"
-              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
-              :show-file-list="false"
-              :on-success="handleAvatar2Success"
-              :before-upload="beforeAvatarUpload">
+            </div>
+            <div v-if="editFormImgs[2].imgUrl" style="background:#F2F2F2;width:208px;height:104px;"
+              class="avatar-uploader">
               <img v-if="editFormImgs[2].imgUrl" :src="getImgUrl(editFormImgs[2].imgUrl)" class="avatar" style="width:208px;height:104px;">
-              <span  v-if="!editFormImgs[2].imgUrl">1314x658</span>
-            </el-upload>
-            <el-upload style="background:#F2F2F2;width:207px;height:116px;"
-              class="avatar-uploader"
-              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
-              :show-file-list="false"
-              :on-success="handleAvatar3Success"
-              :before-upload="beforeAvatarUpload">
+            </div>
+            <div v-if="editFormImgs[3].imgUrl" style="background:#F2F2F2;width:207px;height:116px;"
+              class="avatar-uploader">
               <img v-if="editFormImgs[3].imgUrl" :src="getImgUrl(editFormImgs[3].imgUrl)" class="avatar" style="width:207px;height:116px;">
-              <span  v-if="!editFormImgs[3].imgUrl">16:9</span>
-            </el-upload>
-            <el-upload style="background:#F2F2F2;width:113px;height:74px;"
-              class="avatar-uploader"
-              :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
-              :show-file-list="false"
-              :on-success="handleAvatar4Success"
-              :before-upload="beforeAvatarUpload">
+            </div>
+            <div v-if="editFormImgs[4].imgUrl" style="background:#F2F2F2;width:113px;height:74px;"
+              class="avatar-uploader">
               <img v-if="editFormImgs[4].imgUrl" :src="getImgUrl(editFormImgs[4].imgUrl)" class="avatar" style="width:113px;height:74px;">
-              <span  v-if="!editFormImgs[4].imgUrl">318x207</span>
-            </el-upload>
+            </div>
 
           </div>
           
           <div v-if="editForm.showMode==2" class="imgsBox">
-            <el-upload style="background:#F2F2F2;width:207px;height:116px;"
+            <div v-if="editFormVideos[0].imgUrl" style="background:#F2F2F2;width:207px;height:116px;"
               class="avatar-uploader"
               :action="BASE_API+'/upload/file/upload?file-type=VIDEO'"
               :show-file-list="false"
-              :on-success="handleAvatar5Success"
+              :on-success="handleAvatar3Success"
               :before-upload="beforeAvatarUpload">
-              <!-- <img v-if="editFormVideos[0].imgUrl" :src="getImgUrl(editFormVideos[0].imgUrl)" class="avatar" style="width:207px;height:116px;"> -->
               <video v-if="editFormVideos[0].imgUrl" :src="getImgUrl(editFormVideos[0].imgUrl)" class="avatar" style="width:207px;height:116px;" controls="controls">
                 Your browser does not support the video tag.
               </video>
-              <span  v-if="!editFormVideos[0].imgUrl">1920x1080</span>
-            </el-upload>
-            <el-upload style="background:#F2F2F2;width:207px;height:116px;"
+            </div>
+            <div v-if="editFormVideos[1].imgUrl" style="background:#F2F2F2;width:207px;height:116px;"
               class="avatar-uploader"
               :action="BASE_API+'/upload/file/upload?file-type=VIDEO'"
               :show-file-list="false"
-              :on-success="handleAvatar6Success"
+              :on-success="handleAvatar3Success"
               :before-upload="beforeAvatarUpload">
-              <!-- <img v-if="editFormVideos[1].imgUrl" :src="getImgUrl(editFormVideos[1].imgUrl)" class="avatar" style="width:207px;height:116px;"> -->
               <video v-if="editFormVideos[1].imgUrl" :src="getImgUrl(editFormVideos[1].imgUrl)" class="avatar" style="width:207px;height:116px;" controls="controls">
                 Your browser does not support the video tag.
               </video>
-              <span  v-if="!editFormVideos[1].imgUrl">1280x720</span>
-            </el-upload>
+            </div>
             
           </div>
         </el-form-item>
         <el-form-item :label-width="labelWidth" label="触发方式" prop="triggerMode">
-          <el-select v-model="editForm.triggerMode" placeholder="请选择触发方式">
-            <el-option v-for="(rt, index) in roomTypeNames" :key="index" :label="rt.text" :value="rt.value">
-              {{ rt.text }}
-            </el-option>
-          </el-select>
+         
+          <div>{{contentObj.triggerMode}}</div>
         </el-form-item>
         <el-form-item  v-if="editForm.triggerMode==1" :label-width="labelWidth" label="目标URL" prop="triggerParam">
-          <!-- <el-input placeholder="请输入内容" v-model="editForm.triggerParam" class="input-with-select">
-            <el-select v-model="editForm.http" slot="prepend" placeholder="请选择">
-              <el-option label="Http://" value="Http://"></el-option>
-              <el-option label="Https://" value="Https://"></el-option>
-            </el-select>
-          </el-input> -->
-          <el-input v-model="editForm.triggerParam" placeholder="请输入目标URL" />
+       
+          <div>{{contentObj.triggerParam}}</div>
+
         </el-form-item>
         <el-form-item v-if="editForm.triggerMode==2" :label-width="labelWidth" label="应用" prop="triggerId">
-          <el-select v-model="editForm.triggerId" placeholder="请选择触发方式">
-            <!-- <el-option label="" value=""></el-option> -->
-            <el-option v-for="(rt, index) in applications" :key="index" :label="rt.value" :value="rt.key">
-              {{ rt.value }}
-            </el-option>
-          </el-select>
+         
+          <div>{{contentObj.triggerId}}</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer text-center">
         <el-button class="btn-default" size="medium" @click="goBack">返回</el-button>
-        <el-button class="btn-primary" size="medium" @click="submitEdit">提交</el-button>
       </div>
     </div>
   
