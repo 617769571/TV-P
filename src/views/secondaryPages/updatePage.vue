@@ -30,7 +30,7 @@
           <span style="color:#dcdfe6">只支持图片形式的内容，尺寸1:1，个数限制在2～15个</span>
           <div style="width:100%;min-height:300px;">
             <div class="floatBox" v-if="contentMapper2.length>0">
-              <div class="flex-item" v-for="(item,index) in contentMapper2">
+              <div class="flex-item" v-for="(item,index) in contentMapper2" :key="index">
                   <div>
                       <img :src="getImgUrl(item.imgs.imgUrl)">
                   </div>
@@ -90,7 +90,7 @@
               </el-col>
               <el-col :span="5">
                 <el-button size="medium" class="btn-primary" @click="queryData">查询</el-button>
-                <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentTypes=''">重置</el-button>
+                <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentTypes=[0]">重置</el-button>
 
               </el-col>
             </el-row>
@@ -99,7 +99,7 @@
        
         <div class="device-table-wrapper">
           <div class="floatBox">
-              <div class="flex-item" v-for="(item,index) in dataList"  @click="itemClick(index)">
+              <div class="flex-item" v-for="(item,index) in dataList" :key="index"  @click="itemClick(index)">
                   <div >
                       <img :src="getImgUrl(item.imgs.imgUrl)" >
                   </div>
@@ -443,7 +443,7 @@ export default {
         case 2:
           item.triggerMode='打开应用';
           break;
-        case 3:
+        case 0:
           item.triggerMode='无触发';
           break;
       }
@@ -556,10 +556,10 @@ export default {
       this.dialogVisible = true;
       this.filterForm.imgSizes = [size];
       // this.filterForm.contentTypes = [type];
-      delete this.filterForm.contentTypes;
+      // delete this.filterForm.contentTypes;
       this.dialogChecked = checked;
       this.queryData();
-      this.filterForm.contentTypes = [];
+      this.filterForm.contentTypes = [0];
     },
     itemClick(index){
       if(this.dialogChecked){

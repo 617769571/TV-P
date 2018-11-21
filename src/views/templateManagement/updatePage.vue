@@ -514,7 +514,7 @@ export default {
         case 2:
           item.triggerMode='打开应用';
           break;
-        case 3:
+        case 0:
           item.triggerMode='无触发';
           break;
       }
@@ -576,7 +576,7 @@ export default {
     //   }
     // },
     submitEdit(){
-      var thisdata = window.sessionStorage.templateObj.replace(/"contentImgUrl":".*?",/gm,'').replace(/"contentImgUrl":null,/gm,'').replace(/"contentImgUrl":".*?"/gm,'').replace(/"contentImgUrl":null/gm,'')
+      var thisdata = window.sessionStorage.templateObj.replace(/"contentImgUrl":".*?",/gm,'').replace(/"contentImgUrl":null,/gm,'').replace(/,"contentImgUrl":".*?"/gm,'').replace(/,"contentImgUrl":null/gm,'').replace(/"secondPageId":null,/gm,'').replace(/,"secondPageId":null/gm,'').replace(/"secondPageId":0,/gm,'').replace(/,"secondPageId":0/gm,'')
       let data= JSON.parse(thisdata);
       if(!this.editForm.templateName){
         this.$message({

@@ -100,18 +100,18 @@
                     <img style="width:100%;" :src="getImgUrl(item.contentImgUrl)" alt="" />
                     <el-form-item :label-width="labelWidth" label="关联二级页面">
                       <el-switch
-                        v-model="secondPageFlagList[collapseInds[0]][index]"
+                        v-model="secondPageFlagList[1][index]"
                         active-text="关联二级页面">
                         
                       </el-switch>
                       
                     </el-form-item>
-                    <el-form-item v-if="secondPageFlagList[collapseInds[0]][index]" :label-width="labelWidth" label="二级页面">
-                      <el-select v-model="smartPageList[collapseInds[0]].contentSecondPageBOList[index].secondPageId" placeholder="请选择">
+                    <el-form-item v-if="secondPageFlagList[1][index]" :label-width="labelWidth" label="二级页面">
+                      <el-select v-model="smartPageList[1].contentSecondPageBOList[index].secondPageId" placeholder="请选择">
                         <el-option
                         :key="0"
                         label="请选择"
-                        :value="null">
+                        :value="0">
                         </el-option>
                         <el-option
                           v-for="rt in secondPageList"
@@ -449,9 +449,9 @@ export default {
 
             }
           ],
-          secondPageList:[]
         },
-      ]
+      ],
+      secondPageList:[]
     }
   },
   computed: {
@@ -511,7 +511,7 @@ export default {
           }
           for(let i in this.smartPageList){
             for(let j in this.smartPageList[i].contentSecondPageBOList){
-              if(this.smartPageList[i].contentSecondPageBOList[j].secondPageId!=null){
+              if(this.smartPageList[i].contentSecondPageBOList[j].secondPageId){
                 this.secondPageFlagList[i][j]=true;
               }
             }

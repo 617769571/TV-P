@@ -237,7 +237,7 @@ export default {
         case 2:
           item.triggerMode='打开应用';
           break;
-        case 3:
+        case 0:
           item.triggerMode='无触发';
           break;
       }

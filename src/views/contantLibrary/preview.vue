@@ -76,7 +76,6 @@
 
         </el-form-item>
         <el-form-item v-if="editForm.triggerMode==2" :label-width="labelWidth" label="应用" prop="triggerId">
-         
           <div>{{contentObj.triggerId}}</div>
         </el-form-item>
       </el-form>
@@ -369,12 +368,10 @@ export default {
       this.APILeft = getBaseAPI().IMG_URL;
   
 
-      GET_CONTANT_APP().then(res=>{
-        this.applications = res;
-      })
+     
       this.loading = true;
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
-      if(!this.editOrAddFlag){
+
         CONTANT_GET(this.$route.params.contentObj.id).then(res=>{
           this.contentObj = res;
           for(let i in this.editForm){
@@ -383,21 +380,31 @@ export default {
           this.editForm.id = this.contentObj.id;
           // this.editFormImgs = this.contentObj.imgs;
           this.contentObj = this.fieldConversion(res);
+            
 
-          if(res.showMode==1){
+          if(res.showMode=="图片"){
             for(let j in this.contentObj.imgs){
               this.imgSort(this.contentObj.imgs[j])
             }
-
+            
           }else{
             for(let j in this.contentObj.imgs){
               this.videoSort(this.contentObj.imgs[j])
             }
           }
           this.loading = false;
+           GET_CONTANT_APP().then(res=>{
+              this.applications = res;
+              for(let i in res){
+                if(this.contentObj.triggerId == res[i].key){
+                  this.contentObj.triggerId = res[i].value;
+                  break;
+                }
+              }
+            })
         })
         
-      }
+     
       
     },
     videoSort(imgObj){
@@ -440,7 +447,7 @@ export default {
 
     },
     getImgUrl:function(url){
-      let SRC = this.APILeft+url.split('$}')[1];
+      let SRC = this.APILeft+url.split('{$url$}')[1];
       return SRC;
     },
     handleAvatar0Success(res, file,ind) {
@@ -541,7 +548,7 @@ export default {
         case 2:
           item.triggerMode='打开应用';
           break;
-        case 0||3:
+        case 0:
           item.triggerMode='无触发';
           break;
       }
@@ -590,40 +597,6 @@ export default {
       this.queryData()
     },
  
-    submitEdit(){
-      if(this.editForm.showMode==1){
-        this.editForm.imgs = [];
-        for(let i in this.editFormImgs){
-          if(this.editFormImgs[i].imgUrl){
-            this.editForm.imgs.push(this.editFormImgs[i]);
-
-          }
-        }
-        // this.editForm.imgs = this.editFormImgs;
-      }else{
-        this.editForm.imgs = [];
-        for(let i in this.editFormVideos){
-          if(this.editFormVideos[i].imgUrl){
-            this.editForm.imgs.push(this.editFormVideos[i]);
-
-          }
-        }
-      
-      }
-      
-      if(this.editOrAddFlag){
-          CONTENT_CREATE(this.editForm).then(res=>{
-            Message({ showClose: true, message: '创建成功', type: 'success' })
-            history.go(-1);
-          })
-
-      }else{
-        CONTENT_UPDATE(this.editForm).then(res=>{
-          Message({ showClose: true, message: '编辑成功', type: 'success' })
-            history.go(-1);
-        })
-      }
-    },
  
     goBack(){
       history.go(-1);

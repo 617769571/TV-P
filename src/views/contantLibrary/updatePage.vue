@@ -5,7 +5,7 @@
       <!-- <span class="device-tip">（点击门店名称查看门店详情、点击终端UUID查看设备详情）</span> -->
     </div>
     <div class="content-container">
-      <el-form ref="editForm" :model="editForm" :rules="editRules">
+      <el-form ref="editForm" :model="editForm">
         <el-form-item :label-width="labelWidth" label="内容名称" prop="contentName" style="white-space:nowrap">
           <el-input v-model="editForm.contentName" placeholder="请输入内容名称" :maxlength="30"/><span style="color:#dcdfe6">&nbsp;{{editForm.contentName.length}}/30</span>
         </el-form-item>
@@ -22,6 +22,8 @@
             <el-radio-button :disabled="!editOrAddFlag" label="2">视频</el-radio-button>
           </el-radio-group>
           <div v-if="editForm.showMode==1" class="imgsBox">
+            <div>只支持PNG、JPG、BMP格式，
+          大小：建议PNG不超过 1MB；JPG不超过300K；BMP不超过5MB</div>
             <el-upload style="background:#F2F2F2;width:233px;height:233px;"
               class="avatar-uploader"
               :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
@@ -154,119 +156,12 @@ export default {
     DeviceDetailDialog
   },
   data() {
-    const validateStoreNameE = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.editForm.storeName = ''
-        callback(new Error('内容名称不能为空'))
-      } else {
-        callback()
-      }
-    }
-    const validateBrandCodeE = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.editForm.brandCode = ''
-        callback(new Error('设备品牌必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateTypeCodeE = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.editForm.typeCode = ''
-        callback(new Error('设备型号必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomNoE = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.editForm.roomNo = ''
-        callback(new Error('房间号必须填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomTypeE = (rule, value, callback) => {
-      if ((Number.isSafeInteger(value * 1) && ('' + value)).trim().length < 1) {
-        this.editForm.roomType = ''
-        callback(new Error('房间类型必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateUuidE = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.editForm.uuid = ''
-        callback(new Error('uuid必须填'))
-      } else {
-        callback()
-      }
-    }
-
-    const validateBrandCodeA = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.addForm.brandCode = ''
-        callback(new Error('设备品牌必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateTypeCodeA = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.addForm.typeCode = ''
-        callback(new Error('设备型号必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomNoA = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.addForm.roomNo = ''
-        callback(new Error('房间号必须填'))
-      } else {
-        callback()
-      }
-    }
-    const validatetriggerModeA = (rule, value, callback) => {
-      if ((Number.isSafeInteger(value * 1) && ('' + value)).trim().length < 1) {
-        this.addForm.triggerMode = ''
-        callback(new Error('房间类型必须填'))
-      } else {
-        callback()
-      }
-    }
-    const validateUuidA = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.addForm.uuid = ''
-        callback(new Error('uuid必须填'))
-      } else {
-        callback()
-      }
-    }
+    
     return {
       editOrAddFlag:false, //用于判断当前是新建还是编辑
       BASE_API:'',
       APILeft:'',
       contentTypes:[{ text: '影视', value: 1 }, { text: '直播', value: 2 }, { text: '广告', value: 3 }, { text: '购物', value: 4 }, { text: '服务', value: 5 }, { text: '周边', value: 6 }],
-      editRules: {
-        // storeName: [{ required: true, trigger: 'blur', validator: validateStoreNameE }],
-        // brandCode: [{ required: true, trigger: 'blur', validator: validateBrandCodeE }],
-        // typeCode: [{ required: true, trigger: 'blur', validator: validateTypeCodeE }],
-        // // roomNo: [{ required: true, trigger: 'blur', validator: validateRoomNoE }],
-        triggerMode: [{ required: true, trigger: 'blur', validator: validateRoomTypeE }],
-       
-      },
-      addRules: {
-        contentName: [
-          { required: true, message: '请输入内容名称', trigger: 'blur' },
-          { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
-        ],
-        // brandCode: [{ required: true, trigger: 'blur', validator: validateBrandCodeA }],
-        // typeCode: [{ required: true, trigger: 'blur', validator: validateTypeCodeA }],
-        // roomNo: [{ required: true, trigger: 'blur', validator: validateRoomNoA }],
-        // roomType: [{ required: true, trigger: 'blur', validator: validateRoomTypeA }],
-        // uuid: [{ required: true, trigger: 'blur', validator: validateUuidA }]
-      },
       dialogData: {},
       multipleSelection: [],
       EnabledType,
@@ -408,14 +303,11 @@ export default {
   },
   methods: {
     onShow(){
-      console.log(getBaseAPI());
       this.BASE_API = getBaseAPI().BASE_API;
       this.APILeft = getBaseAPI().IMG_URL;
   
 
-      GET_CONTANT_APP().then(res=>{
-        this.applications = res;
-      })
+      
       this.loading = true;
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       if(!this.editOrAddFlag){
@@ -437,6 +329,9 @@ export default {
             }
           }
           this.loading = false;
+          GET_CONTANT_APP().then(res=>{
+        this.applications = res;
+      })
         })
         
       }
@@ -584,7 +479,7 @@ export default {
         case 2:
           item.triggerMode='打开应用';
           break;
-        case 3:
+        case 0:
           item.triggerMode='无触发';
           break;
       }
@@ -632,14 +527,16 @@ export default {
       this.$refs[formName].resetFields()
       this.queryData()
     },
- 
+    disclose(){
+      
+    },
     submitEdit(){
+     
       if(this.editForm.showMode==1){
         this.editForm.imgs = [];
         for(let i in this.editFormImgs){
           if(this.editFormImgs[i].imgUrl){
             this.editForm.imgs.push(this.editFormImgs[i]);
-
           }
         }
         // this.editForm.imgs = this.editFormImgs;
@@ -653,7 +550,24 @@ export default {
         }
       
       }
-      
+      if(this.editForm.contentName.length<1){
+        return this.$message.error('请输入内容名称!');
+      }
+      if(!this.editForm.contentType){
+        return this.$message.error('请选择内容分类!');
+      }
+      if(this.editForm.imgs.length<1){
+        return this.$message.error('请上传图片!');
+      }
+      if(this.editForm.triggerMode.length<1){
+        return this.$message.error('请选择触发方式!');
+      }
+      if(this.editForm.triggerMode==1&&!this.editForm.triggerParam){
+        return this.$message.error('请输入网址!');
+      }
+      if(this.editForm.triggerMode==2&&!this.editForm.triggerId){
+        return this.$message.error('请选择应用!');
+      }
       if(this.editOrAddFlag){
           CONTENT_CREATE(this.editForm).then(res=>{
             Message({ showClose: true, message: '创建成功', type: 'success' })
