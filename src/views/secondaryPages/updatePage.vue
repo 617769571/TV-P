@@ -303,7 +303,7 @@ export default {
         {text: '无触发',value:0}
       ], // 设备管理列表表格筛选
       contentTypes:[
-          { text: '全部', value: '' }, 
+          { text: '全部', value: 0 }, 
           { text: '影视', value: 1 }, 
           { text: '直播', value: 2 }, 
           { text: '广告', value: 3 }, 

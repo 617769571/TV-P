@@ -519,7 +519,8 @@ export default {
           isJPG = true;
         }
       }else{
-        if(file.type === 'video/mp4'||file.type === 'video/ts'){
+        debugger
+        if(file.type === 'video/mp4'||file.type === 'video/vnd.dlna.mpeg-tts'){
           isJPG = true;
         }
       }

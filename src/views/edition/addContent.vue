@@ -15,7 +15,6 @@
               <video v-if="templateContent.contentImgUrl&&(thisInd==2)" :src="getImgUrl(templateContent.contentImgUrl)"  style="width:100%;height:100%" controls="controls">
                 Your browser does not support the video tag.
               </video>
-
             </div>
           </div>
         </el-form-item>
@@ -97,8 +96,32 @@
                 <el-button @click="showAndGetData(1,['1314x658'],false)">选择图片内容</el-button>
                 <span style="color:#dcdfe6">只支持图片形式的内容，尺寸1314x658，可添加1～8个</span>
                 <div style="width:500px;min-height:300px;margin-top:10px;text-align:center">
-                  <!-- <img v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" style="width:100%;" :src="getImgUrl(smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl)" alt="">
-                  <el-button v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" size="medium" class="btn-default" @click="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl='';smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentId=''">重置</el-button> -->
+                  <div v-for="(item,index) in smartPageList[1].contentSecondPageBOList" :key="index">
+                    <img style="width:100%;" :src="getImgUrl(item.contentImgUrl)" alt="" />
+                    <el-form-item :label-width="labelWidth" label="关联二级页面">
+                      <el-switch
+                        v-model="secondPageFlagList[collapseInds[0]][index]"
+                        active-text="关联二级页面">
+                        
+                      </el-switch>
+                      
+                    </el-form-item>
+                    <el-form-item v-if="secondPageFlagList[collapseInds[0]][index]" :label-width="labelWidth" label="二级页面">
+                      <el-select v-model="smartPageList[collapseInds[0]].contentSecondPageBOList[index].secondPageId" placeholder="请选择">
+                        <el-option
+                        :key="0"
+                        label="请选择"
+                        :value="null">
+                        </el-option>
+                        <el-option
+                          v-for="rt in secondPageList"
+                          :key="rt.id"
+                          :label="rt.pageName"
+                          :value="rt.id">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </div>
                 </div>
               </el-form-item>
             </div>
@@ -107,7 +130,29 @@
                 <el-button @click="showAndGetData(1,['318x207'],true)">选择图片内容</el-button>
                 <span style="color:#dcdfe6">只支持图片形式的内容，尺寸318x207，只能添加一个</span>
                 <div style="width:500px;min-height:300px;margin-top:10px;text-align:center">
-                  <img v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" style="width:100%;" :src="getImgUrl(smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl)" alt="">
+                  <img v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" style="width:100%;" :src="getImgUrl(smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl)" alt="" />
+                  <el-form-item :label-width="labelWidth" label="关联二级页面">
+                      <el-switch
+                        v-model="secondPageFlagList[collapseInds[0]][collapseInds[1]]"
+                        active-text="关联二级页面">
+                      </el-switch>
+                    </el-form-item>
+                    <el-form-item v-if="secondPageFlagList[collapseInds[0]][collapseInds[1]]" :label-width="labelWidth" label="二级页面">
+                      <el-select v-model="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].secondPageId" placeholder="请选择">
+                        <el-option
+                        :key="0"
+                        label="请选择"
+                        :value="null">
+                        </el-option>
+                        <el-option
+                          v-for="item in secondPageList"
+                          :key="item.id"
+                          :label="item.pageName"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  <!-- <el-switch v-model=""></el-switch> -->
                   <el-button v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" size="medium" class="btn-default" @click="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl='';smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentId=''">重置</el-button>
                 </div>
               </el-form-item>
@@ -146,7 +191,7 @@
                   <el-col :span="19">
                     <el-form ref="filterForm" :model="filterForm" :inline="true" label-width="100px" class="filter-form">
                       <el-form-item label="" prop="contentType">
-                        <el-select v-model="filterForm.contentType" placeholder="请选择内容分类">
+                        <el-select v-model="filterForm.contentTypes[0]" placeholder="请选择内容分类">
                           <el-option v-for="(rt, index) in contentTypes" :key="index" :label="rt.text" :value="rt.value">
                             {{ rt.text }}
                           </el-option>
@@ -163,7 +208,7 @@
                   </el-col>
                   <el-col :span="5">
                     <el-button size="medium" class="btn-primary" @click="queryData">查询</el-button>
-                    <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentType=''">重置</el-button>
+                    <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentTypes=[0]">重置</el-button>
                   </el-col>
                 </el-row>
               </div>
@@ -243,6 +288,7 @@ import {
 } from '@/api/contantLibraryAPI/contantLibraryAPI'
 import { GET_ROOM_TYPE, GET_ALL_ROOM_TYPE } from '@/api/storeManage/storeManage'
 import {getBaseAPI} from '@/api/contantLibraryAPI/contantLibraryAPI'
+import {SECONDPAGE_FIND} from '@/api/secondPage/secondPage'
 
 export default {
   name: 'DeviceList',
@@ -288,7 +334,8 @@ export default {
      
       filterForm: {//用于条件筛选搜索的表单内容
         contentName: '',
-        daterange: ''
+        daterange: '',
+        contentTypes:[0]
       },
      
     
@@ -306,8 +353,14 @@ export default {
       dataList: [],
       total: 0,
       collapseInds:[0,0],
+      secondPageFlagList:[
+        [false],
+        [false,false,false,false,false,false,false,false],
+        [false,false,false,false,false],
+        [false]
+      ],
       contentTypes:[
-          { text: '全部', value: '' }, 
+          { text: '全部', value: 0 }, 
           { text: '影视', value: 1 }, 
           { text: '直播', value: 2 }, 
           { text: '广告', value: 3 }, 
@@ -347,6 +400,7 @@ export default {
               contentId:null,
               imgId:null,
               contentImgUrl:null,
+              secondPageId:null,
 
               contentOrder:1
             },
@@ -354,6 +408,7 @@ export default {
               contentId:null,
               imgId:null,
               contentImgUrl:null,
+              secondPageId:null,
 
               contentOrder:2
 
@@ -362,6 +417,7 @@ export default {
               contentId:null,
               imgId:null,
               contentImgUrl:null,
+              secondPageId:null,
 
               contentOrder:3
 
@@ -369,6 +425,7 @@ export default {
               contentId:null,
               imgId:null,
               contentImgUrl:null,
+              secondPageId:null,
 
               contentOrder:4
 
@@ -376,6 +433,7 @@ export default {
               contentId:null,
               imgId:null,
               contentImgUrl:null,
+              secondPageId:null,
 
               contentOrder:5
 
@@ -390,7 +448,8 @@ export default {
               contentImgUrl:null,
 
             }
-          ]
+          ],
+          secondPageList:[]
         },
       ]
     }
@@ -413,10 +472,15 @@ export default {
       return header;
     },
     onShow(){
+      SECONDPAGE_FIND({pageSize:30,pageIndex:0}).then(res=>{
+        this.secondPageList = res.list
+      })
       this.APILeft = getBaseAPI().IMG_URL;
+
       this.thisInd = this.$route.query.index;
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       let tpObj = JSON.parse(window.sessionStorage.templateObj);
+      debugger;
       if(this.thisInd != 4){
         if(JSON.stringify(tpObj.templateContentList)!='[]'){
           for(let i in tpObj.templateContentList){
@@ -443,6 +507,13 @@ export default {
               break;
             }else{
               // this.templateContentIndex = '';
+            }
+          }
+          for(let i in this.smartPageList){
+            for(let j in this.smartPageList[i].contentSecondPageBOList){
+              if(this.smartPageList[i].contentSecondPageBOList[j].secondPageId!=null){
+                this.secondPageFlagList[i][j]=true;
+              }
             }
           }
         }
@@ -478,6 +549,18 @@ export default {
       }
       this.pageTitle = this.getHeader();
       
+    },
+    getSmartPageListToSess(){
+      if(this.appSwitch[3].isThis){
+        for(let i in this.templateContent){
+          if(this.templateContent[i].smartContentType == 2){
+            return this.templateContent[i]
+          }
+        }
+
+      }else{
+        return false;
+      }
     },
     getContentType(type){
       switch(type){
@@ -600,6 +683,15 @@ export default {
         let str = JSON.stringify(this.smartPageList);
         list4.pageContentType = 4;
         list4.smartPageList = JSON.parse(str);
+        for(let i in this.secondPageFlagList){
+          for(let j in this.secondPageFlagList[i]){
+            if(!this.secondPageFlagList[i][j]){
+              if(list4.smartPageList[i].contentSecondPageBOList[j]){
+                list4.smartPageList[i].contentSecondPageBOList[j].secondPageId = null;
+              }
+            }
+          }
+        }
         // if(this.templateContentIndex!=''){
         //   tpObj.templateContentList[this.templateContentIndex] = list4;
         // }else{
@@ -634,7 +726,7 @@ export default {
       this.dialogVisible = true;
       this.filterForm.imgSizes = size;
       this.filterForm.showModes = [type];
-      this.filterForm.contentTypes = [];
+      this.filterForm.contentTypes = [0];
       this.dialogChecked = checked;
       this.queryData();
 
@@ -720,7 +812,7 @@ export default {
             obj.contentOrder = this.collapseInds[1]+1;
             this.smartPageList[this.collapseInds[0]].contentSecondPageBOList.push(obj);
           }
-         
+          
         }
       }
      

@@ -66,6 +66,42 @@
         </div>
       </div>
     </div>
+    <el-dialog
+        title="预览"
+        :visible.sync="previewDialog"
+        width="1000px"
+        :before-close="handleEdit">
+        <el-carousel style="width:960px;height:540px;position:relative;" indicator-position="outside">
+          <el-carousel-item style="width:960px;height:540px;" v-for="(item,index) in dialogData.templateContentVOList" :key="index">
+              <div v-if="item.pageContentType==1" style="width:100%;height:100%;">
+                <img :src="getImgUrl(item.contentImgUrl)" alt="" style="width:100%;height:100%;">
+              </div>
+              <div v-if="item.pageContentType==2" style="width:100%;height:100%;">
+                <video  :src="getImgUrl(item.contentImgUrl)"  style="width:100%;height:100%" controls="controls">
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <div v-if="item.pageContentType==3" style="width:100%;height:100%;">
+                <img :src="getImgUrl(item.contentImgUrl)" alt="" style="width:100%;height:100%;">
+              </div>
+              <div v-if="item.pageContentType==4" style="width:100%;height:100%;position:relative">
+                <div style="position:absolute;width:100%;height:100%;top:0;left:0;">
+                  <img style="width:100%;height:100%;" :src="getImgUrl(dialogSmartList[3].contentSecondPageVOList[0].contentImgUrl)" alt="">
+                </div>
+                <div style="position:absolute;width:170px;height:331px;top:53px;left:40px;">
+                  <img style="width:100%;height:100%;" :src="getImgUrl(dialogSmartList[0].contentSecondPageVOList[0].contentImgUrl)" alt="">
+                </div>
+                <div style="position:absolute;width:701px;height:331px;top:53px;left:217px;">
+                  <img style="width:100%;height:100%;" :src="getImgUrl(dialogSmartList[1].contentSecondPageVOList[0].contentImgUrl)" alt="">
+                </div>
+                <div style="position:absolute;width:877px;height:95px;top:391px;left:40px;display:flex;justify-content: space-between;">
+                  <img style="width:170px;height:100%;" v-for="(app,j) in dialogSmartList[2].contentSecondPageVOList" :key="j" :src="getImgUrl(app.contentImgUrl)" alt="">
+                </div>
+                
+              </div>
+          </el-carousel-item>
+        </el-carousel>
+      </el-dialog>
   </div>
 </template>
 
@@ -73,8 +109,10 @@
 import { Message } from 'element-ui';
 import {
   EDITION_FIND,
+  EDITION_DETAIL
 } from '@/api/editionAPI/editionAPI';
 
+import {getBaseAPI} from '@/api/contantLibraryAPI/contantLibraryAPI'
 
 export default {
   name: 'editionList',
@@ -83,6 +121,7 @@ export default {
     return {
       pageIndex: 0,
       pageSize: 20,
+      APILeft:'',
       labelWidth: '120px',
       editVisible: false,
       addVisible: false,
@@ -95,9 +134,10 @@ export default {
       dataList: [],
       total: 0,
 
-     
+      previewDialog:false,
       loading: false,
-     
+      dialogData:'',
+      dialogSmartList:['','','','']
     }
   },
   computed: {
@@ -107,11 +147,18 @@ export default {
     // // 获取品牌
     // this.getDeviceBrands()
     // // 首次获取前20条数据
-    this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
+    this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize});
+    this.APILeft = getBaseAPI().IMG_URL;
+
     // // 获取所有房间类型
     // this.getAllRoomType()
   },
   methods: {
+    getImgUrl:function(url){
+      
+      let SRC = this.APILeft+url.split('$}')[1];
+      return SRC;
+    },
     filterData(array, key, targetKey) {
       
     },
@@ -121,7 +168,26 @@ export default {
       this.queryData();
 
     },
-    handleEdit(){},
+    handleEdit(item){
+      if(typeof item==='object'){
+        EDITION_DETAIL(item.id).then(res=>{
+          this.dialogData = res;
+          this.dialogData.templateContentVOList.sort((a,b)=> a.pageContentType-b.pageContentType);
+          for(let i in res.templateContentVOList){
+            if(res.templateContentVOList[i].pageContentType==4){
+              for(let j in res.templateContentVOList[i].templateSmartPageVOList){
+                this.dialogSmartList[res.templateContentVOList[i].templateSmartPageVOList[j].smartContentType-1] = res.templateContentVOList[i].templateSmartPageVOList[j];
+              }
+            }
+          }
+
+        })
+      }else{
+        // this.previewCont = '';
+      }
+      this.previewDialog = !this.previewDialog;
+      
+    },
     pageChanged(value) {
       this.pageIndex = value
       this.queryData()
