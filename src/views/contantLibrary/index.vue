@@ -288,7 +288,7 @@ export default {
       roomTypeNames: [
         {text: '打开网址',value:1},
         {text: '打开应用',value:2},
-        {text: '无触发',value:0}
+        {text: '无触发',value:3}
       ], // 设备管理列表表格筛选
       storeNames: [],
       selStoreList: [], // 编辑对话框/所属门店
@@ -329,7 +329,7 @@ export default {
   },
   mounted() {
     // // 获取品牌
-    this.getContantLibraryAPI()
+      this.queryData();
     // // 首次获取前20条数据
     // this.fetchData({})
     // // 获取所有房间类型
@@ -432,7 +432,7 @@ export default {
         case 2:
           item.triggerMode='打开应用';
           break;
-        case 0:
+        case 3:
           item.triggerMode='无触发';
           break;
       }
@@ -459,7 +459,7 @@ export default {
       }
       item.imgSizes='';
       for(let i = 0;i < item.imgs.length; i++){
-        item.imgSizes+=item.imgs[i].size+' ';
+        item.imgSizes+=item.imgs[i].size+',';
       }
       item.createTime = this.timestampToTime(item.createTime);
       return item;
@@ -470,40 +470,27 @@ export default {
         var Y = date.getFullYear() + '-';
         var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
         var D = date.getDate() + ' ';
-        var h = date.getHours() + ':';
-        var m = date.getMinutes() + ':';
-        var s = date.getSeconds();
+        var h = ((String(date.getHours()).length==2)?String(date.getHours()):('0'+String(date.getHours()))) + ':';
+        var m = ((String(date.getMinutes()).length==2)?String(date.getMinutes()):('0'+String(date.getMinutes()))) + ':';
+        var s = (String(date.getSeconds()).length==2)?String(date.getSeconds()):('0'+String(date.getSeconds()));
         return Y+M+D+h+m+s;
     },
 
-    // filterRoomTypeName(value, row, column) {
-    //   const property = column['property']
-    //   this.condition.roomTypeName = value
-    //   return row[property] === RoomTypeConfig[value]
-    // },
-    // filterShowType(value, row, column){
-
-    // },
-    // filterSize(value, row, column){
-
-    // },
-    // filterStatus(value, row, column) {
-    //   const property = column['property']
-    //   this.condition.status = value
-    //   return row[property] === value
-    // },
     filterChanged(filters) {
       for(let i in filters){
         this.filterDataF[i] = filters[i];
       }
+      
         this.queryData(true)
     },
     pageChanged(value) {
       this.pageIndex = value;
-      this.queryData()
+      
+      this.queryData();
     },
     sizeChanged(pageSize) {
       this.pageSize = pageSize
+      
       this.queryData()
     },
     showDeviceDetail(rowData) {
@@ -527,12 +514,13 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields()
+      
       this.queryData()
     },
     queryData(flag) {
       
       if(!flag){
-        this.filterDataF = {};
+        
        
       }else{
         this.pageIndex = 0;

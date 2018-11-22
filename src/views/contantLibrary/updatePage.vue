@@ -21,9 +21,8 @@
             <el-radio-button :disabled="!editOrAddFlag" label="1">图片</el-radio-button>
             <el-radio-button :disabled="!editOrAddFlag" label="2">视频</el-radio-button>
           </el-radio-group>
-          <div v-if="editForm.showMode==1" class="imgsBox">
-            <div>只支持PNG、JPG、BMP格式，
-          大小：建议PNG不超过 1MB；JPG不超过300K；BMP不超过5MB</div>
+          <div style="position:relative;margin-top:36px" v-if="editForm.showMode==1" class="imgsBox">
+            <div style="position:absolute;top:-36px;color:#dcdfe6">只支持PNG、JPG、BMP格式，大小：建议PNG不超过 1MB；JPG不超过300K；BMP不超过5MB</div>
             <el-upload style="background:#F2F2F2;width:233px;height:233px;"
               class="avatar-uploader"
               :action="BASE_API+'/upload/file/upload?file-type=PICTURE'"
@@ -119,7 +118,7 @@
         <el-form-item v-if="editForm.triggerMode==2" :label-width="labelWidth" label="应用" prop="triggerId">
           <el-select v-model="editForm.triggerId" placeholder="请选择触发方式">
             <!-- <el-option label="" value=""></el-option> -->
-            <el-option v-for="(rt, index) in applications" :key="index" :label="rt.value" :value="rt.key">
+            <el-option v-for="rt in applications" :key="rt.key" :label="rt.value" :value="rt.key">
               {{ rt.value }}
             </el-option>
           </el-select>
@@ -257,7 +256,7 @@ export default {
       roomTypeNames: [
         {text: '打开网址',value:1},
         {text: '打开应用',value:2},
-        {text: '无触发',value:0}
+        {text: '无触发',value:3}
       ], // 设备管理列表表格筛选
       storeNames: [],
       selStoreList: [], // 编辑对话框/所属门店
@@ -305,16 +304,15 @@ export default {
     onShow(){
       this.BASE_API = getBaseAPI().BASE_API;
       this.APILeft = getBaseAPI().IMG_URL;
-  
-
-      
-      this.loading = true;
+      GET_CONTANT_APP().then(res=>{
+        this.applications = res;
+      })
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       if(!this.editOrAddFlag){
         CONTANT_GET(this.$route.params.contentObj.id).then(res=>{
-          this.contentObj = res;
+          this.contentObj = JSON.parse(JSON.stringify(res));
           for(let i in this.editForm){
-            this.editForm[i] = this.contentObj[i];
+            this.editForm[i] = res[i];
           }
           this.editForm.id = this.contentObj.id;
           // this.editFormImgs = this.contentObj.imgs;
@@ -328,10 +326,6 @@ export default {
               this.videoSort(this.contentObj.imgs[j])
             }
           }
-          this.loading = false;
-          GET_CONTANT_APP().then(res=>{
-        this.applications = res;
-      })
         })
         
       }
@@ -373,7 +367,7 @@ export default {
       // this.editFormImgs[ind].imgUrl = URL.createObjectURL(file.raw);
       this.editFormImgs[ind].imgUrl = res[0];
      
-      this.editFormImgs[ind].mediaType = file.name.split('.')[1];
+      this.editFormImgs[ind].mediaType = file.name.split('.')[file.name.split('.').length-1];
 
     },
     getImgUrl:function(url){
@@ -410,7 +404,7 @@ export default {
     beforeAvatarUpload(file) {
       let isJPG = false;
       if(this.editForm.showMode == 1){
-        if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/gif'){
+        if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/bmp'||file.type === 'image/jpg'){
           isJPG = true;
         }
       }else{
@@ -423,7 +417,7 @@ export default {
       const isLt2M = file.size / 1024 / 1024 < 30;
 
       if (!isJPG) {
-        this.$message.error(`上传${(this.editForm.showMode == 1)?'图片':'视频'}只能是 ${(this.editForm.showMode == 1)?'png':'mp4/ts'} 格式!`);
+        this.$message.error(`上传${(this.editForm.showMode == 1)?'图片':'视频'}只能是 ${(this.editForm.showMode == 1)?'png,jpg,bmp':'mp4/ts'} 格式!`);
       }
       if (!isLt2M) {
         this.$message.error('上传视频大小不能超过 30MB!');
@@ -479,7 +473,7 @@ export default {
         case 2:
           item.triggerMode='打开应用';
           break;
-        case 0:
+        case 3:
           item.triggerMode='无触发';
           break;
       }
@@ -517,9 +511,9 @@ export default {
         var Y = date.getFullYear() + '-';
         var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
         var D = date.getDate() + ' ';
-        var h = date.getHours() + ':';
-        var m = date.getMinutes() + ':';
-        var s = date.getSeconds();
+        var h = (String(date.getHours()).length==2)?String(date.getHours()):('0'+String(date.getHours())) + ':';
+        var m = (String(date.getMinutes()).length==2)?String(date.getMinutes()):('0'+String(date.getMinutes())) + ':';
+        var s = (String(date.getSeconds()).length==2)?String(date.getSeconds()):('0'+String(date.getSeconds()));
         return Y+M+D+h+m+s;
     },
 
@@ -531,32 +525,62 @@ export default {
       
     },
     submitEdit(){
-     
-      if(this.editForm.showMode==1){
-        this.editForm.imgs = [];
-        for(let i in this.editFormImgs){
-          if(this.editFormImgs[i].imgUrl){
-            this.editForm.imgs.push(this.editFormImgs[i]);
-          }
-        }
-        // this.editForm.imgs = this.editFormImgs;
-      }else{
-        this.editForm.imgs = [];
-        for(let i in this.editFormVideos){
-          if(this.editFormVideos[i].imgUrl){
-            this.editForm.imgs.push(this.editFormVideos[i]);
+      //处理图片是添加还是修改
+      if(!this.editOrAddFlag){
+        for (let j in this.editForm.imgs){
+          if(this.editForm.imgs[j].id){
+            if(this.editForm.showMode==1){
+              for(let i in this.editFormImgs){
+                if(this.editFormImgs[i].imgUrl==this.editForm.imgs[j].imgUrl){
+                  this.editFormImgs.splice(i,1);
+                  
+                }else if(!this.editFormImgs[i].imgUrl){
+                  this.editFormImgs.splice(i,1);
+                }
+              }
+            }else{
+              for(let i in this.editFormVideos){
+                if(this.editFormVideos[i].id==this.editForm.imgs[j].id&&this.editFormVideos[i].imgUrl==this.editForm.imgs[j].imgUrl){
+                  this.editFormVideos.splice(i,1);
+                }else if(!this.editFormVideos[i].imgUrl){
+                  this.editFormVideos.splice(i,1);
+                }
+              }
+            }
 
           }
         }
-      
+         if(this.editForm.showMode==1){
+            this.editForm.imgs = this.editFormImgs
+          }else{
+            this.editForm.imgs = this.editFormVideos
+          }
+      }else{
+        if(this.editForm.showMode==1){
+          this.editForm.imgs = [];
+          for(let i in this.editFormImgs){
+            if(this.editFormImgs[i].imgUrl){
+              this.editForm.imgs.push(this.editFormImgs[i]);
+            }
+          }
+        }else{
+          this.editForm.imgs = [];
+          for(let i in this.editFormVideos){
+            if(this.editFormVideos[i].imgUrl){
+              this.editForm.imgs.push(this.editFormVideos[i]);
+            }
+          }
+        }
       }
+     
+      //验证
       if(this.editForm.contentName.length<1){
         return this.$message.error('请输入内容名称!');
       }
       if(!this.editForm.contentType){
         return this.$message.error('请选择内容分类!');
       }
-      if(this.editForm.imgs.length<1){
+      if(this.editForm.imgs.length<1&&this.editOrAddFlag){
         return this.$message.error('请上传图片!');
       }
       if(this.editForm.triggerMode.length<1){

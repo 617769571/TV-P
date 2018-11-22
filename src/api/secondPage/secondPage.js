@@ -35,7 +35,9 @@ export function SECONDPAGE_GET(id) {
 
 
 export function SECONDPAGE_FIND(params) {
-  // 
+  if(params.pageIndex){
+    params.pageIndex = params.pageIndex-1
+  } 
   return request({
     url: process.env.BASE_API + '/secondPage/find',
     method: 'get',

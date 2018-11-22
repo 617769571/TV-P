@@ -87,7 +87,7 @@ export default {
       roomTypeNames: [
         {text: '打开网址',value:1},
         {text: '打开应用',value:2},
-        {text: '无触发',value:0}
+        {text: '无触发',value:3}
       ], // 设备管理列表表格筛选
       contentTypes:[
           { text: '影视', value: 1 }, 
@@ -237,7 +237,7 @@ export default {
         case 2:
           item.triggerMode='打开应用';
           break;
-        case 0:
+        case 3:
           item.triggerMode='无触发';
           break;
       }

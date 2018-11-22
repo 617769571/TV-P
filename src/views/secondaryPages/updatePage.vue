@@ -89,8 +89,8 @@
                 </el-form>
               </el-col>
               <el-col :span="5">
-                <el-button size="medium" class="btn-primary" @click="queryData">查询</el-button>
-                <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentTypes=[0]">重置</el-button>
+                <el-button size="medium" class="btn-primary" @click="pageIndex=0;queryData()">查询</el-button>
+                <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentTypes=[0];pageIndex=0">重置</el-button>
 
               </el-col>
             </el-row>
@@ -256,7 +256,7 @@ export default {
       roomTypeNames: [
         {text: '打开网址',value:1},
         {text: '打开应用',value:2},
-        {text: '无触发',value:0}
+        {text: '无触发',value:3}
       ], // 设备管理列表表格筛选
       storeNames: [],
       selStoreList: [], // 编辑对话框/所属门店
@@ -300,7 +300,7 @@ export default {
       roomTypeNames: [
         {text: '打开网址',value:1},
         {text: '打开应用',value:2},
-        {text: '无触发',value:0}
+        {text: '无触发',value:3}
       ], // 设备管理列表表格筛选
       contentTypes:[
           { text: '全部', value: 0 }, 
@@ -443,7 +443,7 @@ export default {
         case 2:
           item.triggerMode='打开应用';
           break;
-        case 0:
+        case 3:
           item.triggerMode='无触发';
           break;
       }
