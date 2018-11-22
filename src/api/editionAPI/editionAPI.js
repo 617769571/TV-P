@@ -34,6 +34,9 @@ export function EDITION_DETAIL(id) {
 }
 
 export function EDITION_FIND(params) {
+  if(params.pageIndex){
+    params.pageIndex = params.pageIndex-1
+  }
   return request({
     url: process.env.BASE_API + '/edition/list-page',
     method: 'get',

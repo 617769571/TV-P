@@ -68,13 +68,13 @@ service.interceptors.response.use(
           })
         }
         break
-      default:
-        Message({
-          message: message[0] || error.message,
-          type: 'error',
-          duration: 5 * 1000
-        })
-        break
+      // default:
+      //   Message({
+      //     message: message[0] || error.message,
+      //     type: 'error',
+      //     duration: 5 * 1000
+      //   })
+      //   break
     }
     if (response.status === 410) {
       store.dispatch('FedLogOut').then(() => {

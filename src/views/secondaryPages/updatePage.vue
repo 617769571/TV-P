@@ -54,7 +54,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer text-center">
         <el-button class="btn-default" size="medium" @click="goBack">返回</el-button>
-        <el-button class="btn-primary" size="medium" @click="submitEdit">提交</el-button>
+        <el-button type="primary" size="medium"  @click="handleEdit">预览</el-button>
+        <el-button class="btn-primary" size="medium" @click="submitEdit">保存</el-button>
       </div>
     </div>
     <el-dialog
@@ -103,7 +104,7 @@
                   <div >
                       <img :src="getImgUrl(item.imgs.imgUrl)" >
                   </div>
-                  <div style="text-align:center;margin-top:8px;">{{item.contentName}}</div>
+                  <div style="text-align:center;margin-top:8px;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;">{{item.contentName}}</div>
                   <div class="checkBox" v-if="item.checked">
                     <img src="../../assets/templateImg/check.png" alt="">
                   </div>
@@ -132,6 +133,57 @@
       </div>
   </div>
         <!-- <contentDialod></contentDialod> -->
+      </el-dialog>
+      <el-dialog
+        title="预览"
+        :visible.sync="previewDialog"
+        width="1000px"
+        :before-close="handleEdit">
+        <div style="width:960px;height:540px;background:#0f0;position:relative;">
+          <div style="width:100%;height:100%;">
+            <img :src="contentMapper1?getImgUrl(contentMapper1.imgs.imgUrl):''" style="width:100%;height:100%;" alt="">
+          </div>
+          <div style="font-family: FZZhongDengXian&DevaIdeal-Book;
+            font-size: 25px;
+            font-weight: normal;
+            position:absolute;
+            top:78px;
+            left:58px;
+            color: #ffffff;">
+            {{editForm.pageName}}
+          </div>
+          <div style="width:339px;height:339px;position:absolute;top:131px;left:58px;">
+            <img :src="contentMapper2[0]?getImgUrl(contentMapper2[0].imgs.imgUrl):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:131px;left:404px;">
+            <img :src="contentMapper2[1]?getImgUrl(contentMapper2[1].imgs.imgUrl):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:304px;left:404px;">
+            <img :src="contentMapper2[4]?getImgUrl(contentMapper2[4].imgs.imgUrl):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:131px;left:577px;">
+            <img :src="contentMapper2[2]?getImgUrl(contentMapper2[2].imgs.imgUrl):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:304px;left:577px;">
+            <img :src="contentMapper2[5]?getImgUrl(contentMapper2[5].imgs.imgUrl):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:131px;left:750px;">
+            <img :src="contentMapper2[3]?getImgUrl(contentMapper2[3].imgs.imgUrl):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:304px;left:750px;">
+            <img :src="contentMapper2[6]?getImgUrl(contentMapper2[6].imgs.imgUrl):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="handleEdit">返回</el-button>
+        </span>
       </el-dialog>
   </div>
     
@@ -176,75 +228,7 @@ export default {
         pageLayoutType: '',
         contentMapper:[],
 
-      },
-    editFormImgs:[
-      {
-        imgUrl:'',
-        description:'',
-        size:'1:1',
-        imgType:1,
-        mediaType:'未知'
-      },
-      {
-        imgUrl:'',
-        description:'',
-        size:'318x658',
-        imgType:1,
-        mediaType:'未知'
-      },
-      {
-        imgUrl:'',
-        description:'',
-        size:'1314x658',
-        imgType:1,
-        mediaType:'未知'
-      },
-      {
-        // id:integer($int64),
-        imgUrl:'',
-        description:'',
-        // goodsSource:integer($int32),//来源
-        //商品来源，0-如家；1-其它
-        size:'16:9',
-        imgType:1,
-        mediaType:'未知'
-        //影像类型:1-图片,2-视频
-        
-        // createTime:string($date-time),
-      },
-      {
-        imgUrl:'',
-        description:'',
-        size:'318x207',
-        imgType:1,
-        mediaType:'未知'
-      }
-      ],
-      editFormVideos:[{
-        imgUrl:'',
-        description:'',
-        size:'1920x1080',
-        imgType:2,
-        mediaType:'未知'
-      },{
-        imgUrl:'',
-        description:'',
-        size:'1280x720',
-        imgType:2,
-        mediaType:'未知'
-      }],
-      addForm: {
-        storeId: '',
-        storeName: '',
-        brandCode: '',
-        typeCode: '',
-        model: '',
-        roomNo: 1,
-        roomType: '',
-        uuid: '',
-        linkAdd:'',
-       
-      },
+      },     
       needShow: false,
       deviceBrands: [],
       deviceModels: [],
@@ -299,6 +283,7 @@ export default {
       dialogChecked:false,//判断当前框是单选还是多选
       contentMapper1:'',
       contentMapper2:[],
+      previewDialog:false,
     }
   },
   computed: {
@@ -356,111 +341,8 @@ export default {
       }
       
     },
-    imgSort(imgObj){
-      switch(imgObj.size){
-        case '1:1':
-          this.editFormImgs[0] = imgObj; 
-          break;      
-        case '318x658':
-          this.editFormImgs[1] = imgObj; 
-          break;      
-        case '1314x658':
-          this.editFormImgs[2] = imgObj; 
-          break;      
-        case '16:9':
-          this.editFormImgs[3] = imgObj; 
-          break;      
-        case '318x207':
-          this.editFormImgs[4] = imgObj; 
-          break;
-      }
-      
-            
-    },
-    handleAvatarSuccess(res, file,ind) {
-      // this.editFormImgs[ind].imgUrl = URL.createObjectURL(file.raw);
-      this.editFormImgs[ind].imgUrl = this.APILeft+res[0].split('$}')[1];
-     
-      this.editFormImgs[ind].mediaType = file.name.split('.')[1];
+ 
 
-    },
-    handleAvatar0Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,0)
-    },
-    handleAvatar1Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,1)
-    },
-    handleAvatar2Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,2)
-    },
-    handleAvatar3Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,3)
-    },
-    handleAvatar4Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,4)
-    },
-    
-   
-
-   
-
-    fieldConversion(item){
-      switch(item.status){
-        case 0:
-          item.status='禁用';
-          break;
-        case 1:
-          item.status='开启';
-          break;
-      }
-      switch(item.showMode){
-        case 1:
-          item.showMode='图片';
-          break;
-        case 2:
-          item.showMode='视频';
-          break;
-      }
-      switch(item.triggerMode){
-        case 1:
-          item.triggerMode='打开网址';
-          break;
-        case 2:
-          item.triggerMode='打开应用';
-          break;
-        case 3:
-          item.triggerMode='无触发';
-          break;
-      }
-      // 1-影视, 2-直播,3-广告,4-购物, 5-服务, 6-周边
-      switch(item.contentType){
-        case 1:
-          item.contentType='影视';
-          break;
-        case 2:
-          item.contentType='直播';
-          break;
-        case 3:
-          item.contentType='广告';
-          break;
-        case 4:
-          item.contentType='购物';
-          break;
-        case 5:
-          item.contentType='服务';
-          break;
-        case 6:
-          item.contentType='周边';
-          break;
-      }
-      item.imgSizes='';
-      for(let i = 0;i < item.imgs.length; i++){
-        item.imgSizes+=item.imgs[i].size+' ';
-      }
-      item.createTime = this.timestampToTime(item.createTime);
-      return item;
-      
-    },
     timestampToTime(timestamp) {
         var date = new Date(timestamp);
         var Y = date.getFullYear() + '-';
@@ -520,24 +402,24 @@ export default {
         return this.$message.error('请输入二级页面名称!');
       }
       if(!this.editForm.pageLayoutType){
-        return this.$message.error('请选择布局样式!');
-      }
-      if(this.editForm.contentMapper){
         
         return this.$message.error('请选择布局样式!');
       }
+     
       if(this.contentMapper2.length<2){
         return this.$message.error('广告内容至少为2个');
       }
-      if(this.editForm.contentMapper.length==this.contentMapper2.length){
-        return this.$message.error('背景图片不能为空');
-      }
+      debugger;
+      
       
       // pageName: '',
       //   pageLayoutType: '',
       //   contentMapper:[],
       if(this.editOrAddFlag){
         this.editForm.contentMapper = this.editFormatData();
+        if(this.editForm.contentMapper.length==this.contentMapper2.length){
+        return this.$message.error('背景图片不能为空');
+      }
           SECONDPAGE_CREATE(this.editForm).then(res=>{
             Message({ showClose: true, message: '创建成功', type: 'success' })
             history.go(-1);
@@ -557,6 +439,8 @@ export default {
       }
     },
     showAndGetData(type,size,checked){
+      this.filterForm.contentName='';
+      this.dataList = [];
       this.dialogVisible = true;
       this.filterForm.imgSizes = [size];
       // this.filterForm.contentTypes = [type];
@@ -646,6 +530,11 @@ export default {
     },
     goBack(){
       history.go(-1);
+    },
+    handleEdit(item){
+      console.log(this.contentMapper2);
+      this.previewDialog = !this.previewDialog;
+      
     }
   }
 }

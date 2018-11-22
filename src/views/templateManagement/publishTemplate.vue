@@ -78,8 +78,8 @@
                   <el-option
                     v-for="(rt,index) in storeNames"
                     :key="index"
-                    :label="rt.key"
-                    :value="rt.key">
+                    :label="rt.key.split(' ')[1]"
+                    :value="rt.key.split(' ')[1]">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -422,11 +422,8 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-           
             TEMPLATE_DEL(item.id).then(res=>{
-             
               this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
-
               this.$message({
                 type: 'success',
                 message: '删除成功!'
@@ -453,12 +450,11 @@ export default {
       
     },
     submitEdit(){
-      if(this.addForm.templateName == ''){
-        this.$message({
-            type: 'info',
-            message: '模版名称不能为空',
-          }); 
-          return;
+      if(!this.addForm.editionName){
+        return this.$message.error('版本名称不能为空');
+      }
+      if(this.addForm.deviceIdList.length<1){
+        return this.$message.error('请至少选择一个设备');
       }
       edition_check_join_device({editionId:0,deviceIdList:this.addForm.deviceIdList}).then(res=>{
         if(res.value == '0'){
@@ -480,14 +476,7 @@ export default {
       })
     },
     addEdition(){
-      if(!this.addForm.editionName){
-        return this.$message.error('版本名称不能为空');
-         
-      }
-      if(!this.addForm.deviceIdList.length<1){
-        return this.$message.error('请至少选择一个设备');
-         
-      }
+      
       
       this.addForm.deviceIdList = this.addForm.deviceIdList;
       template_publish(this.addForm).then(res=>{

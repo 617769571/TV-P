@@ -221,7 +221,7 @@
                       <div >
                           <img :src="getImgUrl(item.imgs.imgUrl)">
                       </div>
-                      <div style="text-align:center;margin-top:8px;">{{item.contentName}}</div>
+                      <div style="text-align:center;margin-top:8px;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;">{{item.contentName}}</div>
                       <div class="checkBox" v-if="item.checked">
                         <img src="../../assets/templateImg/check.png" alt="">
                       </div>
@@ -755,6 +755,7 @@ export default {
       }
     },
     showAndGetData(type,size,checked){
+      this.filterForm.contentName='';
       this.pageIndex = 0;
       this.dialogVisible = true;
       this.filterForm.imgSizes = size;

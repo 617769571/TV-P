@@ -52,8 +52,8 @@
                   <el-option
                     v-for="(rt,index) in storeNames"
                     :key="index"
-                    :label="rt.key"
-                    :value="rt.key">
+                    :label="rt.key.split(' ')[1]"
+                    :value="rt.key.split(' ')[1]">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -298,6 +298,46 @@ export default {
       
     },
     handleClick(){
+      this.filterForm= {
+        deviceId:'',
+        brandId:'',
+        //主键
+        organizationId:'',
+        //所属集团编号
+     
+        //所属集团
+        storeId:'',
+        //门店编号
+        internalId:'',
+        //门店内部编号
+        externalId:'',
+        //门店外部编码
+        storeName:'',
+        //所属门店
+        deviceBrand:'',
+        //设备品牌
+        deviceModel:'',
+        //设备型号
+        roomNo:'',
+        //所属房间
+        roomTypeName:'',
+        //房间类型
+        createdTime:'',
+        //安装时间
+        updateTime:'',
+        //更新时间
+        apkVersion:'',
+        //apk版本号
+        status:'',
+        //设备状态:2-启用，4-停用
+  
+        provinceId:'',
+        //省代码
+        cityId:'',
+        //市代码
+    
+        deviceUuid:'',
+        };
       this.onShow()
     },
     organizationChange(){
@@ -390,7 +430,7 @@ export default {
       // if(this.filterForm.show_modes.length>0){
       //   params.show_modes = this.filterForm.show_modes.join(',');
       // }
-      this.fetchData(params,flag?this.filterForm:{});
+      this.fetchData(params,this.filterForm);
     },
     showDialog(editFlag, item) {
       

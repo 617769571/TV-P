@@ -31,6 +31,8 @@
               :before-upload="beforeAvatarUpload">
               <img v-if="editFormImgs[0].imgUrl" :src="getImgUrl(editFormImgs[0].imgUrl)" class="avatar" style="width:233px;height:233px;">
               <span  v-if="!editFormImgs[0].imgUrl">1:1</span>
+              <br>
+              <span  v-if="!editFormImgs[0].imgUrl">上传图片</span>
             </el-upload>
             <el-upload style="background:#F2F2F2;width:144px;height:234px;"
               class="avatar-uploader"
@@ -40,6 +42,8 @@
               :before-upload="beforeAvatarUpload">
               <img v-if="editFormImgs[1].imgUrl" :src="getImgUrl(editFormImgs[1].imgUrl)" class="avatar" style="width:144px;height:234px;">
               <span  v-if="!editFormImgs[1].imgUrl">318x658</span>
+              <br>
+              <span  v-if="!editFormImgs[1].imgUrl">上传图片</span>
             </el-upload>
             <el-upload style="background:#F2F2F2;width:208px;height:104px;"
               class="avatar-uploader"
@@ -49,6 +53,8 @@
               :before-upload="beforeAvatarUpload">
               <img v-if="editFormImgs[2].imgUrl" :src="getImgUrl(editFormImgs[2].imgUrl)" class="avatar" style="width:208px;height:104px;">
               <span  v-if="!editFormImgs[2].imgUrl">1314x658</span>
+              <br>
+              <span  v-if="!editFormImgs[2].imgUrl">上传图片</span>
             </el-upload>
             <el-upload style="background:#F2F2F2;width:207px;height:116px;"
               class="avatar-uploader"
@@ -58,6 +64,8 @@
               :before-upload="beforeAvatarUpload">
               <img v-if="editFormImgs[3].imgUrl" :src="getImgUrl(editFormImgs[3].imgUrl)" class="avatar" style="width:207px;height:116px;">
               <span  v-if="!editFormImgs[3].imgUrl">16:9</span>
+              <br>
+              <span  v-if="!editFormImgs[3].imgUrl">上传图片</span>
             </el-upload>
             <el-upload style="background:#F2F2F2;width:113px;height:74px;"
               class="avatar-uploader"
@@ -67,6 +75,8 @@
               :before-upload="beforeAvatarUpload">
               <img v-if="editFormImgs[4].imgUrl" :src="getImgUrl(editFormImgs[4].imgUrl)" class="avatar" style="width:113px;height:74px;">
               <span  v-if="!editFormImgs[4].imgUrl">318x207</span>
+              <br>
+              <span  v-if="!editFormImgs[4].imgUrl">上传图片</span>
             </el-upload>
 
           </div>
@@ -83,6 +93,8 @@
                 Your browser does not support the video tag.
               </video>
               <span  v-if="!editFormVideos[0].imgUrl">1920x1080</span>
+              <br>
+              <span  v-if="!editFormVideos[0].imgUrl">上传视频</span>
             </el-upload>
             <el-upload style="background:#F2F2F2;width:207px;height:116px;"
               class="avatar-uploader"
@@ -95,6 +107,8 @@
                 Your browser does not support the video tag.
               </video>
               <span  v-if="!editFormVideos[1].imgUrl">1280x720</span>
+              <br>
+              <span  v-if="!editFormVideos[1].imgUrl">上传视频</span>
             </el-upload>
             
           </div>
@@ -118,7 +132,7 @@
         <el-form-item v-if="editForm.triggerMode==2" :label-width="labelWidth" label="应用" prop="triggerId">
           <el-select v-model="editForm.triggerId" placeholder="请选择触发方式">
             <!-- <el-option label="" value=""></el-option> -->
-            <el-option v-for="rt in applications" :key="rt.key" :label="rt.value" :value="rt.key">
+            <el-option v-for="rt in applications" :key="rt.key" :label="rt.value" :value="rt.key" :selecked="rt.key==editForm.triggerId">
               {{ rt.value }}
             </el-option>
           </el-select>
@@ -268,22 +282,7 @@ export default {
       },
       RoomTypeConfig,
       sortType: null,
-      applications:[
-        // {
-        //   text:'爱奇艺',
-        //   value:'1'
-        // },{
-        //   text:'腾讯视频',
-        //   value:'2'
-        // },{
-        //   text:'Bilibili',
-        //   value:'3'
-        // },{
-        //   text:'优酷',
-        //   value:'4'
-        // },
-        
-      ],
+      applications:[],
       contentObj:''
     }
   },
@@ -305,7 +304,11 @@ export default {
       this.BASE_API = getBaseAPI().BASE_API;
       this.APILeft = getBaseAPI().IMG_URL;
       GET_CONTANT_APP().then(res=>{
+        for(let i in res){
+          res[i].key = Number(res[i].key)
+        }
         this.applications = res;
+        
       })
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       if(!this.editOrAddFlag){

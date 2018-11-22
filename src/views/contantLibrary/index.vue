@@ -414,7 +414,7 @@ export default {
           item.status='禁用';
           break;
         case 1:
-          item.status='开启';
+          item.status='正常';
           break;
       }
       switch(item.showMode){
