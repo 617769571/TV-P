@@ -121,6 +121,8 @@
                         </el-option>
                       </el-select>
                     </el-form-item>
+                    
+                    <el-button  size="medium" class="btn-default" @click="smartPageList[1].contentSecondPageBOList.splice(index,1)">删除</el-button>
                   </div>
                 </div>
               </el-form-item>
@@ -207,7 +209,7 @@
                     </el-form>
                   </el-col>
                   <el-col :span="5">
-                    <el-button size="medium" class="btn-primary" @click="queryData">查询</el-button>
+                    <el-button size="medium" class="btn-primary" @click="pageIndex=0;queryData()">查询</el-button>
                     <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentTypes=[0]">重置</el-button>
                   </el-col>
                 </el-row>
@@ -226,7 +228,7 @@
                   </div>
                   <div style="clear:both"></div>
               </div>
-              <div v-if="thisInd==2" style="width:100%;max-height:420px;">
+              <div v-if="thisInd==2" style="width:100%;max-height:420px;overflow: auto;">
                 <table class="videoTable" style="width:100%;">
                   <tr>
                     <td></td>
@@ -242,7 +244,7 @@
                       <el-select v-model="item.checked" placeholder="请选择">
                         <el-option
                           v-for="(option,index) in item.imgs"
-                          :key="index"
+                          :key="option.size"
                           :label="option.size"
                           :value="index">
                         </el-option>
@@ -640,21 +642,28 @@ export default {
         let str = JSON.stringify(value)
         this.dataList = JSON.parse(str).list;
         this.total = value.total;
-        for(let i = 0;i<value.list.length;i++){
-          for(let j = 0;j<value.list[i].imgs.length;j++){
-            this.dataList[i].imgs = [];
-            if(this.thisInd!=2){
-              if(value.list[i].imgs[j].size == this.filterForm.imgSizes[0]){
-                this.dataList[i].imgs = value.list[i].imgs[j];
-                break;
-              }
-            }else{
-              if((value.list[i].imgs[j].size == this.filterForm.imgSizes[0])||(value.list[i].imgs[j].size == this.filterForm.imgSizes[1])){
-                this.dataList[i].imgs.push(value.list[i].imgs[j]);
+        if(this.thisInd!=2){
+          for(let i = 0;i<value.list.length;i++){
+            for(let j = 0;j<value.list[i].imgs.length;j++){
+              this.dataList[i].imgs = [];
+              if(this.thisInd!=2){
+                if(value.list[i].imgs[j].size == this.filterForm.imgSizes[0]){
+                  this.dataList[i].imgs = value.list[i].imgs[j];
+                  break;
+                }
+              }else{
+                if((value.list[i].imgs[j].size == this.filterForm.imgSizes[0])||(value.list[i].imgs[j].size == this.filterForm.imgSizes[1])){
+                  this.dataList[i].imgs.push(value.list[i].imgs[j]);
+                }
               }
             }
+            this.dataList[i].checked = (this.thisInd!=2)?false:0;
           }
-          this.dataList[i].checked = (this.thisInd!=2)?false:0;
+        }else{
+          for(let i = 0;i<value.list.length;i++){
+            this.dataList[i].checked = (this.thisInd!=2)?false:0;
+
+          }
         }
        console.log(this.dataList);
       }).catch(() => {})
@@ -679,6 +688,30 @@ export default {
         // }
         tpObj.templateContentList[this.getTemplateContentListIndex()] = this.templateContent;
       }else{
+        for(let i in this.smartPageList){
+          if(this.smartPageList[i].smartContentType == 2){
+            if(this.smartPageList[i].contentSecondPageBOList.length<1){
+              return this.$message.error('广告区域不能为空');
+            }else if(this.smartPageList[i].contentSecondPageBOList.length>8){
+              this.smartPageList[i].contentSecondPageBOList.length = 8;
+            }
+          }else if(this.smartPageList[i].smartContentType == 3){
+            for(let j in this.smartPageList[i].contentSecondPageBOList){
+              if(!this.smartPageList[i].contentSecondPageBOList[j].contentId){
+                return this.$message.error('应用区域不能为空');
+
+              }
+            }
+          }else if(this.smartPageList[i].smartContentType == 1){
+            if(this.smartPageList[i].contentSecondPageBOList.length!=1){
+              return this.$message.error('logo区域不能为空');
+            }
+          }else if(this.smartPageList[i].smartContentType == 4){
+            if(this.smartPageList[i].contentSecondPageBOList.length!=1){
+              return this.$message.error('背景图不能为空');
+            }
+          }
+        }
         let list4 = {}
         let str = JSON.stringify(this.smartPageList);
         list4.pageContentType = 4;

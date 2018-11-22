@@ -89,19 +89,19 @@
 
           </div>
           <div style="width:166px;height:166px;position:absolute;top:304px;left:404px;">
-            <img :src="advertisList[2]?getImgUrl(advertisList[2]):''" style="width:100%;height:100%;" alt="">
-
-          </div>
-          <div style="width:166px;height:166px;position:absolute;top:131px;left:577px;">
-            <img :src="advertisList[3]?getImgUrl(advertisList[3]):''" style="width:100%;height:100%;" alt="">
-
-          </div>
-          <div style="width:166px;height:166px;position:absolute;top:304px;left:577px;">
             <img :src="advertisList[4]?getImgUrl(advertisList[4]):''" style="width:100%;height:100%;" alt="">
 
           </div>
-          <div style="width:166px;height:166px;position:absolute;top:131px;left:750px;">
+          <div style="width:166px;height:166px;position:absolute;top:131px;left:577px;">
+            <img :src="advertisList[2]?getImgUrl(advertisList[2]):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:304px;left:577px;">
             <img :src="advertisList[5]?getImgUrl(advertisList[5]):''" style="width:100%;height:100%;" alt="">
+
+          </div>
+          <div style="width:166px;height:166px;position:absolute;top:131px;left:750px;">
+            <img :src="advertisList[3]?getImgUrl(advertisList[3]):''" style="width:100%;height:100%;" alt="">
 
           </div>
           <div style="width:166px;height:166px;position:absolute;top:304px;left:750px;">
@@ -110,7 +110,7 @@
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button @click="previewDialog = false">返回</el-button>
+          <el-button @click="handleEdit">返回</el-button>
         </span>
       </el-dialog>
   </div>
@@ -181,6 +181,7 @@ export default {
       
     },
     handleEdit(item){
+      this.advertisList =[];
       if(item){
         SECONDPAGE_GET(item.id).then(res=>{
           this.previewCont = res;
@@ -200,7 +201,6 @@ export default {
               for(let j in res.contents[i].imgs){
                 if(res.contents[i].imgs[j].size == '1:1'){
                   this.advertisList.push(res.contents[i].imgs[j].imgUrl);
-
                   break;
                 }
               }

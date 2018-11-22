@@ -268,22 +268,7 @@ export default {
       },
       RoomTypeConfig,
       sortType: null,
-      applications:[
-        // {
-        //   text:'爱奇艺',
-        //   value:'1'
-        // },{
-        //   text:'腾讯视频',
-        //   value:'2'
-        // },{
-        //   text:'Bilibili',
-        //   value:'3'
-        // },{
-        //   text:'优酷',
-        //   value:'4'
-        // },
-        
-      ],
+      applications:[],
       contentObj:'',
       dialogVisible:false,
       condition:{},
@@ -531,7 +516,26 @@ export default {
       this.queryData()
     },
     submitEdit(){
-     
+      if(!this.editForm.pageName){
+        return this.$message.error('请输入二级页面名称!');
+      }
+      if(!this.editForm.pageLayoutType){
+        return this.$message.error('请选择布局样式!');
+      }
+      if(this.editForm.contentMapper){
+        
+        return this.$message.error('请选择布局样式!');
+      }
+      if(this.contentMapper2.length<2){
+        return this.$message.error('广告内容至少为2个');
+      }
+      if(this.editForm.contentMapper.length==this.contentMapper2.length){
+        return this.$message.error('背景图片不能为空');
+      }
+      
+      // pageName: '',
+      //   pageLayoutType: '',
+      //   contentMapper:[],
       if(this.editOrAddFlag){
         this.editForm.contentMapper = this.editFormatData();
           SECONDPAGE_CREATE(this.editForm).then(res=>{

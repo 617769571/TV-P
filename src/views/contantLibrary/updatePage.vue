@@ -113,7 +113,7 @@
               <el-option label="Https://" value="Https://"></el-option>
             </el-select>
           </el-input> -->
-          <el-input v-model="editForm.triggerParam" placeholder="请输入目标URL" />
+          <el-input v-model="editForm.triggerParam" placeholder="请输入目标URL" :maxlength="100"/>
         </el-form-item>
         <el-form-item v-if="editForm.triggerMode==2" :label-width="labelWidth" label="应用" prop="triggerId">
           <el-select v-model="editForm.triggerId" placeholder="请选择触发方式">
@@ -126,7 +126,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer text-center">
         <el-button class="btn-default" size="medium" @click="goBack">返回</el-button>
-        <el-button class="btn-primary" size="medium" @click="submitEdit">提交</el-button>
+        <el-button class="btn-primary" size="medium" @click="submitEdit">保存</el-button>
       </div>
     </div>
   
@@ -581,7 +581,7 @@ export default {
         return this.$message.error('请选择内容分类!');
       }
       if(this.editForm.imgs.length<1&&this.editOrAddFlag){
-        return this.$message.error('请上传图片!');
+        return this.$message.error('请至少上传一个图片/视频!');
       }
       if(this.editForm.triggerMode.length<1){
         return this.$message.error('请选择触发方式!');

@@ -468,7 +468,7 @@ export default {
       edition_join_device(this.addForm).then(res=>{
          this.$message({
         type: 'success',
-        message: '发布成功!'
+        message: '关联设备成功!'
       });
       })
     }

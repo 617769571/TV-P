@@ -480,7 +480,15 @@ export default {
       })
     },
     addEdition(){
-     
+      if(!this.addForm.editionName){
+        return this.$message.error('版本名称不能为空');
+         
+      }
+      if(!this.addForm.deviceIdList.length<1){
+        return this.$message.error('请至少选择一个设备');
+         
+      }
+      
       this.addForm.deviceIdList = this.addForm.deviceIdList;
       template_publish(this.addForm).then(res=>{
          this.$message({

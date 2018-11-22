@@ -60,6 +60,9 @@ export function OTT_DEVICE_LIST(params,data) {
       delete data[i];
     }
   }
+  if(params.pageIndex){
+    params.pageIndex = params.pageIndex-1
+  }
   return request({
     url: process.env.BASE_API + '/ott/device/list',
     method: 'post',

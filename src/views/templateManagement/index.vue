@@ -264,6 +264,7 @@ export default {
         this.$router.push({ name: 'publishTemplate', query: { id: item.id }});
     },
     handleEdit(item){
+      this.dialogData = '';
       if(typeof item==='object'){
         TEMPLATE_DETAIL(item.id).then(res=>{
           this.dialogData = res;
