@@ -13,7 +13,7 @@
                 <el-form ref="filterForm" :model="filterForm" :inline="true" label-width="100px" class="filter-form">
                   <el-form-item label="" prop="daterange">
                     <span>添加时间：</span>
-                    <el-date-picker
+                    <!-- <el-date-picker
                       v-model="filterForm.daterange"
                       class="data-picker"
                       type="daterange"
@@ -22,10 +22,20 @@
                       range-separator="-"
                       start-placeholder="开始日期"
                       end-placeholder="结束日期"
-                      remote
-                      clearable
-                      filterable
-                      size="medium"></el-date-picker>
+                     
+                      size="medium"></el-date-picker> -->
+                      <el-date-picker
+                        v-model="filterForm.daterange[0]"
+                        type="date"
+                        placeholder="选择开始日期"
+                        :picker-options="pickerBeginDateBefore">
+                      </el-date-picker>-
+                      <el-date-picker
+                        v-model="filterForm.daterange[1]"
+                        type="date"
+                        placeholder="选择结束日期"
+                        :picker-options="pickerBeginDateAfter">
+                      </el-date-picker>
                   </el-form-item>
                   <el-form-item label="" prop="contentName">
                    
@@ -133,117 +143,9 @@ export default {
     DeviceDetailDialog
   },
   data() {
-    const validateStoreNameE = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.editForm.storeName = ''
-        callback(new Error('内容名称不能为空'))
-      } else {
-        callback()
-      }
-    }
-    const validateBrandCodeE = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.editForm.brandCode = ''
-        callback(new Error('设备品牌必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateTypeCodeE = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.editForm.typeCode = ''
-        callback(new Error('设备型号必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomNoE = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.editForm.roomNo = ''
-        callback(new Error('房间号必须填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomTypeE = (rule, value, callback) => {
-      if ((Number.isSafeInteger(value * 1) && ('' + value)).trim().length < 1) {
-        this.editForm.roomType = ''
-        callback(new Error('房间类型必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateUuidE = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.editForm.uuid = ''
-        callback(new Error('uuid必须填'))
-      } else {
-        callback()
-      }
-    }
-
-    const validateBrandCodeA = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.addForm.brandCode = ''
-        callback(new Error('设备品牌必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateTypeCodeA = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.addForm.typeCode = ''
-        callback(new Error('设备型号必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomNoA = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.addForm.roomNo = ''
-        callback(new Error('房间号必须填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomTypeA = (rule, value, callback) => {
-      if ((Number.isSafeInteger(value * 1) && ('' + value)).trim().length < 1) {
-        this.addForm.roomType = ''
-        callback(new Error('房间类型必须填'))
-      } else {
-        callback()
-      }
-    }
-    const validateUuidA = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.addForm.uuid = ''
-        callback(new Error('uuid必须填'))
-      } else {
-        callback()
-      }
-    }
     return {
       pageIndex:0,
       pageSize:20,
-      editRules: {
-        storeName: [{ required: true, trigger: 'blur', validator: validateStoreNameE }],
-        brandCode: [{ required: true, trigger: 'blur', validator: validateBrandCodeE }],
-        typeCode: [{ required: true, trigger: 'blur', validator: validateTypeCodeE }],
-        roomNo: [{ required: true, trigger: 'blur', validator: validateRoomNoE }],
-        roomType: [{ required: true, trigger: 'blur', validator: validateRoomTypeE }],
-        uuid: [{ required: true, trigger: 'blur', validator: validateUuidE }]
-      },
-      addRules: {
-        storeId: [
-          { required: true, message: '请输入内容名称', trigger: 'blur' },
-          { min: 1, max: 30, message: '长度在 1 到 30 个字符', trigger: 'blur' }
-        ],
-        // brandCode: [{ required: true, trigger: 'blur', validator: validateBrandCodeA }],
-        // typeCode: [{ required: true, trigger: 'blur', validator: validateTypeCodeA }],
-        // roomNo: [{ required: true, trigger: 'blur', validator: validateRoomNoA }],
-        // roomType: [{ required: true, trigger: 'blur', validator: validateRoomTypeA }],
-        // uuid: [{ required: true, trigger: 'blur', validator: validateUuidA }]
-      },
       dialogData: {},
       multipleSelection: [],
       EnabledType,
@@ -280,7 +182,7 @@ export default {
       deviceModels: [],
       filterForm: {//用于条件筛选搜索的表单内容
         contentName: '',
-        daterange: ''
+        daterange: [],
       },
       filterDataF:{},
       dataList: [],
@@ -316,7 +218,22 @@ export default {
           value:'4'
         },
         
-      ]
+      ],
+      pickerBeginDateBefore:{
+				disabledDate: function(time) {
+				
+						return time.getTime()>Date.parse(new Date())||time.getTime()<(Date.parse(new Date())-31536000000);
+					}
+				
+			},
+			//end
+			pickerBeginDateAfter:{
+				disabledDate: function(time) {
+					
+						return time.getTime()>Date.parse(new Date());
+					
+				}
+			}
     }
   },
   computed: {

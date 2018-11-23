@@ -87,7 +87,7 @@
                 <span style="color:#dcdfe6">只支持图片形式的内容，尺寸318x658，只能添加一个</span>
                 <div style="width:500px;min-height:300px;margin-top:10px;text-align:center">
                   <img v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" style="width:100%;" :src="getImgUrl(smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl)" alt="">
-                  <el-button v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" size="medium" class="btn-default" @click="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl='';smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentId=''">重置</el-button>
+                  <el-button v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" size="medium" class="btn-default" @click="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl='';smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentId='';setData()">重置</el-button>
                 </div>
               </el-form-item>
             </div>
@@ -122,7 +122,7 @@
                       </el-select>
                     </el-form-item>
                     
-                    <el-button  size="medium" class="btn-default" @click="smartPageList[1].contentSecondPageBOList.splice(index,1)">删除</el-button>
+                    <el-button  size="medium" class="btn-default" @click="smartPageList[1].contentSecondPageBOList.splice(index,1);setData()">删除</el-button>
                   </div>
                 </div>
               </el-form-item>
@@ -155,7 +155,7 @@
                       </el-select>
                     </el-form-item>
                   <!-- <el-switch v-model=""></el-switch> -->
-                  <el-button v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" size="medium" class="btn-default" @click="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl='';smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentId=''">重置</el-button>
+                  <el-button v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" size="medium" class="btn-default" @click="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl='';smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentId='';setData()">重置</el-button>
                 </div>
               </el-form-item>
             </div>
@@ -165,7 +165,7 @@
                 <span style="color:#dcdfe6">只支持图片形式的内容，尺寸16:9，只能添加一个</span>
                 <div style="width:500px;min-height:300px;margin-top:10px;text-align:center">
                   <img v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" style="width:100%;" :src="getImgUrl(smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl)" alt="">
-                  <el-button v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" size="medium" class="btn-default" @click="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl='';smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentId=''">重置</el-button>
+                  <el-button v-if="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl" size="medium" class="btn-default" @click="smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentImgUrl='';smartPageList[collapseInds[0]].contentSecondPageBOList[collapseInds[1]].contentId='';setData()">重置</el-button>
                 </div>
               </el-form-item>
             </div>
@@ -482,7 +482,7 @@ export default {
       this.thisInd = this.$route.query.index;
       this.editOrAddFlag = (this.$route.query.edit==false)||(this.$route.query.edit=='false');
       let tpObj = JSON.parse(window.sessionStorage.templateObj);
-      debugger;
+      
       if(this.thisInd != 4){
         if(JSON.stringify(tpObj.templateContentList)!='[]'){
           for(let i in tpObj.templateContentList){
@@ -879,6 +879,9 @@ export default {
     },
     goBack(){
       history.go(-1);
+    },
+    setData(){
+      this.smartPageList = JSON.parse(JSON.stringify(this.smartPageList));
     }
   }
 }

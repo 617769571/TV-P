@@ -411,7 +411,7 @@ export default {
           isJPG = true;
         }
       }else{
-        debugger
+         
         if(file.type === 'video/mp4'||file.type === 'video/vnd.dlna.mpeg-tts'){
           isJPG = true;
         }
@@ -534,10 +534,10 @@ export default {
           if(this.contentObj.imgs[j].id){
             if(this.contentObj.showMode==1){
               for(let i in this.editFormImgs){
-                if(this.editFormImgs[i].imgUrl==this.contentObj.imgs[j].imgUrl){
+                if(this.editFormImgs[i].imgUrl==this.contentObj.imgs[j].imgUrl&&this.editFormImgs[i].id==this.contentObj.imgs[j].id){
                   this.editFormImgs.splice(i,1);
-                  
-                }else if(!this.editFormImgs[i].imgUrl||this.editFormImgs[i].mediaType == "未知"){
+                }
+                if(this.editFormImgs[i].imgUrl==""||this.editFormImgs[i].mediaType == "未知"){
                   this.editFormImgs.splice(i,1);
                 }
               }

@@ -35,6 +35,9 @@ export function TEMPLATE_DETAIL(id) {
 
 
 export function TEMPLATE_FIND(params) {
+  if(params.pageIndex){
+    params.pageIndex = params.pageIndex-1
+  }
   return request({
     url: process.env.BASE_API + '/template/list-page',
     method: 'get',

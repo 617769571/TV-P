@@ -409,7 +409,7 @@ export default {
       if(this.contentMapper2.length<2){
         return this.$message.error('广告内容至少为2个');
       }
-      debugger;
+       
       
       
       // pageName: '',

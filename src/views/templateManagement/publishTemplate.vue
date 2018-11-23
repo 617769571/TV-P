@@ -403,7 +403,7 @@ export default {
       // if(this.filterForm.show_modes.length>0){
       //   params.show_modes = this.filterForm.show_modes.join(',');
       // }
-      this.fetchData(params,flag?this.filterForm:{});
+      this.fetchData(params,this.filterForm);
     },
     showDialog(editFlag, item) {
       

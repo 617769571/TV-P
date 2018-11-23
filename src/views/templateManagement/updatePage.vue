@@ -294,7 +294,104 @@ export default {
         var s = date.getSeconds();
         return Y+M+D+h+m+s;
     },
-
+    messageSwich(id){
+      
+        switch(id){
+          case 1:
+            this.$message.error('请添加开机画面!');
+            break;
+          case 2:
+            this.$message.error('请添加开机视频!');
+            break;
+          case 3:
+            this.$message.error('请添加欢迎页!');
+            break;
+          case 4:
+            this.$message.error('请添加智能主页*/!');
+            break;
+          
+        }
+      
+      
+    },
+    verifyData(data){
+      let verifyObj = [false,false,false,false];
+      for(let i in data.templateContentList){
+        verifyObj[data.templateContentList[i].pageContentType-1] = true;
+      }
+      
+      switch(this.editForm.showMode){
+        case 1:
+          if(verifyObj[0]&&verifyObj[1]&&verifyObj[2]&&verifyObj[3]){
+            return true;
+          }else{
+            for(let j in verifyObj){
+              if(!verifyObj[j]){
+                this.messageSwich(Number(j)+1);
+                break;
+              }
+            }
+            return false;
+          }
+          break;
+        case 2:
+          if(verifyObj[0]&&verifyObj[1]&&verifyObj[3]){
+            return true;
+          }else{
+            if(!verifyObj[0]){
+              this.messageSwich(1)
+            }else if(!verifyObj[1]){
+              this.messageSwich(2)
+            }else if(!verifyObj[3]){
+              this.messageSwich(4)
+            }
+           
+            return false;
+          }
+          break;
+        case 3:
+          if(verifyObj[0]&&verifyObj[1]&&verifyObj[2]){
+            return true;
+          }else{
+            if(verifyObj[0]&&verifyObj[1]&&verifyObj[2]){
+            return true;
+          }else{
+            if(!verifyObj[0]){
+              this.messageSwich(1)
+            }else if(!verifyObj[1]){
+              this.messageSwich(2)
+            }else if(!verifyObj[2]){
+              this.messageSwich(3)
+            }
+           
+            return false;
+          }
+            return false;
+          }
+          break;
+        case 4:
+          if(verifyObj[0]&&verifyObj[1]){
+            return true;
+          }else{
+            if(verifyObj[0]&&verifyObj[1]&&verifyObj[3]){
+            return true;
+          }else{
+            if(!verifyObj[0]){
+              this.messageSwich(1)
+            }else if(!verifyObj[1]){
+              this.messageSwich(2)
+            }
+           
+            return false;
+          }
+            return false;
+          }
+          break;
+        default:
+          return false;
+          break;
+      }
+    },
     submitEdit(){
       var thisdata = window.sessionStorage.templateObj.replace(/"contentImgUrl":".*?",/gm,'').replace(/"contentImgUrl":null,/gm,'').replace(/,"contentImgUrl":".*?"/gm,'').replace(/,"contentImgUrl":null/gm,'').replace(/"secondPageId":null,/gm,'').replace(/,"secondPageId":null/gm,'').replace(/"secondPageId":0,/gm,'').replace(/,"secondPageId":0/gm,'')
       let data= JSON.parse(thisdata);
@@ -307,6 +404,10 @@ export default {
       }else{
         data.templateName = this.editForm.templateName;
         data.showMode = this.editForm.showMode;
+      }
+      
+      if(!this.verifyData(data)){
+        return;
       }
       if(this.editOrAddFlag){
           TEMPLATE_ADD(data).then(res=>{
