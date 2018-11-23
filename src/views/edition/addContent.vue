@@ -237,7 +237,7 @@
                     <td>尺寸&格式</td>
                   </tr>
                   <tr v-for="(item,index) in dataList" :key="index">
-                    <td><el-radio v-model="videoChecked" :label="index" border></el-radio></td>
+                    <td><el-radio v-model="videoChecked" :label="index+1" border></el-radio></td>
                     <td>{{item.contentName}}</td>
                     <td>{{getContentType(item.contentType)}}</td>
                     <td>

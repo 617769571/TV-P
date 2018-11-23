@@ -91,7 +91,7 @@
               </el-col>
               <el-col :span="5">
                 <el-button size="medium" class="btn-primary" @click="pageIndex=0;queryData()">查询</el-button>
-                <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentTypes=[0];pageIndex=0">重置</el-button>
+                <el-button size="medium" class="btn-default" @click="filterForm.contentName='';filterForm.contentTypes=[0];pageIndex=0;queryData()">重置</el-button>
 
               </el-col>
             </el-row>
