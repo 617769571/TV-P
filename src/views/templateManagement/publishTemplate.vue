@@ -129,10 +129,10 @@
               <el-form-item label="房间类型">
                 <el-select  v-model="filterForm.roomTypeName" placeholder="请选择">
                   <el-option
-                    v-for="item in options"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
+                    v-for="item in roomTypes"
+                    :key="item.typeCode"
+                    :label="item.typeName"
+                    :value="item.typeName">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -151,7 +151,7 @@
           <el-table ref="deviceTable" :data="dataList" stripe border class="device-table" @selection-change="handleSelectionChange">
             <el-table-column type="selection"/>
             <el-table-column prop="organizationName" label="集团名称" width="100"/>
-            <el-table-column prop="storeId" label="门店编号" width="200"/>
+            <el-table-column prop="internalId" label="门店编号" width="200"/>
             <el-table-column prop="externalId" label="门店外部编号" width="100"/>
             <el-table-column prop="deviceBrand" label="品牌" width="150"/>
             <el-table-column prop="storeName" label="门店名称" width="150"/>
@@ -199,7 +199,8 @@ import {
   get_store,
   get_device_model,
   edition_check_join_device,
-  template_publish
+  template_publish,
+  get_store_room_type
 } from '@/api/templateAPI/templateAPI'
 
 import RoomTypeConfig from '@/constants/room-type-config'
@@ -275,6 +276,7 @@ export default {
       storeBrands:[],
       deviceBrands:[],
       storeNames:[],
+      roomTypes:[],
     }
   },
   computed: {
@@ -290,9 +292,7 @@ export default {
     // this.getDeviceBrands()
     // // 首次获取前20条数据
     this.addForm.templateId =this.$route.query.id;
-    this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})
-    // // 获取所有房间类型
-    // this.getAllRoomType()
+    this.fetchData({pageIndex:this.pageIndex,pageSize:this.pageSize})   
     window.addEventListener('pageshow', this.onShow);
     this.onShow();
   },
@@ -307,6 +307,9 @@ export default {
       })
       get_device_brand().then(res=>{
         this.deviceBrands = res;
+      })
+      get_store_room_type().then(res=>{
+        this.roomTypes = res;
       })
       
     },

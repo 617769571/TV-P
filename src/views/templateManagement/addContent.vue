@@ -11,7 +11,7 @@
           <div class="TVBox" >
             <img src="../../assets/templateImg/TV.png" width="581" alt="">
             <div class="tvScreen">
-              <img v-if="templateContent.contentImgUrl&&(thisInd==1)&&(thisInd==3)" style="width:100%;height:100%" :src="getImgUrl(templateContent.contentImgUrl)" alt="">
+              <img v-if="templateContent.contentImgUrl&&(thisInd==1)||(thisInd==3)" style="width:100%;height:100%" :src="getImgUrl(templateContent.contentImgUrl)" alt="">
               <video v-if="templateContent.contentImgUrl&&(thisInd==2)" :src="getImgUrl(templateContent.contentImgUrl)"  style="width:100%;height:100%" controls="controls">
                 Your browser does not support the video tag.
               </video>
@@ -241,7 +241,7 @@
                     <td>{{item.contentName}}</td>
                     <td>{{getContentType(item.contentType)}}</td>
                     <td>
-                      <el-select v-model="item.checked" placeholder="请选择">
+                      <el-select v-model="item.checked" @visible-change="seletedSize()"  placeholder="请选择">                      
                         <el-option
                           v-for="(option,index) in item.imgs"
                           :key="option.size"
@@ -474,7 +474,7 @@ export default {
       return header;
     },
     onShow(){
-      SECONDPAGE_FIND({pageSize:30,pageIndex:0}).then(res=>{
+      SECONDPAGE_FIND({pageSize:100,pageIndex:0}).then(res=>{
         this.secondPageList = res.list
       })
       this.APILeft = getBaseAPI().IMG_URL;
@@ -603,6 +603,9 @@ export default {
           break;
         
       }
+    },
+    seletedSize(){
+      this.dataList=JSON.parse(JSON.stringify(this.dataList))
     },
     setThisIndex(i, index){
       console.log(i,index);
@@ -776,8 +779,8 @@ export default {
         this.dataList[index].checked = !this.dataList[index].checked;
 
       }
-      
-      console.log(item.checked);
+      this.dataList = JSON.parse(JSON.stringify(this.dataList));
+      console.log(this.dataList[index].checked);
     },
     takeImgData(){
       if(this.thisInd!=4){

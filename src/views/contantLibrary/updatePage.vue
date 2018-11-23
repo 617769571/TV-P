@@ -317,16 +317,16 @@ export default {
           for(let i in this.editForm){
             this.editForm[i] = res[i];
           }
-          this.editForm.id = this.contentObj.id;
-          // this.editFormImgs = this.contentObj.imgs;
+          this.editForm.id = res.id;
+          // this.editFormImgs = res.imgs;
           if(res.showMode==1){
-            for(let j in this.contentObj.imgs){
-              this.imgSort(this.contentObj.imgs[j])
+            for(let j in res.imgs){
+              this.imgSort(res.imgs[j])
             }
 
           }else{
-            for(let j in this.contentObj.imgs){
-              this.videoSort(this.contentObj.imgs[j])
+            for(let j in res.imgs){
+              this.videoSort(res.imgs[j])
             }
           }
         })
@@ -530,20 +530,20 @@ export default {
     submitEdit(){
       //处理图片是添加还是修改
       if(!this.editOrAddFlag){
-        for (let j in this.editForm.imgs){
-          if(this.editForm.imgs[j].id){
-            if(this.editForm.showMode==1){
+        for (let j in this.contentObj.imgs){
+          if(this.contentObj.imgs[j].id){
+            if(this.contentObj.showMode==1){
               for(let i in this.editFormImgs){
-                if(this.editFormImgs[i].imgUrl==this.editForm.imgs[j].imgUrl){
+                if(this.editFormImgs[i].imgUrl==this.contentObj.imgs[j].imgUrl){
                   this.editFormImgs.splice(i,1);
                   
-                }else if(!this.editFormImgs[i].imgUrl){
+                }else if(!this.editFormImgs[i].imgUrl||this.editFormImgs[i].mediaType == "未知"){
                   this.editFormImgs.splice(i,1);
                 }
               }
             }else{
               for(let i in this.editFormVideos){
-                if(this.editFormVideos[i].id==this.editForm.imgs[j].id&&this.editFormVideos[i].imgUrl==this.editForm.imgs[j].imgUrl){
+                if(this.editFormVideos[i].id==this.contentObj.imgs[j].id&&this.editFormVideos[i].imgUrl==this.contentObj.imgs[j].imgUrl){
                   this.editFormVideos.splice(i,1);
                 }else if(!this.editFormVideos[i].imgUrl){
                   this.editFormVideos.splice(i,1);

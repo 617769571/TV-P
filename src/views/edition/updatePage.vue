@@ -85,97 +85,9 @@ import {
 import {getBaseAPI} from '@/api/contantLibraryAPI/contantLibraryAPI'
 
 export default {
-  name: 'DeviceList',
+  name: 'editionUpDate',
   data() {
-    const validateStoreNameE = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.editForm.storeName = ''
-        callback(new Error('内容名称不能为空'))
-      } else {
-        callback()
-      }
-    }
-    const validateBrandCodeE = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.editForm.brandCode = ''
-        callback(new Error('设备品牌必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateTypeCodeE = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.editForm.typeCode = ''
-        callback(new Error('设备型号必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomNoE = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.editForm.roomNo = ''
-        callback(new Error('房间号必须填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomTypeE = (rule, value, callback) => {
-      if ((Number.isSafeInteger(value * 1) && ('' + value)).trim().length < 1) {
-        this.editForm.roomType = ''
-        callback(new Error('房间类型必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateUuidE = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.editForm.uuid = ''
-        callback(new Error('uuid必须填'))
-      } else {
-        callback()
-      }
-    }
-
-    const validateBrandCodeA = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.addForm.brandCode = ''
-        callback(new Error('设备品牌必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateTypeCodeA = (rule, value, callback) => {
-      if (value.length < 1) {
-        this.addForm.typeCode = ''
-        callback(new Error('设备型号必填'))
-      } else {
-        callback()
-      }
-    }
-    const validateRoomNoA = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.addForm.roomNo = ''
-        callback(new Error('房间号必须填'))
-      } else {
-        callback()
-      }
-    }
-    const validatetriggerModeA = (rule, value, callback) => {
-      if ((Number.isSafeInteger(value * 1) && ('' + value)).trim().length < 1) {
-        this.addForm.triggerMode = ''
-        callback(new Error('房间类型必须填'))
-      } else {
-        callback()
-      }
-    }
-    const validateUuidA = (rule, value, callback) => {
-      if (value.trim().length < 1) {
-        this.addForm.uuid = ''
-        callback(new Error('uuid必须填'))
-      } else {
-        callback()
-      }
-    }
+    
     return {
 
       editOrAddFlag:false, //用于判断当前是新建还是编辑
@@ -302,12 +214,7 @@ export default {
     }
   },
   computed: {
-    enableText() {
-      return this.enableType === EnabledType.ENABLED ? '确认启用所选设备？' : this.enableType === EnabledType.DISABLED ? '确认禁用所选设备？' : ''
-    },
-    enableVisible() {
-      return this.enableType === EnabledType.ENABLED || this.enableType === EnabledType.DISABLED
-    }
+ 
   },
   mounted() {
     window.addEventListener('pageshow', this.onShow);
@@ -338,162 +245,7 @@ export default {
       }
       
     },
-    imgSort(imgObj){
-      switch(imgObj.size){
-        case '1:1':
-          this.editFormImgs[0] = imgObj; 
-          break;      
-        case '318x658':
-          this.editFormImgs[1] = imgObj; 
-          break;      
-        case '1314x658':
-          this.editFormImgs[2] = imgObj; 
-          break;      
-        case '16:9':
-          this.editFormImgs[3] = imgObj; 
-          break;      
-        case '318x207':
-          this.editFormImgs[4] = imgObj; 
-          break;
-      }
-      
-            
-    },
-    handleAvatarSuccess(res, file,ind) {
-      // this.editFormImgs[ind].imgUrl = URL.createObjectURL(file.raw);
-      this.editFormImgs[ind].imgUrl = this.APILeft+res[0].split('$}')[1];
-     
-      this.editFormImgs[ind].mediaType = file.name.split('.')[1];
 
-    },
-    handleAvatar0Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,0)
-    },
-    handleAvatar1Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,1)
-    },
-    handleAvatar2Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,2)
-    },
-    handleAvatar3Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,3)
-    },
-    handleAvatar4Success(res, file,ind) {
-      this.handleAvatarSuccess(res, file,4)
-    },
-    
-    beforeAvatarUpload(file) {
-      let isJPG = false;
-      if(file.type === 'image/jpeg'||file.type === 'image/png'||file.type === 'image/gif'){
-        isJPG = true;
-      }
-      // const isJPG = (file.type === 'image/jpeg')||;
-      const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!');
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!');
-      }
-      return isJPG && isLt2M;
-    },
-    handleBrandChange(val) {
-      this.deviceModels = []
-      if (!val) {
-        this.filterForm.deviceModel = ''
-        return
-      }
-      // GET_MODEL_LIST(val).then(deviceModels => {
-      //   this.deviceModels = deviceModels
-      // }).catch(() => {
-      //   this.deviceModels = []
-      // })
-    },
-    handleBrandChangeAdd(val) {
-      this.deviceModels = []
-      if (!val) {
-        return
-      }
-      // GET_MODEL_LIST(val).then(deviceModels => {
-      //   this.deviceModels = deviceModels
-      //   this.addForm.typeCode = ''
-      // }).catch(() => {
-      //   this.deviceModels = []
-      // })
-    },
-    handleBrandChangeEdit(val) {
-      this.editForm.typeCode = ''
-      this.deviceModels = []
-      if (!val) {
-        return
-      }
-      // GET_MODEL_LIST(val).then(deviceModels => {
-      //   this.deviceModels = deviceModels
-      //   this.editForm.typeCode = ''
-      // }).catch(() => {
-      //   this.deviceModels = []
-      // })
-    },
-   
-
-    fieldConversion(item){
-      switch(item.status){
-        case 0:
-          item.status='禁用';
-          break;
-        case 1:
-          item.status='开启';
-          break;
-      }
-      switch(item.showMode){
-        case 1:
-          item.showMode='图片';
-          break;
-        case 2:
-          item.showMode='视频';
-          break;
-      }
-      switch(item.triggerMode){
-        case 1:
-          item.triggerMode='打开网址';
-          break;
-        case 2:
-          item.triggerMode='打开应用';
-          break;
-        case 3:
-          item.triggerMode='无触发';
-          break;
-      }
-      // 1-影视, 2-直播,3-广告,4-购物, 5-服务, 6-周边
-      switch(item.contentType){
-        case 1:
-          item.contentType='影视';
-          break;
-        case 2:
-          item.contentType='直播';
-          break;
-        case 3:
-          item.contentType='广告';
-          break;
-        case 4:
-          item.contentType='购物';
-          break;
-        case 5:
-          item.contentType='服务';
-          break;
-        case 6:
-          item.contentType='周边';
-          break;
-      }
-      item.imgSizes='';
-      for(let i = 0;i < item.imgs.length; i++){
-        item.imgSizes+=item.imgs[i].size+' ';
-      }
-      item.createTime = this.timestampToTime(item.createTime);
-      return item;
-      
-    },
     timestampToTime(timestamp) {
         var date = new Date(timestamp);
         var Y = date.getFullYear() + '-';
@@ -505,23 +257,7 @@ export default {
         return Y+M+D+h+m+s;
     },
 
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
-      this.queryData()
-    },
-    // deleteUrl(obj,key){
-    //   if(typeof obj == 'object'){
-    //     for(let i in obj){
-    //       this.deleteUrl(obj[1],i)
-    //     }
-    //   }else{
-    //     if(key == 'contentImgUrl'){
-    //       return false;
-    //     }else{
-    //       return obj;
-    //     }
-    //   }
-    // },
+   
     submitEdit(){
       var thisdata = window.sessionStorage.templateObj.replace(/"contentImgUrl":".*?",/gm,'').replace(/"contentImgUrl":null,/gm,'').replace(/,"contentImgUrl":".*?"/gm,'').replace(/,"contentImgUrl":null/gm,'').replace(/"secondPageId":null,/gm,'').replace(/,"secondPageId":null/gm,'').replace(/"secondPageId":0,/gm,'').replace(/,"secondPageId":0/gm,'')
       let data= JSON.parse(thisdata);

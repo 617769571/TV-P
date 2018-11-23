@@ -159,4 +159,12 @@ export function template_publish(data) {
     }
   })
 }
-
+export function get_store_room_type() {
+  return request({
+    url: process.env.BASE_API + '/ott/store/room-type/all',
+    method: 'get',
+    headers: {
+      'token': getToken()
+    }
+  })
+}
